@@ -1,0 +1,666 @@
+/** -------------------------------------------- Page icons -------------------------------------------- */
+.page-icon, a .jstree-pageicon {
+  background-image: url(../icons/page-icons.png);
+}
+
+li.class-RedirectorPage > a .jstree-pageicon {
+  background-position: 0 -16px;
+}
+
+li.class-VirtualPage > a .jstree-pageicon {
+  background-position: 0 -32px;
+}
+
+li.class-HomePage > a .jstree-pageicon {
+  background-position: 0 -48px;
+}
+
+li.class-UserDefinedForm > a .jstree-pageicon {
+  background-position: 0 -64px;
+}
+
+/* 5 */
+/*li.class-Profile > a .jstree-pageicon { background-position: 0 -80px; }*/
+/*li.class-Cart > a .jstree-pageicon { background-position: 0 -96px; }*/
+li.class-ErrorPage > a .jstree-pageicon {
+  background-position: 0 -112px;
+}
+
+/*li.class-PlusPage > a .jstree-pageicon { background-position: 0 -128px; }*/
+li.class-SpecialistCatalog > a .jstree-pageicon {
+  background-position: 0 -144px;
+}
+
+/* 10 */
+li.class-Specialist > a .jstree-pageicon {
+  background-position: 0 -160px;
+}
+
+li.class-PublicationCatalog > a .jstree-pageicon {
+  background-position: 0 -176px;
+}
+
+li.class-Catalog > a .jstree-pageicon {
+  background-position: 0 -192px;
+}
+
+li.class-CatalogItem > a .jstree-pageicon {
+  background-position: 0 -208px;
+}
+
+li.class-DepartmentHolder > a .jstree-pageicon {
+  background-position: 0 -224px;
+}
+
+/* 15 */
+/*li.class-DepartmentHolder > a .jstree-pageicon { background-position: 0 -240px; }*/
+li.class-SitemapPage > a .jstree-pageicon {
+  background-image: url(../icons/page-icons.png) !important;
+  background-position: 0 -256px !important;
+}
+
+li.class-SimpleCalendar > a .jstree-pageicon {
+  background-image: url(../icons/page-icons.png) !important;
+  background-position: 0 -272px !important;
+}
+
+li.class-ArchivePage > a .jstree-pageicon {
+  background-position: 0 -288px;
+}
+
+li.class-ContactPage > a .jstree-pageicon {
+  background-position: 0 -304px;
+}
+
+/* 20 */
+li.class-InfoPage > a .jstree-pageicon {
+  background-position: 0 -320px;
+}
+
+li.class-BlocksPage > a .jstree-pageicon {
+  background-position: 0 -336px;
+}
+
+li.class-VideoPage > a .jstree-pageicon {
+  background-position: 0 -352px;
+}
+
+li.class-Department > a .jstree-pageicon {
+  background-position: 0 -368px;
+}
+
+li.class-BlockPage > a .jstree-pageicon {
+  background-position: 0 -384px;
+}
+
+/* 25 */
+li.class-IFramePage > a .jstree-pageicon {
+  background-position: 0 -400px;
+}
+
+li.class-ProtectedPage > a .jstree-pageicon {
+  background-position: 0 -416px;
+}
+
+li.class-ImportedContent > a .jstree-pageicon {
+  background-position: 0 -432px;
+}
+
+li.class-SettingsPage > a .jstree-pageicon {
+  background-position: 0 -448px;
+}
+
+li.class-DialogPage > a .jstree-pageicon {
+  background-position: 0 -464px;
+}
+
+/* 30 */
+li.class-HelpPage > a .jstree-pageicon {
+  background-position: 0 -480px;
+}
+
+li.class-SpecialistFilteredCatalog > a .jstree-pageicon {
+  background-position: 0 -496px;
+}
+
+/* extra page images! (16px per image) */
+/*li.class-Specialist > a .jstree-pageicon { background-position: 0 -80px; }
+li.class-SpecialistCatalog > a .jstree-pageicon { background-image: url(../icons/icon-specialistcatalog.png); }
+li.class-Catalog > a .jstree-pageicon { background-image: url(../icons/icon-catalog.png); }*/
+
+/* additional margin-left & .small styles for CMS formfields */
+
+#Root .ss-uploadfield.margin-left .middleColumn {
+  margin-left: 184px !important;
+  clear: none;
+  max-width: 512px;
+  max-width: 600px;
+}
+
+.field.stacked.margin-left label {
+  float: left;
+}
+
+.htmleditor.margin-left .middleColumn,
+.ss-gridfield.margin-left,
+.togglecomposite.margin-left {
+  margin-left: 184px;
+  clear: none;
+}
+
+.htmleditor.small .middleColumn {
+  margin-left: 184px;
+  width: 600px;
+  clear: none;
+}
+
+.field.full-width .middleColumn input.text {
+  width: 512px;
+}
+
+.field.half-width .middleColumn input.text {
+  width: 256px;
+}
+
+.field.fourth-width .middleColumn input.text {
+  width: 128px;
+}
+
+.field.eighth-width .middleColumn input.text {
+  width: 64px;
+}
+
+.field.inline-block .middleColumn,
+.field.inline-block .description,
+.field.inline-block label.right {
+  display: inline-block;
+  margin-left: 0;
+  margin-right: 4px;
+}
+
+.field.hide, .field.hidden {
+  display: none;
+}
+
+.field.label-bold label {
+  font-weight: bold;
+}
+
+/* inline fields */
+.field.inline {
+  float: left;
+  margin-right: 12px;
+  border-bottom: none;
+  padding: 0;
+}
+
+.field.inline + .field.inline .middleColumn {
+  margin-left: 0;
+  display: inline-block;
+}
+
+.field.inline + .field.inline .description {
+  margin-left: 0;
+}
+
+.field.inline + .field.inline label {
+  width: auto;
+}
+
+.field.inline-nolabel label {
+  display: none;
+}
+
+.field.inline-last + .field {
+  clear: both;
+  border-top: 1px solid #D2D5D8;
+  padding-top: 8px;
+}
+
+.field.inline.inline-toggletext input.text {
+  width: 448px;
+}
+
+/* general tweaks */
+h2:first-child {
+  margin-top: 0;
+}
+
+input.read-only-appearance[readonly]:focus,
+input.read-only-appearance[readonly] {
+  border: none;
+  background-image: none;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+/* fix for a.o. Tagfield in single modus */
+.select2-container .selection .select2-selection--single {
+  height: 32px;
+  padding: 1px 7px !important; /* Tagfield css has mucho importants... */
+  width: 512px;
+}
+
+.select2-container--default .selection .select2-selection--single .select2-selection__rendered {
+  color: #4f5861;
+  font-size: 12px;
+}
+
+.ss-gridfield .select2-container .selection .select2-selection--single {
+  height: auto;
+  width: auto;
+}
+
+/* float page-tabs left instead of right */
+
+/*#Root.ui-tabs .ui-tabs-nav {
+	float: left;
+	padding-left: 22px;
+}
+#Root.ui-tabs .ui-tabs-panel .ui-tabs {  // tabs inside tabs   or instead of root: .cms-content-fields 
+	clear: both;
+	padding-top: 0;
+	border-top: 1px solid #c0c0c2;
+	border-radius: 0;
+}
+*/
+
+/* progressbar for .loading-feedback buttons */
+#loading_feedback_progressbar {
+  position: relative;
+  z-index: 10000; /* one above .cms-content-loading-overlay / spinner */
+  margin: 200px auto;
+  width: 40%;
+  background-color: #005a92;
+  background-image: none;
+  border: 4px solid #005a92;
+}
+
+.show-loading-progressbar .cms-content-loading-spinner {
+  display: none;
+}
+
+.progress_label {
+  position: absolute;
+  margin: 5px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 0 1px #333;
+}
+
+#loading_feedback_progressbar .ui-progressbar-value {
+  /*background-color: #328cbf;*/
+  /*background-image: none;*/
+  background-color: #5eceee;
+  -webkit-transition: width .5s; /* Safari */
+  transition: width .5s;
+
+  /* borrowed from Bootstrap */
+  -webkit-animation: progress-bar-stripes 2s linear infinite;
+  -o-animation: progress-bar-stripes 2s linear infinite;
+  animation: progress-bar-stripes 2s linear infinite;
+  /*animation-name: progress-bar-stripes;
+  animation-duration: 2s;
+  animation-timing-function: linear;
+  animation-delay: initial;
+  animation-iteration-count: infinite;
+  animation-direction: initial;
+  animation-fill-mode: initial;
+  animation-play-state: initial;*/
+
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, .15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .15) 50%, rgba(255, 255, 255, .15) 75%, transparent 75%, transparent);
+  -webkit-background-size: 40px 40px;
+  background-size: 40px 40px;
+}
+
+/* WebKit (BS) */
+@-webkit-keyframes progress-bar-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* Spec and IE10+ (BS) */
+@keyframes progress-bar-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+
+/* fix for nested/fieldgroups to include translatable icon when fluent applies */
+
+.field label.LocalisedField:after {
+  float: left;
+  content: url("../../fluent/images/menu-icon-16-green.png");
+  display: block;
+  width: 16px;
+  height: 16px;
+  padding: 0 6px 0 0;
+  filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=70);
+  opacity: 0.7;
+}
+
+/* improvements of the sitetree area */
+
+.cms-tree.jstree-apple .status-addedtodraft > a {
+  color: #80A3D1;
+}
+
+/*.cms-tree.jstree-apple .status-addedtodraft > a { color: #0073C1; }*/
+.cms-tree.jstree-apple .status-addedtodraft > a span.item {
+  border-bottom: 1px dashed #999;
+}
+
+#cms-content-tools-CMSMain #resizer {
+  font-size: 14px;
+  position: absolute;
+  margin-bottom: 28px;
+  padding: 3px;
+  right: 2px;
+  width: 14px;
+  text-align: center;
+  bottom: 0;
+  color: #666;
+  border-radius: 3px;
+}
+
+#cms-content-tools-CMSMain #resizer:hover {
+  color: #555;
+  background: #ccc;
+  cursor: col-resize;
+}
+
+#cms-content-tools-CMSMain.collapsed #resizer {
+  display: none;
+}
+
+/* Displaylogicwrapper fixes */
+div.displaylogicwrapper > .field {
+  border-bottom: 1px solid #D2D5D8;
+}
+
+div.displaylogicwrapper:last-child > .field {
+  border-bottom: none;
+}
+
+/* Gridfield inlinesearch layout fix */
+.filter-header .extra .fieldgroup.nolabel .fieldgroup-field .fieldholder-small { padding-bottom: 0; }
+
+/* Gridfield design update */
+.cms table.ss-gridfield-table tr.title th,
+.cms table.ss-gridfield-table tr td.bottom-all {
+  background: transparent;
+  background: #eee;
+  border-top: 1px solid #D2D5D8;
+  border-bottom: 1px solid #D2D5D8;
+  background-image: transparent;
+  //border-radius: 0;
+  //td, th, th:first-child, th:last-child { border-radius: 0; }
+}
+
+.cms table.ss-gridfield-table tr th.main {
+  color: black;
+  background: #eee;
+  border: none;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid #D2D5D8;
+  font-weight: normal;
+}
+
+.cms table.ss-gridfield-table td,
+.cms table.ss-gridfield-table tr th.main {
+  &:first-child {
+    border-left: 1px solid #D2D5D8;
+  }
+  &:last-child {
+    border-right: 1px solid #D2D5D8;
+  }
+}
+
+.cms table.ss-gridfield-table thead tr:first-child:hover {
+  background-color: transparent;
+}
+
+.cms table.ss-gridfield-table tr th,
+.cms table.ss-gridfield-table tr td.bottom-all .pagination-records-number {
+  //font-weight: bold;
+  font-size: 13px;
+  color: black;
+  //padding: 5px;
+  border-right: none;
+  border-right: 1px solid #D2D5D8;
+  border-left: 1px solid #D2D5D8;
+}
+
+.cms table.ss-gridfield-table tr th.main span,
+.cms .ss-gridfield .right .pagination-records-number,
+.cms table.ss-gridfield-table tr td.bottom-all .pagination-records-number,
+.cms table.ss-gridfield-table tr td.bottom-all .datagrid-pagination .pagination-page-number {
+  color: black;
+  text-shadow: none;
+}
+.cms table.ss-gridfield-table tr td.bottom-all .datagrid-pagination .pagination-page-number { margin: 0 6px; }
+.cms table.ss-gridfield-table tr td.bottom-all .datagrid-pagination {
+  button {
+    background: none !important;
+    margin: 0px;
+    padding: 0 12px;
+    &:before {
+      content: '‹';
+      position: absolute;
+      color: black;
+      font-size: 16px;
+      margin-top: 4px;
+      margin-left: -3px;
+    }
+  }
+  button:hover { background-color: lightgrey !important; }
+  button.action.ss-gridfield-firstpage:before { content: '«'; }
+  button.action.ss-gridfield-nextpage:before { content: '›'; }
+  button.action.ss-gridfield-lastpage:before { content: '»'; }
+}
+
+.cms table.ss-gridfield-table tr td.bottom-all .pagination-records-number {
+  border: none;
+}
+
+.cms table.ss-gridfield-table tr.title th h2 {
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.cms table.ss-gridfield-table tr.title th {
+  text-shadow: none;
+
+  * {
+    color: black !important;
+  }
+}
+
+.cms table.ss-gridfield-table tr td {
+  color: black;
+}
+
+.cms table.ss-gridfield-table tr th button.ss-ui-button.ss-gridfield-button-filter.trigger {
+  background-position: -17px -38px;
+}
+
+/* Gridfield addnewmulticlass after button fix */
+
+.ss-gridfield-buttonrow-after .ss-gridfield-add-new-multi-class-inline {
+  margin-top: 12px;
+}
+
+.ss-gridfield-buttonrow-after .ss-gridfield-add-new-multi-class-inline select.chzn-done {
+  display: none;
+}
+
+.ss-gridfield-buttonrow-after .ss-gridfield-add-new-multi-class-inline .dropdown {
+  margin-top: -2px;
+}
+
+.cms table.ss-gridfield-table tbody .ss-gridfield-editable-row--fieldsHolder td.mceStatusbar {
+  max-width: 100%;
+}
+
+.cms .ss-gridfield .ss-gridfield-buttonrow-after .add-existing-autocompleter input.relation-search {
+  margin-top: 12px;
+}
+
+/* Various Gridfield Extensions fixes & improvements */
+.cms .ss-ui-button.gridfield-button-copy {
+  cursor: copy;
+}
+
+.cms .ss-gridfield-editable tbody td {
+  cursor: default;
+}
+
+.cms .ss-gridfield-editable tbody td a {
+  cursor: pointer;
+}
+
+/* Gridfield EditableRows fixes */
+.ss-gridfield-editable div.embeddedObjectUrl input.text {
+  max-width: 400px !important; // Please stop using 'important' for modules
+}
+
+/* for nestedcheckboxset/Content Checklists */
+.nestedcheckboxset .middleColumn > ul > li {
+  padding: 8px 0;
+  font-weight: bold;
+}
+
+.nestedcheckboxset .middleColumn > ul > li ul {
+  padding: 0;
+  font-weight: normal;
+}
+
+.nestedcheckboxset .middleColumn > ul > li ul li {
+  padding-bottom: 0;
+}
+
+#ContentChecks > label {
+  font-size: 13px;
+  padding-top: 10px;
+  text-shadow: none;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d0d3d5;
+  -webkit-box-shadow: 0 1px 0 rgba(248, 248, 248, 0.9);
+  -moz-box-shadow: 0 1px 0 rgba(248, 248, 248, 0.9);
+  -o-box-shadow: 0 1px 0 rgba(248, 248, 248, 0.9);
+  box-shadow: 0 1px 0 rgba(248, 248, 248, 0.9);
+}
+
+/* Specific */
+.ss-uploadfield-item-preview img,
+.ss-gridfield-item img {
+  /*background-image: url('../img/transp_bg.png'); border-style: solid;*/
+  background-image: url('../img/transparentbg.png');
+}
+
+/*#Form_EditForm_FeaturedCaption,
+#Form_EditForm_FeatLeftTitle,
+#Form_EditForm_FeatRightTitle
+{ height: 50px; }*/
+
+/* SS3.3 CMS tab styling 'improvements' undo's */
+.ui-tabs {
+  & .ui-tabs-nav {
+    padding-left: 6px;
+    margin-top: 16px;
+  }
+  & .cms-tabset-primary .ui-tabs-nav,
+  & .ui-tabs-nav.cms-tabset-nav-primary,
+  & .cms-content-header-tabs .ui-tabs-nav {
+    margin-top: 2px;
+  }
+  & .ui-tabs-nav .ui-state-default a {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  & .ui-tabs-nav {
+    float: none;
+  }
+  & .ui-tabs-nav li {
+    z-index: 1;
+    position: relative;
+  }
+  & .ui-tabs-nav .ui-state-default a {
+    padding: 4px 20px;
+    color: black;
+  }
+  & .ui-tabs-nav li.first a {
+    padding-left: 20px;
+  }
+  & .ui-tabs-nav li::after {
+    content: ''; /* To generate the box */
+    position: absolute;
+    top: -4px;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    z-index: -1;
+    background: #f0f2f4;
+    background: #d0d3d5;
+    background: #d4dbe1;
+    border-radius: 10px 10px 0 0;
+    border: 1px solid #d0d3d5;
+    margin-bottom: -2px;
+    border-bottom: none;
+    /*transform: perspective(4px) rotateX(1.5deg);*/
+    /* http://codepen.io/minipai/pen/Etnhv/ */
+    -webkit-transform: perspective(100px) rotateX(25deg);
+    -moz-transform: perspective(100px) rotateX(25deg);
+  }
+  & .ui-tabs-nav li.ui-state-active::after {
+    background: #f6f7f8;
+    border-bottom: 2px solid #f6f7f8;
+  }
+  .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary {
+    margin: 0;
+    padding: 0;
+    li::after {
+      display: none;
+    }
+  }
+  // unset for uitklapmenu
+  &#ActionMenus .ui-tabs-nav li::after {
+    display: none;
+  }
+  & .ui-tabs-nav li.ui-state-active {
+    z-index: 2;
+  }
+  & .ui-tabs-nav .ui-state-active a {
+    border-bottom: none;
+  }
+
+  &.cms-tabset-primary .ui-tabs-nav .ui-state-active a,
+  & .ui-tabs-nav.cms-tabset-nav-primary .ui-state-active a,
+  & .cms-content-header-tabs .ui-tabs-nav .ui-state-active a {
+    border-bottom: none;
+    margin: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+}
+
+/* some general overrides */
+label,
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button,
+.treedropdownfield-title,
+.chzn-single span,
+.ui-tabs .ui-tabs-nav .ui-state-default a, .ui-tabs .ui-tabs-nav .ui-state-default a:hover {
+  font-size: 13px;
+  color: black;
+}

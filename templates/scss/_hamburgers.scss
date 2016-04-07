@@ -1,0 +1,207 @@
+// -----------------------------------------------------------------------------
+//
+//  HAMBURGER ICONS COMPONENT (http://callmenick.com/post/animating-css-only-hamburger-menu-icons)
+//  
+// ----------------------------------------------------------------------------- 
+
+// vars
+
+$button-width: 96px !default;                    // The width of the button area
+$button-height: 96px !default;                   // The height of the button area
+$bar-thickness: 8px !default;                    // The thickness of the button bars
+$button-pad: 18px !default;                      // The left/right padding between button area and bars.
+$button-bar-space: 12px !default;                // The spacing between button bars
+$button-transistion-duration: 0.3s !default;     // The transition duration
+
+//
+// Toggle Switch Globals
+//
+// All switches should take on the class `c-hamburger` as well as their
+// variant that will give them unique properties. This class is an overview
+// class that acts as a reset for all versions of the icon.
+//
+
+@mixin hamburger() {
+	display: block;
+	position: relative;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	width: $button-width;
+	height: $button-height;
+	font-size: 0;
+	text-indent: -9999px;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	box-shadow: none;
+	border-radius: none;
+	border: none;
+	cursor: pointer;
+	transition: background $button-transistion-duration;
+	
+	&:focus {
+		outline: none;
+	}
+	span {
+		display: block;
+		position: absolute;
+		top: ($button-height / 2) - ($bar-thickness / 2);
+		left: $button-pad;
+		right: $button-pad;
+		height: $bar-thickness;
+		background: rgb(255,255,255);
+	}
+	span::before,
+	span::after {
+		position: absolute;
+		display: block;
+		left: 0;
+		width: 100%;
+		height: $bar-thickness;
+		background-color: #fff;
+		content: "";
+	}
+	span::before {
+		top: -$bar-thickness - $button-bar-space;
+	}
+	span::after {
+		bottom: -$bar-thickness - $button-bar-space;
+	}
+}
+
+// Rotating hamburger icon (rot), that simply rotates 90 degrees when activated
+// Nothing too fancy, simple transition
+
+@mixin hamburger-rotating {
+	@include hamburger();
+	
+	span {
+		transition: transform $button-transistion-duration;
+	}
+	// active state, i.e. menu open
+	.nav-open & {
+		background-color: darken(rgb(40,170,220), 20%);
+	}
+	.nav-open & span {
+		transform: rotate(90deg);
+	}
+}
+
+// Hamburger to "x" (htx). Takes on a hamburger shape, bars slide
+// down to center and transform into an "x".
+
+@mixin hamburger-to-cross() {
+	@include hamburger();
+	
+	span {
+		transition: background 0s $button-transistion-duration;
+	}
+	span::before,
+	span::after {
+		transition-duration: $button-transistion-duration, $button-transistion-duration;
+		transition-delay: $button-transistion-duration, 0s;
+	}
+	span::before {
+		transition-property: top, transform;
+	}
+	span::after {
+		transition-property: bottom, transform;
+	}
+	
+	// active state, i.e. menu open
+	.nav-open & span {
+		background: none;
+	}
+	.nav-open & span::before {
+		top: 0;
+		transform: rotate(45deg);
+	}
+	.nav-open & span::after {
+		bottom: 0;
+		transform: rotate(-45deg);
+	}
+	.nav-open & span::before,
+	.nav-open & span::after {
+		transition-delay: 0s, $button-transistion-duration;
+	}
+}
+
+// Hamburger to left-arrow (htla). Hamburger menu transforms to a left-pointing
+// arrow. Usually indicates an off canvas menu sliding in from left that
+// will be close on re-click of the icon.
+
+@mixin hamburger-to-leftarrow {
+	@include hamburger();
+
+	span {
+		transition: transform $button-transistion-duration;
+	}
+	span::before {
+		transform-origin: top right;
+		transition: transform $button-transistion-duration, width $button-transistion-duration, top $button-transistion-duration;
+	}
+	span::after {
+		transform-origin: bottom right;
+		transition: transform $button-transistion-duration, width $button-transistion-duration, bottom $button-transistion-duration;
+	}
+	// active state, i.e. menu open
+	.nav-open & {
+		background-color: darken(rgb(50,220,100), 20%);
+	}
+
+	.nav-open & span {
+		transform: rotate(180deg);
+	}
+	.nav-open & span::before,
+	.nav-open & span::after {
+		width: 50%;
+	}
+	.nav-open & span::before {
+		top: 0;
+		transform: translateX($button-width/2 - $button-pad + $bar-thickness) translateY($bar-thickness/2) rotate(45deg);
+	}
+	.nav-open & span::after {
+		bottom: 0;
+		transform: translateX($button-width/2 - $button-pad + $bar-thickness) translateY(-$bar-thickness/2) rotate(-45deg);
+	}
+}
+
+// Hamburger to right-arrow (htra). Hamburger menu transforms to a
+// right-pointing arrow. Usually indicates an off canvas menu sliding in from 
+// right that will be close on re-click of the icon.
+
+@mixin hamburger-to-rightarrow {
+	@include hamburger();
+
+	span {
+		transition: transform $button-transistion-duration;
+	}
+	span::before {
+		transform-origin: top left;
+		transition: transform $button-transistion-duration, width $button-transistion-duration, top $button-transistion-duration;
+	}
+	span::after {
+		transform-origin: bottom left;
+		transition: transform $button-transistion-duration, width $button-transistion-duration, bottom $button-transistion-duration;
+	}
+	// active state, i.e. menu open
+	.nav-open & {
+		background-color: darken(rgb(255,150,80), 20%);
+	}
+	.nav-open & span {
+		transform: rotate(180deg);
+	}
+	.nav-open & span::before,
+	.nav-open & span::after {
+		width: 50%;
+	}
+	.nav-open & span::before {
+		top: 0;
+		transform: translateX(-$bar-thickness) translateY($bar-thickness/2) rotate(-45deg);
+	}
+	.nav-open & span::after {
+		bottom: 0;
+		transform: translateX(-$bar-thickness) translateY(-$bar-thickness/2) rotate(45deg);
+	}
+}

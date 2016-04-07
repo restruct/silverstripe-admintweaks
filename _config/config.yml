@@ -1,0 +1,32 @@
+---
+name: cmstweaks
+---
+LeftAndMain:
+  extra_requirements_css:
+    - cmstweaks/css/cmstweaks.css
+  extra_requirements_javascript:
+#    - framework/thirdparty/jquery-ui/jquery-ui.min.js
+    - cmstweaks/js/cmstweaks.js
+
+File:
+#  apply_restrictions_to_admin: false
+# add these to assets/.htaccess as well
+  allowed_extensions: 
+    - svg
+    - xlsm
+  
+HtmlEditorField:
+  insert_width: 1000
+
+Page:
+  extensions:
+    - PageHelpersExtension
+
+---
+name: dyncasheext
+Only:
+  classexists: DynamicCache
+---
+DynamicCache:
+  extensions:
+    - BetterNavDynCacheExtension

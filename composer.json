@@ -1,0 +1,23 @@
+{
+    "name": "micschk/silverstripe-cmstweaks",
+    "description": "Various CMS tweaks & enhancements",
+    "type": "silverstripe-module",
+    "keywords": [
+        "silverstripe",
+        "blocks",
+        "widgets"
+    ],
+    "homepage": "http://github.com/micschk/silverstripe-cmstweaks",
+    "authors": [
+        {
+            "name": "Restruct web & apps",
+            "email": "dev@restruct.nl"
+        }
+    ],
+    "require": {
+        "silverstripe/cms": "~3.1",
+    },
+    "extra": {
+        "installer-name": "cmstweaks"
+    }
+}
