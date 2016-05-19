@@ -304,17 +304,19 @@ input.read-only-appearance[readonly] {
 }
 
 /* float page-tabs left instead of right */
-/*#Root.ui-tabs .ui-tabs-nav {
-	float: left;
-	padding-left: 22px;
+/* line 257, cmstweaks.scss */
+.cms_v3-1 #Root.ui-tabs .ui-tabs-nav, .cms_v3-2 #Root.ui-tabs .ui-tabs-nav {
+  float: left;
+  padding-left: 22px;
 }
-#Root.ui-tabs .ui-tabs-panel .ui-tabs {  // tabs inside tabs   or instead of root: .cms-content-fields 
-	clear: both;
-	padding-top: 0;
-	border-top: 1px solid #c0c0c2;
-	border-radius: 0;
+/* line 261, cmstweaks.scss */
+.cms_v3-1 #Root.ui-tabs .ui-tabs-panel .ui-tabs, .cms_v3-2 #Root.ui-tabs .ui-tabs-panel .ui-tabs {
+  clear: both;
+  padding-top: 0;
+  border-top: 1px solid #c0c0c2;
+  border-radius: 0;
 }
-*/
+
 /* progressbar for .loading-feedback buttons */
 /* line 270, cmstweaks.scss */
 #loading_feedback_progressbar {
@@ -670,40 +672,40 @@ div.displaylogicwrapper:last-child > .field {
 #Form_EditForm_FeatRightTitle
 { height: 50px; }*/
 /* SS3.3 CMS tab styling 'improvements' undo's */
-/* line 578, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav {
+/* line 579, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav {
   padding-left: 6px;
   margin-top: 16px;
 }
-/* line 582, cmstweaks.scss */
-.ui-tabs .cms-tabset-primary .ui-tabs-nav, .ui-tabs .ui-tabs-nav.cms-tabset-nav-primary, .ui-tabs .cms-content-header-tabs .ui-tabs-nav {
+/* line 583, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .cms-tabset-primary .ui-tabs-nav, .cms_v3-3 .ui-tabs .ui-tabs-nav.cms-tabset-nav-primary, .cms_v3-3 .ui-tabs .cms-content-header-tabs .ui-tabs-nav {
   margin-top: 2px;
 }
-/* line 587, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav .ui-state-default a {
+/* line 588, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav .ui-state-default a {
   margin-left: 0px;
   margin-right: 0px;
 }
-/* line 591, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav {
+/* line 592, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav {
   float: none;
 }
-/* line 594, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav li {
+/* line 595, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav li {
   z-index: 1;
   position: relative;
 }
-/* line 598, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav .ui-state-default a {
+/* line 599, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav .ui-state-default a {
   padding: 4px 20px;
   color: black;
 }
-/* line 602, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav li.first a {
+/* line 603, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav li.first a {
   padding-left: 20px;
 }
-/* line 605, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav li::after {
+/* line 606, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav li::after {
   content: '';
   /* To generate the box */
   position: absolute;
@@ -724,34 +726,34 @@ div.displaylogicwrapper:last-child > .field {
   -webkit-transform: perspective(100px) rotateX(25deg);
   -moz-transform: perspective(100px) rotateX(25deg);
 }
-/* line 625, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav li.ui-state-active::after {
+/* line 626, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav li.ui-state-active::after {
   background: #f6f7f8;
   border-bottom: 2px solid #f6f7f8;
 }
-/* line 629, cmstweaks.scss */
-.ui-tabs .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary {
+/* line 630, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary {
   margin: 0;
   padding: 0;
 }
-/* line 632, cmstweaks.scss */
-.ui-tabs .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary li::after {
+/* line 633, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary li::after {
   display: none;
 }
-/* line 637, cmstweaks.scss */
-.ui-tabs#ActionMenus .ui-tabs-nav li::after {
+/* line 638, cmstweaks.scss */
+.cms_v3-3 .ui-tabs#ActionMenus .ui-tabs-nav li::after {
   display: none;
 }
-/* line 640, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav li.ui-state-active {
+/* line 641, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav li.ui-state-active {
   z-index: 2;
 }
-/* line 643, cmstweaks.scss */
-.ui-tabs .ui-tabs-nav .ui-state-active a {
+/* line 644, cmstweaks.scss */
+.cms_v3-3 .ui-tabs .ui-tabs-nav .ui-state-active a {
   border-bottom: none;
 }
-/* line 647, cmstweaks.scss */
-.ui-tabs.cms-tabset-primary .ui-tabs-nav .ui-state-active a, .ui-tabs .ui-tabs-nav.cms-tabset-nav-primary .ui-state-active a, .ui-tabs .cms-content-header-tabs .ui-tabs-nav .ui-state-active a {
+/* line 648, cmstweaks.scss */
+.cms_v3-3 .ui-tabs.cms-tabset-primary .ui-tabs-nav .ui-state-active a, .cms_v3-3 .ui-tabs .ui-tabs-nav.cms-tabset-nav-primary .ui-state-active a, .cms_v3-3 .ui-tabs .cms-content-header-tabs .ui-tabs-nav .ui-state-active a {
   border-bottom: none;
   margin: 0;
   padding-left: 20px;
@@ -759,7 +761,7 @@ div.displaylogicwrapper:last-child > .field {
 }
 
 /* some general overrides */
-/* line 659, cmstweaks.scss */
+/* line 660, cmstweaks.scss */
 label,
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button,
 .treedropdownfield-title,

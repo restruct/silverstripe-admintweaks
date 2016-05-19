@@ -116,8 +116,10 @@ class PageHelpersExtension extends SiteTreeExtension {
 	///// SORTABLE LISTS:
 	
 	// http://docs.silverstripe.org/en/4.0/developer_guides/model/how_tos/grouping_dataobject_sets/
-	public function getTitleFirstLetter() {
-        return strtolower( $this->owner->Title[0] );
+	public function getTitleFirstChar() {
+        // consider only alphanumeric (not '()' etc)
+        $title = preg_replace('/\W|_/iu', '', $this->owner->Title);
+        return strtolower( $title[0] );
     }
 	
 	public function AlphabetChars(){

@@ -253,18 +253,18 @@ input.read-only-appearance[readonly] {
 }
 
 /* float page-tabs left instead of right */
-
-/*#Root.ui-tabs .ui-tabs-nav {
-	float: left;
-	padding-left: 22px;
+.cms_v3-1, .cms_v3-2 {
+  #Root.ui-tabs .ui-tabs-nav {
+    float: left;
+    padding-left: 22px;
+  }
+  #Root.ui-tabs .ui-tabs-panel .ui-tabs { // tabs inside tabs   or instead of root: .cms-content-fields
+    clear: both;
+    padding-top: 0;
+    border-top: 1px solid #c0c0c2;
+    border-radius: 0;
+  }
 }
-#Root.ui-tabs .ui-tabs-panel .ui-tabs {  // tabs inside tabs   or instead of root: .cms-content-fields 
-	clear: both;
-	padding-top: 0;
-	border-top: 1px solid #c0c0c2;
-	border-radius: 0;
-}
-*/
 
 /* progressbar for .loading-feedback buttons */
 #loading_feedback_progressbar {
@@ -574,85 +574,86 @@ div.displaylogicwrapper:last-child > .field {
 { height: 50px; }*/
 
 /* SS3.3 CMS tab styling 'improvements' undo's */
-.ui-tabs {
-  & .ui-tabs-nav {
-    padding-left: 6px;
-    margin-top: 16px;
-  }
-  & .cms-tabset-primary .ui-tabs-nav,
-  & .ui-tabs-nav.cms-tabset-nav-primary,
-  & .cms-content-header-tabs .ui-tabs-nav {
-    margin-top: 2px;
-  }
-  & .ui-tabs-nav .ui-state-default a {
-    margin-left: 0px;
-    margin-right: 0px;
-  }
-  & .ui-tabs-nav {
-    float: none;
-  }
-  & .ui-tabs-nav li {
-    z-index: 1;
-    position: relative;
-  }
-  & .ui-tabs-nav .ui-state-default a {
-    padding: 4px 20px;
-    color: black;
-  }
-  & .ui-tabs-nav li.first a {
-    padding-left: 20px;
-  }
-  & .ui-tabs-nav li::after {
-    content: ''; /* To generate the box */
-    position: absolute;
-    top: -4px;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    z-index: -1;
-    background: #f0f2f4;
-    background: #d0d3d5;
-    background: #d4dbe1;
-    border-radius: 10px 10px 0 0;
-    border: 1px solid #d0d3d5;
-    margin-bottom: -2px;
-    border-bottom: none;
-    /*transform: perspective(4px) rotateX(1.5deg);*/
-    /* http://codepen.io/minipai/pen/Etnhv/ */
-    -webkit-transform: perspective(100px) rotateX(25deg);
-    -moz-transform: perspective(100px) rotateX(25deg);
-  }
-  & .ui-tabs-nav li.ui-state-active::after {
-    background: #f6f7f8;
-    border-bottom: 2px solid #f6f7f8;
-  }
-  .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary {
-    margin: 0;
-    padding: 0;
-    li::after {
+.cms_v3-3 {
+  .ui-tabs {
+    & .ui-tabs-nav {
+      padding-left: 6px;
+      margin-top: 16px;
+    }
+    & .cms-tabset-primary .ui-tabs-nav,
+    & .ui-tabs-nav.cms-tabset-nav-primary,
+    & .cms-content-header-tabs .ui-tabs-nav {
+      margin-top: 2px;
+    }
+    & .ui-tabs-nav .ui-state-default a {
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+    & .ui-tabs-nav {
+      float: none;
+    }
+    & .ui-tabs-nav li {
+      z-index: 1;
+      position: relative;
+    }
+    & .ui-tabs-nav .ui-state-default a {
+      padding: 4px 20px;
+      color: black;
+    }
+    & .ui-tabs-nav li.first a {
+      padding-left: 20px;
+    }
+    & .ui-tabs-nav li::after {
+      content: ''; /* To generate the box */
+      position: absolute;
+      top: -4px;
+      right: 0;
+      left: 0;
+      bottom: 0;
+      z-index: -1;
+      background: #f0f2f4;
+      background: #d0d3d5;
+      background: #d4dbe1;
+      border-radius: 10px 10px 0 0;
+      border: 1px solid #d0d3d5;
+      margin-bottom: -2px;
+      border-bottom: none;
+      /*transform: perspective(4px) rotateX(1.5deg);*/
+      /* http://codepen.io/minipai/pen/Etnhv/ */
+      -webkit-transform: perspective(100px) rotateX(25deg);
+      -moz-transform: perspective(100px) rotateX(25deg);
+    }
+    & .ui-tabs-nav li.ui-state-active::after {
+      background: #f6f7f8;
+      border-bottom: 2px solid #f6f7f8;
+    }
+    .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary {
+      margin: 0;
+      padding: 0;
+      li::after {
+        display: none;
+      }
+    }
+    // unset for uitklapmenu
+    &#ActionMenus .ui-tabs-nav li::after {
       display: none;
     }
-  }
-  // unset for uitklapmenu
-  &#ActionMenus .ui-tabs-nav li::after {
-    display: none;
-  }
-  & .ui-tabs-nav li.ui-state-active {
-    z-index: 2;
-  }
-  & .ui-tabs-nav .ui-state-active a {
-    border-bottom: none;
-  }
+    & .ui-tabs-nav li.ui-state-active {
+      z-index: 2;
+    }
+    & .ui-tabs-nav .ui-state-active a {
+      border-bottom: none;
+    }
 
-  &.cms-tabset-primary .ui-tabs-nav .ui-state-active a,
-  & .ui-tabs-nav.cms-tabset-nav-primary .ui-state-active a,
-  & .cms-content-header-tabs .ui-tabs-nav .ui-state-active a {
-    border-bottom: none;
-    margin: 0;
-    padding-left: 20px;
-    padding-right: 20px;
+    &.cms-tabset-primary .ui-tabs-nav .ui-state-active a,
+    & .ui-tabs-nav.cms-tabset-nav-primary .ui-state-active a,
+    & .cms-content-header-tabs .ui-tabs-nav .ui-state-active a {
+      border-bottom: none;
+      margin: 0;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
   }
-
 }
 
 /* some general overrides */

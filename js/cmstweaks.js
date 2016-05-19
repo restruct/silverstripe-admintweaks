@@ -2,6 +2,16 @@
 
 	$.entwine('ss', function($) {
 
+		$('[title^="SilverStripe (Version"]').entwine({
+			onadd: function(e){
+				// SilverStripe (Version - Framework: 3.2.4, CMS: 3.2.4)
+				if(this.attr('title').indexOf('CMS: 3.1.') !== -1) $('body').addClass('cms_v3 cms_v3-1');
+				if(this.attr('title').indexOf('CMS: 3.2.') !== -1) $('body').addClass('cms_v3 cms_v3-2');
+				if(this.attr('title').indexOf('CMS: 3.3.') !== -1) $('body').addClass('cms_v3 cms_v3-3');
+				if(this.attr('title').indexOf('CMS: 4.') !== -1) $('body').addClass('cms_v4');
+			}
+		});
+
 		// adding flags to nested/complex fields if fluent is translating 'em
 		$('.field.fieldgroup:not(.LocalisedField) input.LocalisedField').entwine({
 			onadd: function(e){
@@ -9,7 +19,7 @@
 				this.prev('label').addClass('LocalisedField');
 				//this.append('<span class="ui-button-icon-primary ui-icon btn-icon-cross-circle"></span>');
 			}
-		})
+		});
 
 		// missing button icons in gridfield... workaround
 	//	$('button.gridfield-button-delete').entwine({
