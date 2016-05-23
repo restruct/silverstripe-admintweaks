@@ -611,13 +611,13 @@ div.displaylogicwrapper:last-child > .field {
       left: 0;
       bottom: 0;
       z-index: -1;
-      background: #f0f2f4;
-      background: #d0d3d5;
+      //background: #f0f2f4;
+      //background: #d0d3d5;
       background: #d4dbe1;
       border-radius: 10px 10px 0 0;
       border: 1px solid #d0d3d5;
-      margin-bottom: -2px;
-      border-bottom: none;
+      //margin-bottom: -2px;
+      border-bottom-width: 0;
       /*transform: perspective(4px) rotateX(1.5deg);*/
       /* http://codepen.io/minipai/pen/Etnhv/ */
       -webkit-transform: perspective(100px) rotateX(25deg);
@@ -625,7 +625,9 @@ div.displaylogicwrapper:last-child > .field {
     }
     & .ui-tabs-nav li.ui-state-active::after {
       background: #f6f7f8;
+      border: 1px solid #b0bec7;
       border-bottom: 2px solid #f6f7f8;
+      bottom: -3px;
     }
     .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary {
       margin: 0;

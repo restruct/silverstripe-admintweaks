@@ -714,13 +714,10 @@ div.displaylogicwrapper:last-child > .field {
   left: 0;
   bottom: 0;
   z-index: -1;
-  background: #f0f2f4;
-  background: #d0d3d5;
   background: #d4dbe1;
   border-radius: 10px 10px 0 0;
   border: 1px solid #d0d3d5;
-  margin-bottom: -2px;
-  border-bottom: none;
+  border-bottom-width: 0;
   /*transform: perspective(4px) rotateX(1.5deg);*/
   /* http://codepen.io/minipai/pen/Etnhv/ */
   -webkit-transform: perspective(100px) rotateX(25deg);
@@ -729,30 +726,32 @@ div.displaylogicwrapper:last-child > .field {
 /* line 626, cmstweaks.scss */
 .cms_v3-3 .ui-tabs .ui-tabs-nav li.ui-state-active::after {
   background: #f6f7f8;
+  border: 1px solid #b0bec7;
   border-bottom: 2px solid #f6f7f8;
+  bottom: -3px;
 }
-/* line 630, cmstweaks.scss */
+/* line 632, cmstweaks.scss */
 .cms_v3-3 .ui-tabs .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary {
   margin: 0;
   padding: 0;
 }
-/* line 633, cmstweaks.scss */
+/* line 635, cmstweaks.scss */
 .cms_v3-3 .ui-tabs .icon-button-group .ui-tabs-nav.cms-tabset-nav-primary li::after {
   display: none;
 }
-/* line 638, cmstweaks.scss */
+/* line 640, cmstweaks.scss */
 .cms_v3-3 .ui-tabs#ActionMenus .ui-tabs-nav li::after {
   display: none;
 }
-/* line 641, cmstweaks.scss */
+/* line 643, cmstweaks.scss */
 .cms_v3-3 .ui-tabs .ui-tabs-nav li.ui-state-active {
   z-index: 2;
 }
-/* line 644, cmstweaks.scss */
+/* line 646, cmstweaks.scss */
 .cms_v3-3 .ui-tabs .ui-tabs-nav .ui-state-active a {
   border-bottom: none;
 }
-/* line 648, cmstweaks.scss */
+/* line 650, cmstweaks.scss */
 .cms_v3-3 .ui-tabs.cms-tabset-primary .ui-tabs-nav .ui-state-active a, .cms_v3-3 .ui-tabs .ui-tabs-nav.cms-tabset-nav-primary .ui-state-active a, .cms_v3-3 .ui-tabs .cms-content-header-tabs .ui-tabs-nav .ui-state-active a {
   border-bottom: none;
   margin: 0;
@@ -761,7 +760,7 @@ div.displaylogicwrapper:last-child > .field {
 }
 
 /* some general overrides */
-/* line 660, cmstweaks.scss */
+/* line 662, cmstweaks.scss */
 label,
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button,
 .treedropdownfield-title,
