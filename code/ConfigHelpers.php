@@ -9,7 +9,7 @@ class GeneralHelpers {
 		// get property to test for
 		$prop = array_shift($prop_arr);
 		// return null if not property exists
-		if(!property_exists($object, $prop)) { return null; }
+		if(!is_object($object) || !property_exists($object, $prop)) { return null; }
 		// else, if final property, return value
 		else if (count($prop_arr)==0){ return $object->{$prop}; }
 		// else, call self recursively on existing property
