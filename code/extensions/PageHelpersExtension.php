@@ -46,13 +46,15 @@ class PageHelpersExtension extends SiteTreeExtension {
 	 * @return ArrayData Mapped list of locale properties
 	 */
 	public function CurrentLocaleInformation() {
-		$locale = Fluent::current_locale();
+		$locale = i18n::get_locale();
+		if(ClassInfo::exists('Fluent') && Fluent::current_locale()) $locale = Fluent::current_locale();
 		// Store basic locale information
 		$data = array(
 			'Locale' => $locale,
 			'LocaleRFC1766' => i18n::convert_rfc1766($locale),
-			'Alias' => Fluent::alias($locale),
+			'Alias' => (ClassInfo::exists('Fluent') ? Fluent::alias($locale) : ''),
 			'Title' => i18n::get_locale_name($locale),
+			'LanguageISO' => i18n::get_lang_from_locale($locale),
 			'LanguageNative' => i18n::get_language_name(i18n::get_lang_from_locale($locale), true)
 		);
 		return new ArrayData($data);
