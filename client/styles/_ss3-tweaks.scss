@@ -1,3 +1,44 @@
+@charset "UTF-8";
+
+// Checkboxes
+input.checkbox.styled-checkbox {
+  &.styled-checkbox-hide {
+    display: none;
+  }
+  + label:before {
+    content: '';
+    box-sizing: border-box;
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    outline: 1px solid rgb(210, 213, 216);
+    text-align: center;
+  }
+  &:checked +label:before {
+    //content: '🔗\uFE0E'; // 𐄂
+    color: white;
+    //font-size: 24px;
+    line-height: 10px;
+    background-color: rgb(51, 141, 193);
+    //border-color: rgb(51, 141, 193);
+    border: 2px solid white;
+    //outline: 1px solid ;
+  }
+}
+
+
+.optionset {
+  ul {
+    column-count: 4;
+  }
+  li {
+    float: none;
+    width: auto;
+  }
+}
+
+
 /** -------------------------------------------- Page icons -------------------------------------------- */
 .page-icon, a .jstree-pageicon {
   background-image: url(../icons/page-icons.png);
@@ -402,7 +443,7 @@ div.displaylogicwrapper:last-child > .field {
   background: #eee;
   border-top: 1px solid #D2D5D8;
   border-bottom: 1px solid #D2D5D8;
-  background-image: transparent;
+  background-image: none;
   //border-radius: 0;
   //td, th, th:first-child, th:last-child { border-radius: 0; }
 }
@@ -482,12 +523,14 @@ div.displaylogicwrapper:last-child > .field {
   text-shadow: none;
 
   * {
-    color: black !important;
+    //color: black !important;
+    color: #4f5861 !important;
   }
 }
 
 .cms table.ss-gridfield-table tr td {
-  color: black;
+  //color: black;
+  color: #4f5861;
 }
 
 .cms table.ss-gridfield-table tr th button.ss-ui-button.ss-gridfield-button-filter.trigger {
@@ -574,7 +617,9 @@ div.displaylogicwrapper:last-child > .field {
 { height: 50px; }*/
 
 /* SS3.3 CMS tab styling 'improvements' undo's */
-.cms_v3-3 {
+.cms_v3-3,
+.cms_v3-4,
+.cms_v3-5 {
   .ui-tabs {
     & .ui-tabs-nav {
       padding-left: 6px;
@@ -598,13 +643,14 @@ div.displaylogicwrapper:last-child > .field {
     }
     & .ui-tabs-nav .ui-state-default a {
       padding: 4px 20px;
-      color: black;
+      //color: black;
     }
     & .ui-tabs-nav li.first a {
       padding-left: 20px;
     }
-    & .ui-tabs-nav li::after {
-      content: ''; /* To generate the box */
+
+    & .ui-tabs-nav li a::after { // moving to the <a> because li can have .field and then interferes with frameworks clearfix
+      content: '' !important; /* To generate the box */
       position: absolute;
       top: -4px;
       right: 0;
@@ -623,7 +669,7 @@ div.displaylogicwrapper:last-child > .field {
       -webkit-transform: perspective(100px) rotateX(25deg);
       -moz-transform: perspective(100px) rotateX(25deg);
     }
-    & .ui-tabs-nav li.ui-state-active::after {
+    & .ui-tabs-nav li.ui-state-active a::after {
       background: #f6f7f8;
       border: 1px solid #b0bec7;
       border-bottom: 2px solid #f6f7f8;
@@ -658,12 +704,38 @@ div.displaylogicwrapper:last-child > .field {
   }
 }
 
-/* some general overrides */
-label,
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button,
-.treedropdownfield-title,
-.chzn-single span,
-.ui-tabs .ui-tabs-nav .ui-state-default a, .ui-tabs .ui-tabs-nav .ui-state-default a:hover {
-  font-size: 13px;
-  color: black;
+
+// ModelAdmin advanced_search tweaks
+.ModelAdmin {
+  //&.DocSys_DocAdmin, &.DocSys_DocCollAdmin, &.Notes_Admin, &.CourseAdmin {
+  &.HasAdvancedSearch {
+    #filters-button { display: none; }
+    .cms-content-filters {
+      display: block !important;
+      .field { margin: 0; }
+      h3 { display: none; }
+      #Form_SearchForm_q_Advanced_Holder {
+        margin-top: 16px;
+        margin-bottom: 8px;
+
+        .filtertitle {
+          font-size: 16px;
+          font-weight: bold;
+          float: left;
+          margin-right: 20px;
+        }
+        .switchery {
+          margin-top: -4px;
+        }
+      }
+    }
+    .advanced_search { display: none; }
+    .show_advanced_searchfields .advanced_search { display: inline-block; }
+  }
+
+  //#Form_SearchForm_Advanced{
+  //  width: 100%;
+  //  max-width: none;
+  //}
+
 }

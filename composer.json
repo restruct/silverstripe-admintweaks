@@ -1,13 +1,11 @@
 {
-    "name": "micschk/silverstripe-cmstweaks",
-    "description": "Various CMS tweaks & enhancements",
-    "type": "silverstripe-module",
+    "name": "restruct/silverstripe-admintweaks",
+    "description": "Various admin tweaks & enhancements",
+    "type": "silverstripe-vendormodule",
     "keywords": [
-        "silverstripe",
-        "blocks",
-        "widgets"
+        "silverstripe"
     ],
-    "homepage": "http://github.com/micschk/silverstripe-cmstweaks",
+    "license": "MIT",
     "authors": [
         {
             "name": "Restruct web & apps",
@@ -15,9 +13,20 @@
         }
     ],
     "require": {
-        "silverstripe/cms": "~3.1"
+        "silverstripe/framework": "^4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Restruct\\Silverstripe\\AdminTweaks": "src/"
+        }
+    },
+    "replace": {
+        "micschk/silverstripe-cmstweaks": "self.version",
+        "restruct/silverstripe-cmstweaks": "self.version"
     },
     "extra": {
-        "installer-name": "cmstweaks"
+        "expose": [
+            "client"
+        ]
     }
 }

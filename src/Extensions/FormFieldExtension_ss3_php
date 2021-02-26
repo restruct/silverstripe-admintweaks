@@ -1,0 +1,43 @@
+<?php
+
+class FormFieldExtension
+    extends Extension
+{
+
+    /**
+     * Allows adding custom classes to the field itself (as opposed to the field + holder)
+     */
+    protected $holderClasses = [ 'field' ];
+
+    public function addHolderClass($class)
+    {
+        $this->holderClasses[] = $class;
+        $this->SetClassedHolderTemplate();
+        return $this->owner;
+    }
+
+    public function HolderClasses()
+    {
+        return implode(" ", $this->holderClasses);
+    }
+
+    public function setClassedHolderTemplate()
+    {
+        $this->owner->setFieldHolderTemplate('FrontendFormField_holder');
+        return $this->owner;
+    }
+
+    public function updateExtraClass($classes)
+    {
+//        if(in_array('holder-bad', $classes)) array_push($classes, 'is-invalid');
+    }
+
+//    public function onBeforeRender()
+//    {
+//        // add Bootstrap validation classes
+//        if($this->owner->Message()) {
+//            $this->owner->addExtraClass($this->owner->MessageType()=='bad' ? 'is-invalid' : 'is-valid');
+//        }
+//    }
+
+}

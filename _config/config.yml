@@ -1,32 +1,63 @@
 ---
-name: cmstweaks
+name: admintweaks
 ---
-LeftAndMain:
+SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
-    - cmstweaks/css/cmstweaks.css
+    - 'restruct/silverstripe-admintweaks:client/styles/admintweaks.css'
   extra_requirements_javascript:
 #    - framework/thirdparty/jquery-ui/jquery-ui.min.js
-    - cmstweaks/js/cmstweaks.js
+    - 'restruct/silverstripe-admintweaks:client/js/cmstweaks.js'
 
-File:
+SilverStripe\Assets\File:
 #  apply_restrictions_to_admin: false
-# add these to assets/.htaccess as well
+# NOTE: need to add these extensions to assets/.htaccess as well, else they can be uploaded but not downloaded
   allowed_extensions: 
     - svg
     - xlsm
+
+SilverStripe\CMS\Model\SiteTree:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\PageHelpersExtension
   
-HtmlEditorField:
-  insert_width: 1000
+#SilverStripe\Forms\HTMLEditor\HTMLEditorField:
+#  insert_width: 1000
+#
+#SilverStripe\Forms\FormField:
+#  extensions:
+#    - FormFieldExtension
+#
+#Text:
+#  extensions:
+#    - DBStringExtension
 
-SiteTree:
-  extensions:
-    - PageHelpersExtension
+SilverStripe\View\Parsers\URLSegmentFilter:
+  default_replacements:
+    '/&amp;/u': '-en-'
+    '/&/u': '-en-'
+
+# Fix long strings in e-mails being split over multiple lines with default encoding 'quoted-printable'
+# (alternative 'base64' works OK as well, 'plain' equals no special encoding/quoting, eg plaintext which seems to work just fine)
+# NOTE: 'plain' is not valid, the only valid type are: Content-Transfer-Encoding := "BASE64" / "QUOTED-PRINTABLE" / "8BIT"   / "7BIT" / "BINARY"
+SilverStripe\Control\Email\Mailer:
+  default_message_encoding: 'base64'
+
+
+#---
+#name: dyncasheext
+#Only:
+#  classexists: DynamicCache
+#---
+#DynamicCache:
+#  extensions:
+#    - BetterNavDynCacheExtension
+
 
 ---
-name: dyncasheext
+name: shortcodable_ext
 Only:
-  classexists: DynamicCache
+  classexists: Shortcodable
 ---
-DynamicCache:
-  extensions:
-    - BetterNavDynCacheExtension
+Shortcodable:
+  shortcodable_classes:
+    - currentyear
+    - featuredimage
