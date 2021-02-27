@@ -21,8 +21,8 @@
         }
     },
     "replace": {
-        "micschk/silverstripe-cmstweaks": "self.version",
-        "restruct/silverstripe-cmstweaks": "self.version"
+        "micschk/silverstripe-cmstweaks": "1.*",
+        "restruct/silverstripe-cmstweaks": "*"
     },
     "extra": {
         "installer-name": "admintweaks",
