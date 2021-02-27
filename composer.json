@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Restruct\\Silverstripe\\AdminTweaks": "src/"
+            "Restruct\\Silverstripe\\AdminTweaks\\": "src/"
         }
     },
     "replace": {
