@@ -13,16 +13,21 @@
         }
     ],
     "require": {
+        "silverstripe/vendor-plugin": "^1.0",
         "silverstripe/framework": "^4"
+    },
+    "replace": {
+        "micschk/silverstripe-cmstweaks": "1.*",
+        "restruct/silverstripe-cmstweaks": "*"
+    },
+    "suggest": {
+        "axllent/silverstripe-cms-tweaks": "Some complemental tweaks by Axllent",
+        "guzzlehttp/guzzle": "Include for titles & thumbnail images with Axllent VideoLink fields"
     },
     "autoload": {
         "psr-4": {
             "Restruct\\Silverstripe\\AdminTweaks\\": "src/"
         }
-    },
-    "replace": {
-        "micschk/silverstripe-cmstweaks": "1.*",
-        "restruct/silverstripe-cmstweaks": "*"
     },
     "extra": {
         "installer-name": "admintweaks",

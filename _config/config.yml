@@ -6,7 +6,7 @@ SilverStripe\Admin\LeftAndMain:
     - 'restruct/silverstripe-admintweaks:client/styles/admintweaks.css'
   extra_requirements_javascript:
 #    - framework/thirdparty/jquery-ui/jquery-ui.min.js
-    - 'restruct/silverstripe-admintweaks:client/js/cmstweaks.js'
+    - 'restruct/silverstripe-admintweaks:client/js/admintweaks.js'
 
 SilverStripe\Assets\File:
 #  apply_restrictions_to_admin: false
