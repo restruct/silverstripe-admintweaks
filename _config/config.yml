@@ -30,6 +30,12 @@ SilverStripe\CMS\Model\SiteTree:
 #  extensions:
 #    - DBStringExtension
 
+# OPTION: Alias/workaround some legacy/temporary missing Image Manipulations
+#SilverStripe\Assets\Image:
+#  extensions:
+#    - Restruct\Silverstripe\AdminTweaks\Extensions\Image\LegacyManipulationsExtension
+#    - Restruct\Silverstripe\AdminTweaks\Extensions\Image\CropFocusManipulationsExtension
+
 SilverStripe\View\Parsers\URLSegmentFilter:
   default_replacements:
     '/&amp;/u': '-en-'

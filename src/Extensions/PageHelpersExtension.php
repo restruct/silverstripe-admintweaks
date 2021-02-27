@@ -3,40 +3,21 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions {
 
-    use SilverStripe\Assets\File;
     use SilverStripe\CMS\Controllers\RootURLController;
     use SilverStripe\CMS\Model\SiteTree;
+    use SilverStripe\CMS\Model\SiteTreeExtension;
     use SilverStripe\Control\Controller;
     use SilverStripe\Control\Director;
-    use SilverStripe\Control\Email\Mailer;
-    use SilverStripe\Core\Extension;
-    use SilverStripe\Forms\FieldList;
-    use SilverStripe\Forms\FormField;
-    use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
     use SilverStripe\ORM\ArrayList;
     use SilverStripe\ORM\DataObject;
     use SilverStripe\Versioned\Versioned;
     use SilverStripe\View\ArrayData;
-    use SilverStripe\View\Parsers\URLSegmentFilter;
     use SilverStripe\View\Requirements;
     use SilverStripe\View\SSViewer;
+    use SilverStripe\View\ThemeResourceLoader;
 
-    class PageHelpersExtension extends Extension
+    class PageHelpersExtension extends SiteTreeExtension
     {
-//        public function tmp(){
-//            Mailer::class;
-//        }
-
-//        public function updateCMSFields(FieldList $fields)
-//        {
-//            parent::updateCMSFields($fields);
-//
-//            // Make more sense of the base fields
-//            //        $fields->insertBefore('Title', $fields->dataFieldByName('MenuTitle'));
-//            //        $fields->insertBefore('Title', $fields->dataFieldByName('URLSegment'));
-//            //        $fields->dataFieldByName('Title')->setTitle('Title');
-//
-//        }
 
         public function BreadCrumbPath($append = null)
         {
@@ -133,6 +114,8 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
 
 //        public function RequireThemeRelativeJS($pathrelativetotheme)
 //        {
+//            $themes = SSViewer::get_themes();
+////            Debug::show($themes);
 //            $themedir = SSViewer::current_theme();
 //            Requirements::javascript("themes/$themedir/$pathrelativetotheme");
 //        }
@@ -155,33 +138,43 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
 
         ///// COMBINED REQUIREMENTS (callable from templates)
 
-//        public static function CombineThemeRelativeFile($combine_name, $pathrelativetotheme, $makeFirstItem = false)
-//        {
-//            $themedir = SSViewer::current_theme();
-//            $file = "themes/$themedir/$pathrelativetotheme";
-//            $to_combine = array($file);
-//            $combine_name = "$themedir-$combine_name";
-//            $previously_included = Requirements::get_combine_files();
-//            // append to existing array, if any
-//            if (array_key_exists($combine_name, $previously_included)) {
-//                if ($makeFirstItem) {
-//                    $to_combine = array_merge($to_combine, $previously_included[$combine_name]);
-//                } else {
-//                    $to_combine = array_merge($previously_included[$combine_name], $to_combine);
-//                }
-//            }
-//            Requirements::combine_files($combine_name, $to_combine);
-//        }
-//
-//        public function RequireCombinedThemeRelativeCSS($pathrelativetotheme, $makeFirstItem = false)
-//        {
-//            self::CombineThemeRelativeFile('styles.css', $pathrelativetotheme, $makeFirstItem);
-//        }
-//
-//        public function RequireCombinedThemeRelativeJS($pathrelativetotheme, $makeFirstItem = false)
-//        {
-//            self::CombineThemeRelativeFile('scripts.js', $pathrelativetotheme, $makeFirstItem);
-//        }
+        public static function CombineThemeRelativeFile($combine_name, $pathrelativetotheme, $makeFirstItem = false)
+        {
+            $loader = ThemeResourceLoader::inst();
+            $themes = SSViewer::get_themes();
+            //Debug::show($themes);
+            //$themedir = SSViewer::current_theme();
+            $themedir = 'themes';// SSViewer::current_theme();
+            $file = "themes/$themedir/$pathrelativetotheme";
+
+            //$to_combine = [ $file ];
+            $to_combine = [
+                $loader->findThemedResource($pathrelativetotheme, $themes),
+            ];
+
+
+            $combine_name = "$themedir-$combine_name";
+            $previously_included = Requirements::get_combine_files();
+            // append to existing array, if any
+            if ( array_key_exists($combine_name, $previously_included) ) {
+                if ( $makeFirstItem ) {
+                    $to_combine = array_merge($to_combine, $previously_included[ $combine_name ]);
+                } else {
+                    $to_combine = array_merge($previously_included[ $combine_name ], $to_combine);
+                }
+            }
+            Requirements::combine_files($combine_name, $to_combine);
+        }
+
+        public function RequireCombinedThemeRelativeCSS($pathrelativetotheme, $makeFirstItem = false)
+        {
+            self::CombineThemeRelativeFile('styles.css', $pathrelativetotheme, $makeFirstItem);
+        }
+
+        public function RequireCombinedThemeRelativeJS($pathrelativetotheme, $makeFirstItem = false)
+        {
+            self::CombineThemeRelativeFile('scripts.js', $pathrelativetotheme, $makeFirstItem);
+        }
 
         ///// SORTABLE LISTS:
 
@@ -190,21 +183,25 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
         {
             // consider only alphanumeric (not '()' etc)
             $title = preg_replace('/\W|_/iu', '', $this->owner->Title);
-            return strtolower($title[0]);
+
+            return strtolower($title[ 0 ]);
         }
 
         public function AlphabetChars()
         {
             $chars = ArrayList::create();
-            foreach (range('a', 'z') as $char) {
-                $chars->push(ArrayData::create(array('Char' => $char)));
+            foreach ( range('a', 'z') as $char ) {
+                $chars->push(ArrayData::create([ 'Char' => $char ]));
             }
+
             return $chars;
+
 //            $chars = new ArrayList();
 //            //array_combine(range('A','Z'),range('A','Z'))
-//            foreach (range('a', 'z') as $char) {
-//                $chars->add(array('Char' => $char));
+//            foreach ( range('a', 'z') as $char ) {
+//                $chars->add([ 'Char' => $char ]);
 //            }
+//
 //            return $chars;
         }
 
@@ -213,12 +210,11 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
         // for listing all children including unpublished
         public function allStageDescendants($parentObject = null)
         {
-
             // go into Stage mode to allow setting up relations to unpublished pages
             $origMode = Versioned::get_reading_mode(); // save current mode
             Versioned::set_reading_mode('Stage.Stage'); // temporarily overwrite mode
 
-            $allDesc = $this->owner->allDescendants($parentObject);
+            $allDesc = $this->allDescendants($parentObject);
 
             // Return to default mode (eg Live)
             Versioned::set_reading_mode($origMode); // reset current mode
@@ -230,12 +226,12 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
         {
             //for first iteration
             $arrayList = ArrayList::create();
-            if ($parentObject === null) {
+            if ( $parentObject === null ) {
                 $parentObject = $this->owner;
             }
             $children = $parentObject->$childRelation();
 
-            if ($children->count() > 0) {
+            if ( $children->count() > 0 ) {
                 // add each child & subchildren to the array
                 foreach ($children as $child) {
                     $arrayList->add($child);

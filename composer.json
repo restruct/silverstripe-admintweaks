@@ -25,6 +25,7 @@
         "restruct/silverstripe-cmstweaks": "self.version"
     },
     "extra": {
+        "installer-name": "admintweaks",
         "expose": [
             "client"
         ]
