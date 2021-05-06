@@ -1,0 +1,140 @@
+// @TODO:
+// - Checkboxes
+// - Margin-left & small
+// - ModelAdmin advanced search
+// - Uploadfield background (transparnet imgs)
+// - etc (check ss3-tweaks.scss)
+
+
+//// Checkboxes (in gridfields)
+//input.checkbox.styled-checkbox {
+//  &.styled-checkbox-hide {
+//    display: none;
+//  }
+//  + label:before {
+//    content: '';
+//    box-sizing: border-box;
+//    display: block;
+//    width: 20px;
+//    height: 20px;
+//    background-color: white;
+//    outline: 1px solid rgb(210, 213, 216);
+//    text-align: center;
+//  }
+//  &:checked +label:before {
+//    //content: '🔗\uFE0E'; // 𐄂
+//    color: white;
+//    //font-size: 24px;
+//    line-height: 10px;
+//    background-color: rgb(51, 141, 193);
+//    //border-color: rgb(51, 141, 193);
+//    border: 2px solid white;
+//    //outline: 1px solid ;
+//  }
+//}
+
+
+// nicely stack optionsets into columns
+//.optionset {
+//  ul {
+//    column-count: 4;
+//  }
+//  li {
+//    float: none;
+//    width: auto;
+//  }
+//}
+
+
+// Uploadfield thumbnails with transparent bg
+.uploadfield-item.uploadfield-item--image { // .uploadfield-item--missing
+  &:before {
+    content: "";
+    width: 60px;
+    height: 60px;
+    position: absolute;
+    //background-color: white;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 2 2" fill="%23dddddd"><rect width="1" height="1" x="1" y="0" /><rect width="1" height="1" x="0" y="1" /></svg>');
+  }
+  .uploadfield-item__thumbnail {
+    z-index: 1;
+  }
+}
+
+//
+// Additional margin-left & .small styles for CMS formfields -> instead (v4) just $field->removeExtraClass('stacked')->setRows(10)
+//
+
+//
+// PAGE ICONS
+//
+@font-face {
+  font-family: 'FA 5 Free';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.eot");
+  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.woff2") format("woff2"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.woff") format("woff"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.ttf") format("truetype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.svg#fontawesome") format("svg");
+}
+@font-face {
+  font-family: 'FA 5 Free';
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.eot");
+  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.woff2") format("woff2"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.woff") format("woff"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.ttf") format("truetype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.svg#fontawesome") format("svg");
+}
+
+@mixin fa_page_icon($icon, $version:'fas'){
+  font-family: 'FA 5 Free' !important;
+  font-weight: if($version=='fas',900,400) !important;
+  content: $icon;
+  width: 1.2rem;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+li.jstree-leaf > a .jstree-pageicon, .page-icon {
+  line-height: 1.25rem;
+  height: 1.2rem !important;
+  width: 1.4rem !important;
+  margin-right: .4rem !important;
+
+  //&[class*="SiteTree"]:before { @include fa_page_icon("\f850"); }
+  &[class*="Page"]:before, &[class*="SiteTree"]:before { @include fa_page_icon("\f15b",'far'); }
+  &[class*="HomePage"]:before { @include fa_page_icon("\f015"); }
+  &[class*="RedirectorPage"]:before { @include fa_page_icon("\f5eb"); }
+  &[class*="VirtualPage"]:before { @include fa_page_icon("\f24d",'far'); }
+  &[class*="UserDefinedForm"]:before { @include fa_page_icon("\f46d"); }
+  &[class*="ErrorPage"]:before { @include fa_page_icon("\f06a"); }
+  &[class*="Profile"]:before { @include fa_page_icon("\f2bb"); }
+  &[class*="Cart"]:before { @include fa_page_icon("\f07a"); }
+  &[class*="AlbumPage"]:before { @include fa_page_icon("\f302",'far'); margin-left: -10%; }
+  &[class*="Catalog"]:before { @include fa_page_icon("\f02d"); }
+  &[class*="CatalogItem"]:before { @include fa_page_icon("\f15c",'far'); }
+  &[class*="Specialist"]:before { @include fa_page_icon("\f0f0"); }
+  &[class*="SpecialistCatalog"]:before { @include fa_page_icon("\f80d"); margin-left: -10%; }
+  &[class*="SpecialistFilteredCatalog"]:before { @include fa_page_icon("\f80d"); }
+  &[class*="PublicationCatalog "]:before { @include fa_page_icon("\f02d"); }
+  &[class*="SitemapPage"]:before { @include fa_page_icon("\f0e8"); margin-left: -10%; }
+  &[class*="SimpleCalendar"]:before { @include fa_page_icon("\f073",'far'); }
+  &[class*="SimpleCalendar"] { background: none !important; }
+  &[class*="ArchivePage"]:before { @include fa_page_icon("\f187"); }
+  &[class*="ContactPage"]:before { @include fa_page_icon("\f87b"); }
+  &[class*="InfoPage"]:before { @include fa_page_icon("\f05a"); }
+  &[class*="BlocksPage"]:before, &[class*="BlockPage"]:before { @include fa_page_icon("\f009"); }
+  &[class*="VideoPage"]:before { @include fa_page_icon("\f1c8",'far'); }
+  &[class*="Department"]:before { @include fa_page_icon("\f1ad",'far'); }
+  &[class*="DepartmentHolder"]:before { @include fa_page_icon("\f277"); }
+  &[class*="ReservationPage"]:before { @include fa_page_icon("\f274",'far'); }
+  &[class*="IFramePage"]:before { @include fa_page_icon("\f247",'far'); }
+  &[class*="NewsGridHolder"]:before { @include fa_page_icon("\f0ac"); }
+  &[class*="NewsGridPage"]:before { @include fa_page_icon("\f1ea",'far'); margin-left: -10%; }
+  &[class*="NewsGridHolder"], &[class*="NewsGridPage"] { background: none !important; }
+  &[class*="LifestylePage"]:before { @include fa_page_icon("\f496"); }
+  &[class*="ProtectedPage"]:before { @include fa_page_icon("\f023"); }
+  &[class*="ImportedContent"]:before { @include fa_page_icon("\f59d"); }
+  &[class*="SettingsPage"]:before { @include fa_page_icon("\f013"); }
+  &[class*="DialogPage"]:before { @include fa_page_icon("\f086",'far'); }
+  &[class*="HelpPage"]:before { @include fa_page_icon("\f1cd",'far'); }
+}

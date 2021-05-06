@@ -32,7 +32,10 @@
     "extra": {
         "installer-name": "admintweaks",
         "expose": [
-            "client"
+            "client/imgs",
+            "client/fonts",
+            "client/dist",
+            "client/js"
         ]
     }
 }

@@ -1,4 +1,10 @@
-(function ($) {
+console.log('LOADING');
+
+(function($) {
+
+  console.log('RUNNING');
+
+//  window.ss = window.ss || {};
 
   $.entwine('ss', function ($) {
 
@@ -39,90 +45,6 @@
     // //			this.append('<span class="ui-button-icon-primary ui-icon btn-icon-chain--minus"></span>');
     // //		}
     // //	})
-
-    // // resizable SiteTree panel
-    // $('#cms-content-tools-CMSMain').entwine({
-    //
-    //   // properties are set & get'd with this.setMinWidth() in entwine...
-    //   IconWidth: 22, // the width of the drag icon...
-    //   LeftOffset: null,
-    //   MinWidth: null,
-    //
-    //   // methods
-    //   //		onload: function(e) {
-    //   //			//var self = this; window.setTimeout(self.onadd(e), 400); // trigger initially
-    //   //			console.log('onload');
-    //   //		},
-    //   onadd: function (e) {
-    //     //console.log('onadd');
-    //     // save standard width (as set by some other entwine code)
-    //     //this.setMinWidth(parseInt(this.css('width'))); // 288px
-    //     this.setMinWidth(180); // allow making the panel a little smaller
-    //
-    //     // insert resize icon
-    //     $(this).append('<span id="resizer">⇔</div>');
-    //
-    //     var self = this;
-    //
-    //     // set size if stored
-    //     var setWidth = this.retrieveSiteTreePanelWidth();
-    //     if (setWidth) {
-    //       //console.log('setWidth');
-    //       // we initially use min/max-width because the width gets set from some other entwine place...
-    //       // and if we set a custom width & trigger resize, the publish buttons are positioned at the
-    //       // top of the window (@TODO: fix this - some day, maybe)
-    //       //				if(!this.hasClass('collapsed')){
-    //       //					$(this).css('min-width', setWidth+"px");
-    //       //					$(this).css('max-width', setWidth+"px");
-    //       //				}
-    //       // Use a timeout so this happens after the redraw
-    //       setTimeout(function () {
-    //         $(self).css('width', setWidth + "px");
-    //         $(window).trigger('resize');
-    //         //console.log('timeout');
-    //       }, 0);
-    //     }
-    //
-    //     // create icon & set actions on icon (using jquery ui draggable)
-    //     $('#resizer').draggable({
-    //       axis: "x",
-    //       start: function (event, ui) {
-    //         self.setLeftOffset($(self).offset().left);
-    //       },
-    //       drag: function (event, ui) {
-    //         self.updateSize(event, ui);
-    //       },
-    //       stop: function (event, ui) {
-    //         self.storeSiteTreePanelWidth(self.outerWidth());
-    //         // remove left position so the icon will be positioned relative to the container
-    //         // (or it may be out of view after toggling the panel in & out)
-    //         $(event.target).css('left', 'auto');
-    //       }
-    //     });
-    //
-    //     this._super();
-    //   },
-    //   updateSize: function (event, ui) {
-    //     var newWidth = ui.position.left + this.getIconWidth();
-    //     if (newWidth > this.getMinWidth()) {
-    //       $(this).css('width', newWidth + "px");
-    //       $(window).trigger('resize');
-    //     }
-    //   },
-    //   retrieveSiteTreePanelWidth: function () {
-    //     var cookieValue;
-    //     if ($.cookie !== void 0) {
-    //       cookieValue = $.cookie('cms-menu-resize-width');
-    //     }
-    //     return cookieValue;
-    //   },
-    //   storeSiteTreePanelWidth: function (newWidth) {
-    //     if ($.cookie !== void 0) {
-    //       $.cookie('cms-menu-resize-width', newWidth, {path: '/', expires: 31});
-    //     }
-    //   }
-    //
-    // });
 
     // @TODO: fix this based on HLCL publisher update publications action
     // Add optional loading feedback overlay to buttons

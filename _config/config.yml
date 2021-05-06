@@ -3,14 +3,16 @@ name: admintweaks
 ---
 SilverStripe\Admin\LeftAndMain:
   extra_requirements_css:
-    - 'restruct/silverstripe-admintweaks:client/styles/admintweaks.css'
+    - 'restruct/silverstripe-admintweaks:client/dist/css/admintweaks.css'
+#    - 'restruct/silverstripe-admintweaks:client/fonts/fontawesome-free-5.15.3-web/css/all.css'
   extra_requirements_javascript:
 #    - framework/thirdparty/jquery-ui/jquery-ui.min.js
     - 'restruct/silverstripe-admintweaks:client/js/admintweaks.js'
+#    - 'restruct/silverstripe-admintweaks:client/dist/js/webpacktest.js'
 
 SilverStripe\Assets\File:
-#  apply_restrictions_to_admin: false
-# NOTE: need to add these extensions to assets/.htaccess as well, else they can be uploaded but not downloaded
+  # apply_restrictions_to_admin: false
+  # NOTE: need to add these extensions to assets/.htaccess as well, else they can be uploaded but not downloaded
   allowed_extensions: 
     - svg
     - xlsm

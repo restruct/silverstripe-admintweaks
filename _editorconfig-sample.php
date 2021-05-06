@@ -1,0 +1,146 @@
+<?php
+
+//
+// HTMLEDITOR CONFIG
+//
+// see: https://docs.silverstripe.org/en/3.2/developer_guides/forms/field_types/htmleditorfield/
+// and: https://docs.silverstripe.org/en/4/developer_guides/customising_the_admin_interface/typography/#custom-style-dropdown
+// and: https://www.tiny.cloud/docs/configure/content-formatting/
+
+# Set some dropdown menu options
+$editor = SilverStripe\Forms\HTMLEditor\HtmlEditorConfig::get('cms');
+
+$editor->setOption('entity_encoding', 'raw');
+$editor->setOption('block_formats', 'Paragraph=p;Header 2=h2;Header 3=h3;Header 4=h4;Preformatted=pre');
+
+# If we want to set only our own styles, disable importcss
+$editor->disablePlugins('importcss');
+# If we want to auto-load styles from editor.css, dont disable importcss and set importcss_append to true
+//$editor->setOption('importcss_append', true);
+# You can configure TinyMCE to load any css file in _config.php with the following code:
+# HtmlEditorConfig::get('cms')->setOption('content_css','/themes/my-amazing-theme/styles/kick-ass-editor-styles.css');
+
+# Set style select options
+$editor->insertButtonsAfter('formatselect', 'styleselect');
+//$editor->setButtonsForLine(1, 'image', 'media', 'shortcodable','bold, italic, removeformat, bullist, numlist, outdent, indent, blockquote, hr, visualchars');
+//$editor->addButtonsToLine(2, 'styleselect');
+//$editor->removeButtons('styleselect');
+$editor->setOption('style_formats', [
+//    Define the styles that will be available in TinyMCE's dropdown style menu
+//    * Use 'selector' to specify which elements a style can be applied to
+//    * See Headings example below for explanation of different settings
+//    * Using 'classes' allows a class to be combined with others while 'attributes'=>'style' removes other classes before applying
+//
+//    # Item options:
+//    'title' => 'Document link', // title in dropdown
+//    'classes' => 'doc_link', // CSS class of .doc_link will be toggled on or off, will not remove or affect other classes on this element
+//    'wrapper' => true, // expand to closest block element
+//    'merge_siblings' => false, // merge adjacent elements with this class into one
+//    'selector' => 'a', // If no text is selected but cursor is within one of these elements, apply class to element
+//    'block' => 'h3', // block element to wrap selection in
+//    'inline' => 'span', // Allow applying this style inline to selected text by using a span tag
+//
+//    [   'title' => 'Headings', # Set a title to be displayed above the following options in the dropdown menu
+//        'items' => [
+//            [
+//                # Applied to the current heading element (inline not allowed)
+//                'title' => 'Ruled', // Title used in TinyMCE dropdown menu
+//                'attributes' => array('class'=>'ruled'), // CSS class of .ruled will be applied to element, other classes on this element will be removed
+//                'selector' => 'h1,h2,h3,h4,h5,h6' // Only allow class to be applied to these elements
+//            ],
+//            [
+//                # Applied to selected text using a span tag, or applied to an inline element if no text is highlighted (inline allowed)
+//                'title' => 'Sub title',
+//                'classes' => 'sub-title', // CSS class of .sub-title will be toggled on or off, will not remove or affect other classes on this element
+//                'inline' => 'span', // Allow applying this style inline to selected text by using a span tag
+//                'selector' => 'i,em,b,strong,a' // If no text is selected but cursor is within one of these elements, apply class to element
+//            ],
+//        ]
+//    ],
+    [
+        'title' => 'Paragraphs',
+        'items' => [
+            [
+                'title' => 'Intro paragraaf (groter)',
+                'selector' => 'p',
+                'classes' => 'intro',
+            ],
+            [
+                'title' => 'Notitie (cosmetisch verborgen)',
+                'selector' => 'p',
+                'classes' => 'hidden',
+            ],
+            [
+                'title' => 'Notificatie (rood)',
+                'selector' => 'p',
+                'classes' => 'alert alert-danger',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Layout',
+        'items' => [
+            [
+                'title' => 'Uitklap item (onderaan)',
+                'block' => 'h3',
+                'classes' => 'accordion',
+            ],
+            [
+                'title' => 'Document link',
+                'selector' => 'a',
+                'classes' => 'doc_link',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Beelden',
+        'items' => [
+            [
+                'title' => 'Rechts met tekst eromheen',
+                'selector' => 'img,div',
+                'classes' => 'right',
+            ],
+            [
+                'title' => 'Links met tekst eromheen',
+                'selector' => 'img,div',
+                'classes' => 'left',
+            ],
+            [
+                'title' => 'Gecentreerd',
+                'selector' => 'img,div',
+                'classes' => 'center',
+            ],
+            [
+                'title' => 'Volledige breedte',
+                'selector' => 'img,div',
+                'classes' => 'fullwidth',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Lijsten',
+        'items' => [
+            [
+                'title' => 'Link lijst (o.a. footer)',
+                'selector' => 'ul',
+                'classes' => 'items-menu',
+            ],
+            [
+                'title' => 'Links met tekst eromheen',
+                'selector' => 'img,div',
+                'classes' => 'left',
+            ],
+            [
+                'title' => 'Gecentreerd',
+                'selector' => 'img,div',
+                'classes' => 'center',
+            ],
+            [
+                'title' => 'Volledige breedte',
+                'selector' => 'img,div',
+                'classes' => 'fullwidth',
+            ],
+        ],
+    ],
+]);
+
