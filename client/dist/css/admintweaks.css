@@ -1,13 +1,32 @@
 @charset "UTF-8";
+.multiple .Select--multi .Select-value {
+  margin-left: 3px;
+  margin-top: 3px;
+}
+
 .uploadfield-item.uploadfield-item--image:before {
   content: "";
   width: 60px;
   height: 60px;
   position: absolute;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 2 2" fill="%23dddddd"><rect width="1" height="1" x="1" y="0" /><rect width="1" height="1" x="0" y="1" /></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 8 8" fill="%23dddddd"><rect width="4" height="4" x="0" y="0" /><rect width="4" height="4" x="4" y="4" /></svg>');
 }
 .uploadfield-item.uploadfield-item--image .uploadfield-item__thumbnail {
   z-index: 1;
+}
+
+.grid-field.ss-gridfield-editable input.editable-column-field {
+  margin-top: -0.6rem !important;
+  margin-bottom: -0.6rem !important;
+}
+
+.grid-field .ss-gridfield-item img {
+  margin-top: -1.2rem;
+  margin-bottom: -1.15rem;
+}
+
+.grid-field.ss-gridfield-editable p.readonly {
+  margin-bottom: 0;
 }
 
 @font-face {

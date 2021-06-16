@@ -6,6 +6,7 @@
 // see: https://docs.silverstripe.org/en/3.2/developer_guides/forms/field_types/htmleditorfield/
 // and: https://docs.silverstripe.org/en/4/developer_guides/customising_the_admin_interface/typography/#custom-style-dropdown
 // and: https://www.tiny.cloud/docs/configure/content-formatting/
+// and: https://www.tiny.cloud/docs/configure/editor-appearance/#style_formats
 
 # Set some dropdown menu options
 $editor = SilverStripe\Forms\HTMLEditor\HtmlEditorConfig::get('cms');
@@ -21,9 +22,11 @@ $editor->disablePlugins('importcss');
 # HtmlEditorConfig::get('cms')->setOption('content_css','/themes/my-amazing-theme/styles/kick-ass-editor-styles.css');
 
 # Set style select options
+//$editor->addButtonsToLine(1, '| anchor');
+//$editor->addButtonsToLine(1, 'blockquote');
+$editor->insertButtonsAfter('indent', 'blockquote');
 $editor->insertButtonsAfter('formatselect', 'styleselect');
 //$editor->setButtonsForLine(1, 'image', 'media', 'shortcodable','bold, italic, removeformat, bullist, numlist, outdent, indent, blockquote, hr, visualchars');
-//$editor->addButtonsToLine(2, 'styleselect');
 //$editor->removeButtons('styleselect');
 $editor->setOption('style_formats', [
 //    Define the styles that will be available in TinyMCE's dropdown style menu
@@ -139,6 +142,41 @@ $editor->setOption('style_formats', [
                 'title' => 'Volledige breedte',
                 'selector' => 'img,div',
                 'classes' => 'fullwidth',
+            ],
+        ],
+    ],
+    [
+        'title' => 'Gezonde Leefstijl',
+        'items' => [
+            [
+                'title' => 'Omkaderd (outline)',
+                'wrapper' => true,
+                'merge_siblings' => false,
+                'block' => 'div',
+                'classes' => 'border-block',
+            ],
+            [
+                'title' => 'Vinkjes-lijstje',
+                'selector' => 'ul',
+                'classes' => 'check-list',
+            ],
+//            [ // Removed: instead styling simply applied to any image inside a .border-block
+//                'title' => 'Recept-plaatje (rechts in kader)',
+//                'selector' => 'img',
+//                'classes' => 'recipe-image',
+//            ],
+            [
+                'title' => 'In-/uitklap item (los)',
+                'wrapper' => true,
+                'block' => 'div',
+                'merge_siblings' => false,
+                'classes' => 'collapse-expand',
+            ],
+            [
+                'title' => 'Meer-info blok (volvlak achtergrond)',
+                'wrapper' => true,
+                'block' => 'div',
+                'classes' => 'info-block',
             ],
         ],
     ],

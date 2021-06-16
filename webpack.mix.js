@@ -1,39 +1,45 @@
+// More or less relevant references:
+// https://laravel.com/docs/5.7/mix
+// https://northcreation.agency/laravel-mix-with-silverstripe/
+// https://github.com/gorriecoe/silverstripe-mix/blob/master/package.json
+
 const mix = require('laravel-mix');
-const webpack = require('webpack');
+
 mix.options({
-    processCssUrls: false,
+    // See: https://laravel-mix.com/docs/6.0/options
+//    processCssUrls: false,
 });
+
 mix.setPublicPath('client/dist');
 
-mix.sass('client/src/scss/admintweaks.scss', 'client/dist/css/admintweaks.css')
-//    .sass('client/src/sass/editor.scss', 'client/dist/css/')
-    ;
+// this keeps relative image urls in js/scss intact:
+// else they're converted to absolute (unless processCssUrls is set to false, but then no images will be copied to dist/images either...)
+mix.setResourceRoot('../');
 
-//mix.js([
-////    'client/plugins/bootstrap-multiselect/dist/js/bootstrap-multiselect.js',
-//    'client/src/js/webpacktest.js',
-//], 'client/dist/js/webpacktest.js').extract();
+// Examples: https://laravel-mix.com/docs/6.0/examples
+//mix.sass('client/src/scss/admintweaks.scss', 'client/dist/css/admintweaks.css');
+mix.sass('client/src/scss/admintweaks.scss', 'css');
 
+// mix.scripts = basic concattenation
+// mix.babel = concattenation + babel (ES2015 -> vanilla)
+// mix.js = components, react, vue, etc -> include { "presets": ["@babel/preset-react"] } in .babelrc for correct transpilation (or add .vue()/.react() in mix.js)
+mix.js([ 'client/src/js/admintweaks.js', ], 'js');
+// extract() results in main.js plus separate vendor.js () + manifest.js which all three have to get loaded
+// mix.js([ 'client/src/js/one.js', 'client/src/js/two.js', ], 'js/main.js').extract();
 
 mix.autoload({
-    jquery: ['$', 'window.jQuery'],
-    underscore: ['_', 'underscore']
+    // make webpack prepend var $ = require('jquery') to every $, jQuery or window.jQuery
+    // (this will result in jQuery being compiled-in, even though it may be provided externally)
+//    jquery: ['$', 'jQuery', 'window.jQuery'],
+//    underscore: ['_', 'underscore'],
 });
 
-mix.webpackConfig(webpack => {
-    return {
-        plugins: [
-            new webpack.ProvidePlugin({
-                $: 'jquery',
-                jQuery: 'jquery',
-                'window.jQuery': 'jquery',
-                _: "underscore",
-                underscore: 'underscore'
-            })
-        ],
-        externals: {
-        //    'components/FormBuilder/FormBuilder': 'FormBuilder',
-            jQuery: 'jQuery',
-        }
+mix.webpackConfig({
+    externals: {
+        // Externals will not be compiled-in (eg import $ from 'jQuery', combined with external 'jquery': 'jQuery' means jQuery gets provided externally)
+        // For external modules provided by SilverStripe see: https://github.com/silverstripe/webpack-config/blob/master/js/externals.js
+        'jquery': 'jQuery',
+        'react': 'React',
+        'lib/Injector': 'Injector',
     }
 });

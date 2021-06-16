@@ -45,6 +45,11 @@
 //  }
 //}
 
+// Fix Tagfield multiple spacing
+.multiple .Select--multi .Select-value {
+  margin-left: 3px;
+  margin-top: 3px;
+}
 
 // Uploadfield thumbnails with transparent bg
 .uploadfield-item.uploadfield-item--image { // .uploadfield-item--missing
@@ -54,15 +59,28 @@
     height: 60px;
     position: absolute;
     //background-color: white;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 2 2" fill="%23dddddd"><rect width="1" height="1" x="1" y="0" /><rect width="1" height="1" x="0" y="1" /></svg>');
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 8 8" fill="%23dddddd"><rect width="4" height="4" x="0" y="0" /><rect width="4" height="4" x="4" y="4" /></svg>');
   }
   .uploadfield-item__thumbnail {
     z-index: 1;
   }
 }
 
+// Fix editablecolumns enlarging GridField rows
+.grid-field.ss-gridfield-editable input.editable-column-field {
+  margin-top: -.6rem !important;
+  margin-bottom: -.6rem !important;
+}
+.grid-field .ss-gridfield-item img {
+  margin-top: -1.2rem;
+  margin-bottom: -1.15rem;
+}
+.grid-field.ss-gridfield-editable p.readonly {
+  margin-bottom: 0;
+}
+
 //
-// Additional margin-left & .small styles for CMS formfields -> instead (v4) just $field->removeExtraClass('stacked')->setRows(10)
+// Additional margin-left & .small styles for CMS formfields -> instead (v4) just $field->removeExtraClass('stacked')->setRows(15)
 //
 
 //

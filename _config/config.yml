@@ -7,7 +7,7 @@ SilverStripe\Admin\LeftAndMain:
 #    - 'restruct/silverstripe-admintweaks:client/fonts/fontawesome-free-5.15.3-web/css/all.css'
   extra_requirements_javascript:
 #    - framework/thirdparty/jquery-ui/jquery-ui.min.js
-    - 'restruct/silverstripe-admintweaks:client/js/admintweaks.js'
+    - 'restruct/silverstripe-admintweaks:client/dist/js/admintweaks.js'
 #    - 'restruct/silverstripe-admintweaks:client/dist/js/webpacktest.js'
 
 SilverStripe\Assets\File:
@@ -16,27 +16,9 @@ SilverStripe\Assets\File:
   allowed_extensions: 
     - svg
     - xlsm
-
-SilverStripe\CMS\Model\SiteTree:
-  extensions:
-    - Restruct\Silverstripe\AdminTweaks\Extensions\PageHelpersExtension
   
 #SilverStripe\Forms\HTMLEditor\HTMLEditorField:
 #  insert_width: 1000
-#
-#SilverStripe\Forms\FormField:
-#  extensions:
-#    - FormFieldExtension
-#
-#Text:
-#  extensions:
-#    - DBStringExtension
-
-# OPTION: Alias/workaround some legacy/temporary missing Image Manipulations
-#SilverStripe\Assets\Image:
-#  extensions:
-#    - Restruct\Silverstripe\AdminTweaks\Extensions\Image\LegacyManipulationsExtension
-#    - Restruct\Silverstripe\AdminTweaks\Extensions\Image\CropFocusManipulationsExtension
 
 SilverStripe\View\Parsers\URLSegmentFilter:
   default_replacements:
@@ -49,7 +31,41 @@ SilverStripe\View\Parsers\URLSegmentFilter:
 SilverStripe\Control\Email\Mailer:
   default_message_encoding: 'base64'
 
+# Various Extensions
+SilverStripe\CMS\Model\SiteTree:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\PageHelpersExtension
 
+#SilverStripe\Forms\FormField:
+#  extensions:
+#    - FormFieldExtension
+#
+#Text:
+#  extensions:
+#    - DBStringExtension
+
+#
+# Alias/workaround some legacy/temporary missing Image Manipulations
+#
+SilverStripe\Assets\Image:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\Image\LegacyManipulationsExtension
+
+
+## Shortcodes
+---
+name: admintweaks_shortcodables
+Only:
+  classexists: Shortcodable\Shortcodable
+---
+Shortcodable\Shortcodable:
+  shortcodable_classes:
+    - Restruct\Silverstripe\AdminTweaks\Shortcodes\CurrentYearShortcode
+    - Restruct\Silverstripe\AdminTweaks\Shortcodes\FeaturedImageShortcode
+---
+
+
+# Legacy: DynamicCache helper (cachebuster)
 #---
 #name: dyncasheext
 #Only:
@@ -58,14 +74,3 @@ SilverStripe\Control\Email\Mailer:
 #DynamicCache:
 #  extensions:
 #    - BetterNavDynCacheExtension
-
-
----
-name: shortcodable_ext
-Only:
-  classexists: Shortcodable
----
-Shortcodable:
-  shortcodable_classes:
-    - currentyear
-    - featuredimage

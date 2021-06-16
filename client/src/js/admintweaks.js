@@ -1,8 +1,8 @@
-console.log('LOADING');
+//console.log('LOADING');
 
 (function($) {
 
-  console.log('RUNNING');
+//  console.log('RUNNING');
 
 //  window.ss = window.ss || {};
 

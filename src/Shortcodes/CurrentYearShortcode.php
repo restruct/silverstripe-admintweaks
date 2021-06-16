@@ -3,10 +3,14 @@
 namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
 
     use SilverStripe\Dev\Debug;
-    use Silverstripe\Shortcodable;
+    use SilverStripe\View\ViewableData;
 
-    class currentyear extends Shortcodable
+    class CurrentYearShortcode extends ViewableData
     {
+        /**
+         * @config string
+         */
+        private static $shortcode = 'currentyear';
 
         public function singular_name()
         {
