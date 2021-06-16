@@ -21,8 +21,7 @@
         "restruct/silverstripe-cmstweaks": "*"
     },
     "suggest": {
-        "axllent/silverstripe-cms-tweaks": "Some complemental tweaks by Axllent",
-        "guzzlehttp/guzzle": "Include for titles & thumbnail images with Axllent VideoLink fields"
+        "axllent/silverstripe-cms-tweaks": "Some complemental tweaks by Axllent"
     },
     "autoload": {
         "psr-4": {
