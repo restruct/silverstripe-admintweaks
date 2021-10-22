@@ -16,8 +16,9 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
          * @config string the actual shortcode used/inserted into the HTML editor
          */
         private static $shortcode = 'featuredimage';
+
         /**
-         * @config string the actual shortcode used/inserted into the HTML editor
+         * @config string alternative parse_shortcode callback function (if not parse_shortcode)
          */
 //        private static $shortcode_callback = 'parse_shortcode';
 
@@ -67,5 +68,29 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
             }
         }
 
+//        /**
+//         * Return a link to an image to be displayed as a placeholder in the editor
+//         *
+//         * @param array $attributes the list of attributes of the shortcode
+//         * @return String
+//         **/
+//        public function getShortcodePlaceHolder($attributes)
+//        {
+////            $text = $this->Title;
+////            if (isset($attributes['Style'])) {
+////                $text .= ' (' . $attributes['Style'] . ')';
+////            }
+//
+//            $params = array(
+//                'txt' => 'Placeholder',
+//                'w' => '400',
+//                'h' => '200',
+//                'txtsize' => '27',
+//                'bg' => '000000',
+//                'txtclr' => 'cccccc'
+//            );
+//
+//            return 'https://placeholdit.imgix.net/~text?' . http_build_query($params);
+//        }
     }
 }

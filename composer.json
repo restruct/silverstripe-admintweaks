@@ -6,12 +6,7 @@
         "silverstripe"
     ],
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Restruct web & apps",
-            "email": "dev@restruct.nl"
-        }
-    ],
+    "authors": [ { "name": "Restruct", "email": "dev@restruct.nl", "homepage": "https://restruct.nl" } ],
     "require": {
         "silverstripe/vendor-plugin": "^1.0",
         "silverstripe/framework": "^4"

@@ -10,7 +10,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Traits {
         /*
           * Base permissions:
           * ADMIN = all
-          * CMS_ACCESS_LeftAndMain = all CMS
+          * CMS_ACCESS_LeftAndMain = base admin/cms access
           * CMS_ACCESS_CMSMain = pages
           * CMS_ACCESS_SecurityAdmin = users
           * CMS_ACCESS_MediaAdmin = media/files

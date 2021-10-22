@@ -34,16 +34,16 @@
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.eot");
-  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.woff2") format("woff2"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.woff") format("woff"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.ttf") format("truetype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.svg#fontawesome") format("svg");
+  src: url(../fonts/fa-regular-400.eot?4079ae2d2a15d0689568f3a5459241c7);
+  src: url(../fonts/fa-regular-400.eot?4079ae2d2a15d0689568f3a5459241c7) format("embedded-opentype"), url(../fonts/fa-regular-400.woff2?68c5af1f48e2bfca1e57ae1c556a5c72) format("woff2"), url(../fonts/fa-regular-400.woff?3672264812746c3c7225909742da535c) format("woff"), url(../fonts/fa-regular-400.ttf?1017bce89c72f95bcf8e2bf4774efdbf) format("truetype"), url(../fonts/fa-regular-400.svg?19e27d348fefc21941e0310a0ec6339b) format("svg");
 }
 @font-face {
   font-family: "FA 5 Free";
   font-style: normal;
   font-weight: 900;
   font-display: block;
-  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.eot");
-  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.woff2") format("woff2"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.woff") format("woff"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.ttf") format("truetype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.svg#fontawesome") format("svg");
+  src: url(../fonts/fa-solid-900.eot?efbd5d20e407bbf85f2b3087ee67bfa1);
+  src: url(../fonts/fa-solid-900.eot?efbd5d20e407bbf85f2b3087ee67bfa1) format("embedded-opentype"), url(../fonts/fa-solid-900.woff2?ada6e6df937f7e5e8b790dfea07109b7) format("woff2"), url(../fonts/fa-solid-900.woff?c6ec080084769a6d8a34ab35b77999cd) format("woff"), url(../fonts/fa-solid-900.ttf?07c3313b24f7b1ca85ee99b4fa7db55e) format("truetype"), url(../fonts/fa-solid-900.svg?13de59f1a36b6cb4bca0050160ff0e41) format("svg");
 }
 li.jstree-leaf > a .jstree-pageicon, .page-icon {
   line-height: 1.25rem;

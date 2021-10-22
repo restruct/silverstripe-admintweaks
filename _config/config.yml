@@ -51,8 +51,12 @@ SilverStripe\Assets\Image:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\Image\LegacyManipulationsExtension
 
+# Make UserForms NOT save form data by default
+SilverStripe\UserForms\Model\UserDefinedForm:
+  defaults:
+    DisableSaveSubmissions: true
 
-## Shortcodes
+# Shortcodes
 ---
 name: admintweaks_shortcodables
 Only:
