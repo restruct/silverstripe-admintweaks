@@ -4,6 +4,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Jobs;
 
 use Exception;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\ORM\DataObject;
 
 if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
 
@@ -16,7 +17,7 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
     {
         /**
          * ScheduledExecutionJob constructor
-         * @param object $object object to call method on
+         * @param DataObject $object object to call method on
          * @param string $method method to call each time this job gets processed
          * @param null $description of this job
          * @param null|int $when timestamp of when to execute this job (eg strtotime('tomorrow 8:00')
@@ -25,13 +26,15 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
          * @param null|int $totalSteps
          * @param null|bool $generateRandomSignature
          */
-        public function __construct($object, $method, $description = null, $arguments=null, $jobType=null, $totalSteps=null, $generateRandomSignature=null)
+        public function __construct(DataObject $object, $method, $description = null, $arguments=null, $jobType=null, $totalSteps=null, $generateRandomSignature=null)
         {
             // doesn't do anything really, just prevents IDE warning
             parent::__construct();
 
             if($object && $method){ // initialize (job data is serialized between calls)
-                $this->object = $object;
+//                $this->object = $object;
+                $this->objectID = $object->ID;
+                $this->objectType = $object->ClassName;
                 $this->method = $method;
                 $this->description = ($description ?: '[ no description ]');
                 $this->arguments = $arguments ?: [];
@@ -39,6 +42,14 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
                 $this->totalSteps = $totalSteps ?: 1;
                 $this->appendSig = $generateRandomSignature ? $this->randomSignature() : '';
             }
+        }
+
+        /**
+         * @return DataObject
+         */
+        public function getDataObject()
+        {
+            return DataObject::get_by_id($this->objectType, $this->objectID);
         }
 
         /**
@@ -83,7 +94,7 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
 
         public function process() {
             $this->currentStep = (int) $this->currentStep +1;
-            $object = $this->object;
+            $object = $this->getDataObject();
             if ($object) {
                 $object->scheduled_job_instance = $this;
                 try {
