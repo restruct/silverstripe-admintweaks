@@ -12,12 +12,12 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
      * A universal ScheduledExecution_Job that gets scheduled and executed once, async (eg for sending out an email)
      * Calls the $method argument on the $object argument, optionally with $arguments
      */
-    class ScheduledExecutionJob
+    class ScheduledMethodCall
         extends \Symbiote\QueuedJobs\Services\AbstractQueuedJob
     {
         /**
-         * ScheduledExecutionJob constructor
-         * @param DataObject $object object to call method on
+         * ScheduledMethodCall constructor
+         * @param DataObject|object|string $ObjectOrClass to call method on (if object, will be instantiated as singleton)
          * @param string $method method to call each time this job gets processed
          * @param null $description of this job
          * @param null|int $when timestamp of when to execute this job (eg strtotime('tomorrow 8:00')
@@ -26,15 +26,20 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
          * @param null|int $totalSteps
          * @param null|bool $generateRandomSignature
          */
-        public function __construct(DataObject $object, $method, $description = null, $arguments=null, $jobType=null, $totalSteps=null, $generateRandomSignature=null)
+        public function __construct($ObjectOrClass, $method, $description = null, $arguments=null, $jobType=null, $totalSteps=null, $generateRandomSignature=null)
         {
             // doesn't do anything really, just prevents IDE warning
             parent::__construct();
 
-            if($object && $method){ // initialize (job data is serialized between calls)
-//                $this->object = $object;
-                $this->objectID = $object->ID;
-                $this->objectType = $object->ClassName;
+            if($ObjectOrClass && $method){ // initialize (job data is serialized between calls)
+                if(is_a($ObjectOrClass, DataObject::class)){
+                    $this->objectID = $ObjectOrClass->ID;
+                    $this->objectClass = $ObjectOrClass->ClassName;
+                } elseif (is_object($ObjectOrClass)) {
+                    $this->objectClass = get_class($ObjectOrClass);
+                } else {
+                    $this->objectClass = $ObjectOrClass;
+                }
                 $this->method = $method;
                 $this->description = ($description ?: '[ no description ]');
                 $this->arguments = $arguments ?: [];
@@ -45,16 +50,9 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
         }
 
         /**
-         * @return DataObject
-         */
-        public function getDataObject()
-        {
-            return DataObject::get_by_id($this->objectType, $this->objectID);
-        }
-
-        /**
-         * ScheduledExecutionJob constructor
-         * @param object $object object to call method on
+         * Static method to schedule ScheduledMethodCall
+         *
+         * @param DataObject|object|string $ObjectOrClass to call method on (if object, will be instantiated as singleton)
          * @param string $method method to call each time this job gets processed
          * @param null $description of this job
          * @param null|int $when timestamp of when to execute this job (eg strtotime('tomorrow 8:00')
@@ -65,13 +63,24 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
          *
          * @return int ID of created \Symbiote\QueuedJobs\DataObjects\QueuedJobDescriptor
          */
-        public static function schedule($object, $method, $description = null, $when = null, $arguments=null, $jobType=null, $totalSteps=null, $generateRandomSignature=null)
+        public static function schedule($ObjectOrClass, $method, $description = null, $when = null, $arguments=null, $jobType=null, $totalSteps=null, $generateRandomSignature=null)
         {
             // using full namespaced classnames because qjobs module may not be installed (so we cannot use imports)
             return singleton(\Symbiote\QueuedJobs\Services\QueuedJobService::class)->queueJob(
-                new ScheduledExecutionJob($object, $method, $description = null, $arguments=null, $jobType=null, $totalSteps=null, $generateRandomSignature),
+                new ScheduledMethodCall($ObjectOrClass, $method, $description, $arguments, $jobType, $totalSteps, $generateRandomSignature),
                 $when ? date('Y-m-d H:i:s', $when) : null
             );
+        }
+
+        /**
+         * @return object|DataObject
+         */
+        public function getObjectToCallMethodOn()
+        {
+            if($this->objectID){
+                return DataObject::get_by_id($this->objectClass, $this->objectID);
+            }
+            return singleton($this->objectClass);
         }
 
         /**
@@ -94,7 +103,7 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
 
         public function process() {
             $this->currentStep = (int) $this->currentStep +1;
-            $object = $this->getDataObject();
+            $object = $this->getObjectToCallMethodOn();
             if ($object) {
                 $object->scheduled_job_instance = $this;
                 try {
@@ -105,8 +114,9 @@ if(ClassInfo::exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')){
                 }
                 $this->addMessage(sprintf("%s::%s done", get_class($this->object), $this->method));
             } else {
-                $this->addMessage(sprintf("%s::%s ERROR: NO OBJECT", get_class($this->object), $this->method));
-//                $this->jobStatus = self::STATUS_BROKEN;
+                $this->addMessage(sprintf("%s::%s ERROR: NO OBJECT", $this->objectClass, $this->method));
+                $this->jobStatus = self::STATUS_BROKEN;
+                return;
             }
             if($this->currentStep >= $this->totalSteps){
                 $this->isComplete = true;
