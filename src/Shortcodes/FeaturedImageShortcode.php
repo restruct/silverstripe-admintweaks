@@ -2,12 +2,14 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
 
+    use SilverStripe\Assets\Image;
     use SilverStripe\Control\Controller;
     use SilverStripe\Forms\CheckboxField;
     use SilverStripe\Forms\DropdownField;
     use SilverStripe\Forms\FieldList;
     use SilverStripe\Forms\TextField;
     use SilverStripe\ORM\DataObject;
+    use SilverStripe\View\SSViewer;
     use SilverStripe\View\ViewableData;
 
     class FeaturedImageShortcode extends ViewableData
@@ -62,9 +64,11 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
         public static function parse_shortcode($attrs, $content=null, $parser=null, $shortcode, $info=null)
         {
             $ctrl = Controller::curr();
-    //		if($ctrl->FeaturedImageID && $ctrl->FeaturedImages()->first()->exists()){
-            if ( $ctrl->FeaturedImage() ) {
-                return '<div class="image">' . $ctrl->FeaturedImage()->Fill(900, 500)->forTemplate() . '</div>';
+            $size = isset($attrs['size']) && $attrs['size']=='full' ? '1000, 600' : '640, 480';
+            /** @var Image $featImg */
+            if ( $featImg = $ctrl->FeaturedImage() ) {
+//                return '<div class="image">' . $featImg->Fill(640, 500)->forTemplate() . '</div>';
+                return $featImg->renderWith(SSViewer::fromString('<div class="image"><% if $CroppedFill('.$size.') %>$CroppedFill('.$size.')<% else %>$Fill('.$size.')<% end_if %></div>'));
             }
         }
 
