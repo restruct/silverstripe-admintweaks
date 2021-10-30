@@ -24,8 +24,7 @@
     "sass-loader": "^10.0.5",
     "webpack": "^5.3.2"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "version": "1.0.0",
   "main": "webpack.mix.js",
   "keywords": []
