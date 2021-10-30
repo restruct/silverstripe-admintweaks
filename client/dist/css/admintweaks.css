@@ -1,4 +1,3 @@
-@charset "UTF-8";
 .multiple .Select--multi .Select-value {
   margin-left: 3px;
   margin-top: 3px;
@@ -54,7 +53,7 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
 li.jstree-leaf > a .jstree-pageicon[class*=Page]:before, li.jstree-leaf > a .jstree-pageicon[class*=SiteTree]:before, .page-icon[class*=Page]:before, .page-icon[class*=SiteTree]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f15b";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -62,7 +61,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=Page]:before, li.jstree-leaf > a .jst
 li.jstree-leaf > a .jstree-pageicon[class*=HomePage]:before, .page-icon[class*=HomePage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f015";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -70,7 +69,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=HomePage]:before, .page-icon[class*=H
 li.jstree-leaf > a .jstree-pageicon[class*=RedirectorPage]:before, .page-icon[class*=RedirectorPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f5eb";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -78,7 +77,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=RedirectorPage]:before, .page-icon[cl
 li.jstree-leaf > a .jstree-pageicon[class*=VirtualPage]:before, .page-icon[class*=VirtualPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f24d";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -86,7 +85,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=VirtualPage]:before, .page-icon[class
 li.jstree-leaf > a .jstree-pageicon[class*=UserDefinedForm]:before, .page-icon[class*=UserDefinedForm]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f46d";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -94,7 +93,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=UserDefinedForm]:before, .page-icon[c
 li.jstree-leaf > a .jstree-pageicon[class*=ErrorPage]:before, .page-icon[class*=ErrorPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f06a";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -102,7 +101,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=ErrorPage]:before, .page-icon[class*=
 li.jstree-leaf > a .jstree-pageicon[class*=Profile]:before, .page-icon[class*=Profile]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f2bb";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -110,7 +109,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=Profile]:before, .page-icon[class*=Pr
 li.jstree-leaf > a .jstree-pageicon[class*=Cart]:before, .page-icon[class*=Cart]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f07a";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -118,7 +117,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=Cart]:before, .page-icon[class*=Cart]
 li.jstree-leaf > a .jstree-pageicon[class*=AlbumPage]:before, .page-icon[class*=AlbumPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f302";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -127,7 +126,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=AlbumPage]:before, .page-icon[class*=
 li.jstree-leaf > a .jstree-pageicon[class*=Catalog]:before, .page-icon[class*=Catalog]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f02d";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -135,7 +134,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=Catalog]:before, .page-icon[class*=Ca
 li.jstree-leaf > a .jstree-pageicon[class*=CatalogItem]:before, .page-icon[class*=CatalogItem]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f15c";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -143,7 +142,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=CatalogItem]:before, .page-icon[class
 li.jstree-leaf > a .jstree-pageicon[class*=Specialist]:before, .page-icon[class*=Specialist]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f0f0";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -151,7 +150,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=Specialist]:before, .page-icon[class*
 li.jstree-leaf > a .jstree-pageicon[class*=SpecialistCatalog]:before, .page-icon[class*=SpecialistCatalog]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f80d";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -160,7 +159,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=SpecialistCatalog]:before, .page-icon
 li.jstree-leaf > a .jstree-pageicon[class*=SpecialistFilteredCatalog]:before, .page-icon[class*=SpecialistFilteredCatalog]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f80d";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -168,7 +167,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=SpecialistFilteredCatalog]:before, .p
 li.jstree-leaf > a .jstree-pageicon[class*="PublicationCatalog "]:before, .page-icon[class*="PublicationCatalog "]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f02d";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -176,7 +175,7 @@ li.jstree-leaf > a .jstree-pageicon[class*="PublicationCatalog "]:before, .page-
 li.jstree-leaf > a .jstree-pageicon[class*=SitemapPage]:before, .page-icon[class*=SitemapPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f0e8";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -185,7 +184,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=SitemapPage]:before, .page-icon[class
 li.jstree-leaf > a .jstree-pageicon[class*=SimpleCalendar]:before, .page-icon[class*=SimpleCalendar]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f073";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -196,7 +195,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=SimpleCalendar], .page-icon[class*=Si
 li.jstree-leaf > a .jstree-pageicon[class*=ArchivePage]:before, .page-icon[class*=ArchivePage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f187";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -204,7 +203,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=ArchivePage]:before, .page-icon[class
 li.jstree-leaf > a .jstree-pageicon[class*=ContactPage]:before, .page-icon[class*=ContactPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f87b";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -212,7 +211,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=ContactPage]:before, .page-icon[class
 li.jstree-leaf > a .jstree-pageicon[class*=InfoPage]:before, .page-icon[class*=InfoPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f05a";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -220,7 +219,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=InfoPage]:before, .page-icon[class*=I
 li.jstree-leaf > a .jstree-pageicon[class*=BlocksPage]:before, li.jstree-leaf > a .jstree-pageicon[class*=BlockPage]:before, .page-icon[class*=BlocksPage]:before, .page-icon[class*=BlockPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f009";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -228,7 +227,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=BlocksPage]:before, li.jstree-leaf > 
 li.jstree-leaf > a .jstree-pageicon[class*=VideoPage]:before, .page-icon[class*=VideoPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f1c8";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -236,7 +235,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=VideoPage]:before, .page-icon[class*=
 li.jstree-leaf > a .jstree-pageicon[class*=Department]:before, .page-icon[class*=Department]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f1ad";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -244,7 +243,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=Department]:before, .page-icon[class*
 li.jstree-leaf > a .jstree-pageicon[class*=DepartmentHolder]:before, .page-icon[class*=DepartmentHolder]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f277";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -252,7 +251,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=DepartmentHolder]:before, .page-icon[
 li.jstree-leaf > a .jstree-pageicon[class*=ReservationPage]:before, .page-icon[class*=ReservationPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f274";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -260,7 +259,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=ReservationPage]:before, .page-icon[c
 li.jstree-leaf > a .jstree-pageicon[class*=IFramePage]:before, .page-icon[class*=IFramePage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f247";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -268,7 +267,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=IFramePage]:before, .page-icon[class*
 li.jstree-leaf > a .jstree-pageicon[class*=NewsGridHolder]:before, .page-icon[class*=NewsGridHolder]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f0ac";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -276,7 +275,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=NewsGridHolder]:before, .page-icon[cl
 li.jstree-leaf > a .jstree-pageicon[class*=NewsGridPage]:before, .page-icon[class*=NewsGridPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f1ea";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -288,7 +287,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=NewsGridHolder], li.jstree-leaf > a .
 li.jstree-leaf > a .jstree-pageicon[class*=LifestylePage]:before, .page-icon[class*=LifestylePage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f496";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -296,7 +295,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=LifestylePage]:before, .page-icon[cla
 li.jstree-leaf > a .jstree-pageicon[class*=ProtectedPage]:before, .page-icon[class*=ProtectedPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f023";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -304,7 +303,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=ProtectedPage]:before, .page-icon[cla
 li.jstree-leaf > a .jstree-pageicon[class*=ImportedContent]:before, .page-icon[class*=ImportedContent]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f59d";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -312,7 +311,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=ImportedContent]:before, .page-icon[c
 li.jstree-leaf > a .jstree-pageicon[class*=SettingsPage]:before, .page-icon[class*=SettingsPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 900 !important;
-  content: "";
+  content: "\f013";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -320,7 +319,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=SettingsPage]:before, .page-icon[clas
 li.jstree-leaf > a .jstree-pageicon[class*=DialogPage]:before, .page-icon[class*=DialogPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f086";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -328,7 +327,7 @@ li.jstree-leaf > a .jstree-pageicon[class*=DialogPage]:before, .page-icon[class*
 li.jstree-leaf > a .jstree-pageicon[class*=HelpPage]:before, .page-icon[class*=HelpPage]:before {
   font-family: "FA 5 Free" !important;
   font-weight: 400 !important;
-  content: "";
+  content: "\f1cd";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
