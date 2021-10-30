@@ -22,8 +22,8 @@ SilverStripe\Assets\File:
 
 SilverStripe\View\Parsers\URLSegmentFilter:
   default_replacements:
-    '/&amp;/u': '-en-'
-    '/&/u': '-en-'
+    '/&amp;/u': '-et-'
+    '/&/u': '-et-'
 
 # Fix long strings in e-mails being split over multiple lines with default encoding 'quoted-printable'
 # (alternative 'base64' works OK as well, 'plain' equals no special encoding/quoting, eg plaintext which seems to work just fine)
@@ -55,6 +55,14 @@ SilverStripe\Assets\Image:
 SilverStripe\UserForms\Model\UserDefinedForm:
   defaults:
     DisableSaveSubmissions: true
+
+# Create a default cache namespace (default lifetime 1h)
+SilverStripe\Core\Injector\Injector:
+  Psr\SimpleCache\CacheInterface.appCache:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "appCache"
+      defaultLifetime: 3600
 
 # Shortcodes
 ---
