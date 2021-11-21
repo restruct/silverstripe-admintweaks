@@ -10,6 +10,10 @@ mix.options({
 //    processCssUrls: false,
 });
 
+// Generate sourcemaps in dev (not in prod)
+mix.sourceMaps(null, 'source-map');
+
+// Typical Silverstripe client-dir setup
 mix.setPublicPath('client/dist');
 
 // this keeps relative image urls in js/scss intact:

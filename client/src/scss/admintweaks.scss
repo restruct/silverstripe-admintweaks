@@ -45,6 +45,16 @@
 //  }
 //}
 
+// Fix 'Elemental' popover width
+@media (min-width: 545px) {
+  .popover-option-set > .popover {
+    max-width: 60vw;
+  }
+  .cms-container--split-mode ~ div .popover-option-set > .popover {
+    max-width: 40vw;
+  }
+}
+
 // Fix Tagfield multiple spacing
 .multiple .Select--multi .Select-value {
   margin-left: 3px;
@@ -78,6 +88,29 @@
 .grid-field.ss-gridfield-editable p.readonly {
   margin-bottom: 0;
 }
+
+//
+// Remove (faux) 'stacked' layout on Elemental blocks
+//
+.elementalarea .element-editor-editform .tab-pane > div > .form-group {
+  display: flex;
+  @media (min-width: 992px) {
+    & > .form__field-label {
+      max-width: calc(100%/6);
+    }
+  }
+
+  &.checkbox.field {
+    padding-left: calc(100%/6);
+    margin-left: -0.8rem;
+  }
+
+  .form__field-description {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
 
 //
 // Additional margin-left & .small styles for CMS formfields -> instead (v4) just $field->removeExtraClass('stacked')->setRows(15)
