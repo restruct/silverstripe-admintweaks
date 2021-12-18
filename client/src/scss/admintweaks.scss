@@ -45,6 +45,14 @@
 //  }
 //}
 
+// Make inputs (almost) black instead of 50 shades of gray
+h1, h2, h3, h4, h5,
+label,
+.field input.text, .field select, .field textarea, .form-control {
+  color: #43536d;
+  //color: black;
+}
+
 // Fix 'Elemental' popover width
 @media (min-width: 545px) {
   .popover-option-set > .popover {
@@ -55,11 +63,11 @@
   }
 }
 
-// Fix Tagfield multiple spacing
-.multiple .Select--multi .Select-value {
-  margin-left: 3px;
-  margin-top: 3px;
-}
+//// Fix Tagfield multiple spacing
+//.multiple .Select--multi .Select-value {
+//  margin-left: 3px;
+//  margin-top: 3px;
+//}
 
 // Uploadfield thumbnails with transparent bg
 .uploadfield-item.uploadfield-item--image { // .uploadfield-item--missing
@@ -69,7 +77,8 @@
     height: 60px;
     position: absolute;
     //background-color: white;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 8 8" fill="%23dddddd"><rect width="4" height="4" x="0" y="0" /><rect width="4" height="4" x="4" y="4" /></svg>');
+    background-color: #999999;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 8 8" fill="%23aaaaaa"><rect width="4" height="4" x="0" y="0" /><rect width="4" height="4" x="4" y="4" /></svg>');
   }
   .uploadfield-item__thumbnail {
     z-index: 1;
@@ -83,31 +92,45 @@
 }
 .grid-field .ss-gridfield-item img {
   margin-top: -1.2rem;
-  margin-bottom: -1.15rem;
+  margin-bottom: -1.2rem;
+
+  // enlarge 4 times on hover
+  &.hover-zoom {
+    transition: transform .2s;
+    transform-origin: left;
+    &:hover {
+      transform: scale(4);
+      border-radius: 1px;
+      border: 1px solid white;
+    }
+  }
 }
 .grid-field.ss-gridfield-editable p.readonly {
   margin-bottom: 0;
 }
 
 //
-// Remove (faux) 'stacked' layout on Elemental blocks
+// Remove (faux) 'stacked' layout on Elemental blocks (:first-child -> just for 'Main' tab/content)
 //
-.elementalarea .element-editor-editform .tab-pane > div > .form-group {
-  display: flex;
+.elementalarea .element-editor-editform .tab-pane:first-child > div > .form-group {
   @media (min-width: 992px) {
+    display: flex;
     & > .form__field-label {
       max-width: calc(100%/6);
     }
-  }
 
-  &.checkbox.field {
-    padding-left: calc(100%/6);
-    margin-left: -0.8rem;
-  }
+    &.checkbox.field, &.readonly.pad-left {
+      padding-left: calc(100% / 6);
+      margin-left: -0.8rem;
+    }
+    &.readonly.pad-left {
+      margin-left: 0.8rem;
+    }
 
-  .form__field-description {
-    margin-top: 0;
-    margin-bottom: 0;
+    .form__field-description {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
   }
 }
 

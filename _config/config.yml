@@ -13,10 +13,10 @@ SilverStripe\Admin\LeftAndMain:
 SilverStripe\Assets\File:
   # apply_restrictions_to_admin: false
   # NOTE: need to add these extensions to assets/.htaccess as well, else they can be uploaded but not downloaded
-  allowed_extensions: 
+  allowed_extensions:
     - svg
     - xlsm
-  
+
 #SilverStripe\Forms\HTMLEditor\HTMLEditorField:
 #  insert_width: 1000
 
@@ -55,14 +55,6 @@ SilverStripe\Assets\Image:
 SilverStripe\UserForms\Model\UserDefinedForm:
   defaults:
     DisableSaveSubmissions: true
-
-# Create a default cache namespace (default lifetime 1h)
-SilverStripe\Core\Injector\Injector:
-  Psr\SimpleCache\CacheInterface.appCache:
-    factory: SilverStripe\Core\Cache\CacheFactory
-    constructor:
-      namespace: "appCache"
-      defaultLifetime: 3600
 
 # Shortcodes
 ---

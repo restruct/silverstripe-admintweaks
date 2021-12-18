@@ -1,35 +1,42 @@
 {
-    "name": "restruct/silverstripe-admintweaks",
-    "description": "Various admin tweaks & enhancements",
-    "type": "silverstripe-vendormodule",
-    "keywords": [
-        "silverstripe"
-    ],
-    "license": "MIT",
-    "authors": [ { "name": "Restruct", "email": "dev@restruct.nl", "homepage": "https://restruct.nl" } ],
-    "require": {
-        "silverstripe/vendor-plugin": "^1.0",
-        "silverstripe/framework": "^4"
-    },
-    "replace": {
-        "micschk/silverstripe-cmstweaks": "1.*",
-        "restruct/silverstripe-cmstweaks": "*"
-    },
-    "suggest": {
-        "axllent/silverstripe-cms-tweaks": "Some complemental tweaks by Axllent"
-    },
-    "autoload": {
-        "psr-4": {
-            "Restruct\\Silverstripe\\AdminTweaks\\": "src/"
-        }
-    },
-    "extra": {
-        "installer-name": "admintweaks",
-        "expose": [
-            "client/imgs",
-            "client/fonts",
-            "client/dist",
-            "client/js"
-        ]
+  "name": "restruct/silverstripe-admintweaks",
+  "description": "Various admin tweaks & enhancements",
+  "type": "silverstripe-vendormodule",
+  "keywords": [
+    "silverstripe"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Restruct",
+      "email": "dev@restruct.nl",
+      "homepage": "https://restruct.nl"
     }
+  ],
+  "require": {
+    "silverstripe/vendor-plugin": "^1.0",
+    "silverstripe/framework": "^4",
+    "guzzlehttp/guzzle": "^7.0"
+  },
+  "replace": {
+    "micschk/silverstripe-cmstweaks": "1.*",
+    "restruct/silverstripe-cmstweaks": "*"
+  },
+  "suggest": {
+    "axllent/silverstripe-cms-tweaks": "Some complemental tweaks by Axllent"
+  },
+  "autoload": {
+    "psr-4": {
+      "Restruct\\Silverstripe\\AdminTweaks\\": "src/"
+    }
+  },
+  "extra": {
+    "installer-name": "admintweaks",
+    "expose": [
+      "client/imgs",
+      "client/fonts",
+      "client/dist",
+      "client/js"
+    ]
+  }
 }

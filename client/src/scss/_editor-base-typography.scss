@@ -1,0 +1,101 @@
+$spacer: 1rem !default;
+$img-margin-side: 1.5 * $spacer !default;
+$img-margin-bottom: .5 * $spacer !default;
+$img-margin-top: .3 * $spacer !default;
+
+@mixin editor-wysiwym-layout {
+  background: #f3f3fa;
+  padding: 10px 20px 20px;
+
+  & > h1,
+  & > h2,
+  & > h3,
+  & > h4,
+  & > h5,
+  & > h6,
+  & > p,
+  & > ul,
+  & > ol,
+  & > pre,
+  & > blockquote {
+    background: #fff;
+    border: 4px solid #fff;
+  }
+}
+
+@mixin editor-base-typography-styles {
+
+  p img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  ol, ul {
+    padding-left: 1.4rem;
+  }
+
+  p.hidden {
+    display: none;
+  }
+
+  img, .articleText img, .articleText picture {
+    &.right {
+      float:right;
+      margin: $img-margin-top 0 $img-margin-bottom $img-margin-side;
+    }
+    &.left {
+      float:left;
+      margin: $img-margin-top $img-margin-side $img-margin-bottom 0;
+      max-width: 50%;
+
+      //@media (max-width: $screen-xs-max) {
+      //  width: 100%;
+      //  max-width: none;
+      //  float: none;
+      //}
+    }
+    &.leftAlone {
+      margin: 0 $img-margin-side $img-margin-bottom 0;
+      float: none;
+      display: block;
+      clear: both;
+    }
+    &.center {
+      display:block;
+      margin: $img-margin-top auto $img-margin-bottom auto !important;
+      clear: both;
+    }
+  }
+
+  .captionImage {
+    width: 100%;
+    &.left {
+      float: left;
+      margin: $img-margin-top $img-margin-side $img-margin-bottom 0;
+    }
+    &.right{
+      float:right;
+      margin: $img-margin-top 0 $img-margin-bottom $img-margin-side;
+    }
+    &.leftAlone{
+      float:none;
+      margin: $img-margin-top $img-margin-side $img-margin-bottom 0px;
+    }
+    &.center{
+      margin: $img-margin-top auto $img-margin-bottom;
+    }
+    .caption {
+      font-style: italic;
+    }
+  }
+
+  blockquote, body.mce-content-body > blockquote {
+    margin: 2rem 0.35rem;
+    border-left: 4px solid var(--accentcolor);
+    padding-left: 1rem;
+    strong {
+      color: var(--accentcolor);
+    }
+  }
+
+}

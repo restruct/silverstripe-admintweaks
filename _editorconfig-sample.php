@@ -28,6 +28,9 @@ $editor->insertButtonsAfter('indent', 'blockquote');
 $editor->insertButtonsAfter('formatselect', 'styleselect');
 //$editor->setButtonsForLine(1, 'image', 'media', 'shortcodable','bold, italic, removeformat, bullist, numlist, outdent, indent, blockquote, hr, visualchars');
 //$editor->removeButtons('styleselect');
+
+//$fontreset = ['font-weight' => 'normal', 'font-family' => '"Helvetica Neue",Helvetica,Arial,sans-serif', 'font-size' => '14px'];
+$fontreset = [];
 $editor->setOption('style_formats', [
 //    Define the styles that will be available in TinyMCE's dropdown style menu
 //    * Use 'selector' to specify which elements a style can be applied to
@@ -61,22 +64,43 @@ $editor->setOption('style_formats', [
 //        ]
 //    ],
     [
-        'title' => 'Paragraphs',
+        'title' => 'Paragrafen',
         'items' => [
             [
                 'title' => 'Intro paragraaf (groter)',
                 'selector' => 'p',
-                'classes' => 'intro',
+                'classes' => 'lead',
+                'styles' => $fontreset,
             ],
             [
                 'title' => 'Notitie (cosmetisch verborgen)',
                 'selector' => 'p',
                 'classes' => 'hidden',
+                'styles' => $fontreset,
             ],
             [
-                'title' => 'Notificatie (rood)',
+                'title' => 'Notification (info/blue)',
+                'attributes' => array('class'=>'alert alert-info'),
                 'selector' => 'p',
-                'classes' => 'alert alert-danger',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Notification (success/green)',
+                'attributes' => array('class'=>'alert alert-success'),
+                'selector' => 'p',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Notification (warning/yellow)',
+                'attributes' => array('class'=>'alert alert-warning'),
+                'selector' => 'p',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Notification (danger/red)',
+                'attributes' => array('class'=>'alert alert-danger'),
+                'selector' => 'p',
+                'styles' => $fontreset,
             ],
         ],
     ],
@@ -99,24 +123,40 @@ $editor->setOption('style_formats', [
         'title' => 'Beelden',
         'items' => [
             [
-                'title' => 'Rechts met tekst eromheen',
-                'selector' => 'img,div',
-                'classes' => 'right',
-            ],
-            [
-                'title' => 'Links met tekst eromheen',
+                'title' => 'Links',
                 'selector' => 'img,div',
                 'classes' => 'left',
+                'styles' => $fontreset,
             ],
             [
                 'title' => 'Gecentreerd',
                 'selector' => 'img,div',
                 'classes' => 'center',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Rechts',
+                'selector' => 'img,div',
+                'classes' => 'right',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Links zonder tekst eromheen',
+                'selector' => 'img,div',
+                'classes' => 'leftAlone',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Rechts zonder tekst eromheen',
+                'selector' => 'img,div',
+                'classes' => 'rightAlone',
+                'styles' => $fontreset,
             ],
             [
                 'title' => 'Volledige breedte',
                 'selector' => 'img,div',
                 'classes' => 'fullwidth',
+                'styles' => $fontreset,
             ],
         ],
     ],
