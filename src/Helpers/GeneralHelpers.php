@@ -68,13 +68,15 @@ class GeneralHelpers
         $File->ParentID = $Folder->ID;
         $File->setFilename($fileRelativePath);
 
-//        if($write) {
+        // This is needed to build the thumbnails in asset manager (doesnt seem necessary?)
+        AssetAdmin::create()->generateThumbnails($File);
+
+        if($write) {
             $File->write();
-//        }
-        // This is needed to build the thumbnails in asset manager
-//        if($File->getClassName()==Image::class) {
-            AssetAdmin::create()->generateThumbnails($File);
-//        }
+        }
+        if($publish) {
+            $File->publishRecursive();
+        }
 
         return $File;
     }

@@ -32,7 +32,7 @@ Symbiote\QueuedJobs\Jobs\CleanupJob:
 SilverStripe\Core\Injector\Injector:
   Symbiote\QueuedJobs\Services\QueuedJobService:
     properties:
-      queueRunner: %$DoormanRunner
+      queueRunner: '%$DoormanRunner'
       defaultJobs:
 
         # This key is used as the title for error logs and alert emails
