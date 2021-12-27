@@ -4,15 +4,20 @@ namespace Restruct\Silverstripe\AdminTweaks\Jobs;
 
 use Exception;
 use SilverStripe\Core\ClassInfo;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
-use Symbiote\QueuedJobs\Services\AbstractQueuedJobNonexist;
+use SilverStripe\ORM\FieldType\DBDatetime;
+use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
+use Symbiote\QueuedJobs\Services\QueuedJob;
+use Symbiote\QueuedJobs\Services\QueuedJobService;
+use VacancyPortal\VacancyPortalController;
 
 //use SilverStripe\GraphQL\TypeCreator;
 //if (!class_exists(TypeCreator::class)) {
 //    return;
 //}
 
-if(!ClassInfo::exists(AbstractQueuedJobNonexist::class)) {
+if(!ClassInfo::exists(AbstractQueuedJob::class)) {
     return;
 }
 
@@ -21,20 +26,37 @@ if(!ClassInfo::exists(AbstractQueuedJobNonexist::class)) {
  * Calls the $method argument on the $object argument, optionally with $arguments
  */
 class ScheduledMethodCall
-    extends AbstractQueuedJobNonexist
+    extends AbstractQueuedJob
 {
+    /**
+     * Static method to schedule a ScheduledMethodCall
+     *
+     * @params {@see __construct()}
+     * @param int|string $when to schedule
+     *
+     * @return int ID of created \Symbiote\QueuedJobs\DataObjects\QueuedJobDescriptor
+     */
+    public static function schedule($ObjectOrClass, string $method, array $args = [], array $options = [], $when = 'now')
+    {
+        return QueuedJobService::singleton()->queueJob(
+            Injector::inst()->create(ScheduledMethodCall::class, $ObjectOrClass, $method, $args, $options),
+            DBDatetime::create()->setValue(strtotime($when))->Rfc2822()
+        );
+    }
+
     /**
      * ScheduledMethodCall constructor
      * @param DataObject|object|string $ObjectOrClass to call method on (if object, will be instantiated as singleton)
      * @param string $method method to call each time this job gets processed
-     * @param null $description of this job
-     * @param null|int $when timestamp of when to execute this job (eg strtotime('tomorrow 8:00')
-     * @param null|array $arguments
-     * @param null|string $jobType
-     * @param null|int $totalSteps
-     * @param null|bool $generateRandomSignature
+     * @param array $args arguments for the called method
+     * @param null $options [
+     *      'description' => '[ no description ]',
+     *      'jobType' => QueuedJob::QUEUED,
+     *      'totalSteps' => 1,
+     *      'ignoreIdentical' => false // add even if an identical job is already queued
+     * ]
      */
-    public function __construct($ObjectOrClass, $method, $description = null, $arguments=null, $jobType=null, $totalSteps=null, $generateRandomSignature=null)
+    public function __construct($ObjectOrClass = null, $method = null, $args = [], $options = [])
     {
         // doesn't do anything really, just prevents IDE warning
         parent::__construct();
@@ -48,84 +70,95 @@ class ScheduledMethodCall
             } else {
                 $this->objectClass = $ObjectOrClass;
             }
+
             $this->method = $method;
-            $this->description = ($description ?: '[ no description ]');
-            $this->arguments = $arguments ?: [];
-            $this->jobType = $jobType ?: \Symbiote\QueuedJobs\Services\QueuedJob::QUEUED;
-            $this->totalSteps = $totalSteps ?: 1;
-            $this->appendSig = $generateRandomSignature ? $this->randomSignature() : '';
+            $this->arguments = $args;
+
+            $mergedOptions = array_merge(
+                [
+                    'description' => '[ no description ]',
+                    'jobType' => QueuedJob::QUEUED,
+                    'totalSteps' => 1,
+                    'ignoreIdentical' => false
+                ],
+                $options
+            );
+            $this->description = $mergedOptions['description'];
+            $this->jobType = $mergedOptions['jobType'];
+            $this->totalSteps = $mergedOptions['totalSteps'];
+            $this->appendSig = $mergedOptions['ignoreIdentical'] ? $this->randomSignature() : '';
+
+            $this->addMessage('Job will call ' . $this->getContextDescription());
         }
     }
 
-    /**
-     * Static method to schedule ScheduledMethodCall
-     *
-     * @param DataObject|object|string $ObjectOrClass to call method on (if object, will be instantiated as singleton)
-     * @param string $method method to call each time this job gets processed
-     * @param null $description of this job
-     * @param null|int $when timestamp of when to execute this job (eg strtotime('tomorrow 8:00')
-     * @param null|array $arguments
-     * @param null|string $jobType
-     * @param null|int $totalSteps
-     * @param null|bool $generateRandomSignature
-     *
-     * @return int ID of created \Symbiote\QueuedJobs\DataObjects\QueuedJobDescriptor
-     */
-    public static function schedule($ObjectOrClass, $method, $description = null, $when = null, $arguments=null, $jobType=null, $totalSteps=null, $generateRandomSignature=null)
+    private function getContextDescription()
     {
-        // using full namespaced classnames because qjobs module may not be installed (so we cannot use imports)
-        return singleton(\Symbiote\QueuedJobs\Services\QueuedJobService::class)->queueJob(
-            new ScheduledMethodCall($ObjectOrClass, $method, $description, $arguments, $jobType, $totalSteps, $generateRandomSignature),
-            $when ? date('Y-m-d H:i:s', $when) : null
+        return sprintf(
+            "method %s on %s (%s)",
+            $this->method,
+            $this->objectClass,
+            $this->objectID ? "ID:{$this->objectID}" : 'statically'
         );
-    }
-
-    /**
-     * @return object|DataObject
-     */
-    public function getObjectToCallMethodOn()
-    {
-        if($this->objectID){
-            return DataObject::get_by_id($this->objectClass, $this->objectID);
-        }
-        return singleton($this->objectClass);
     }
 
     /**
      * @return string
      */
-    public function getTitle() {
+    public function getTitle()
+    {
         return $this->description;
     }
 
     /**
      * Send to the 'immediate' queue (handling not set up but may be later)
      */
-    public function getJobType() {
+    public function getJobType()
+    {
         return $this->jobType;
     }
 
-    public function getSignature(){
+    public function getSignature()
+    {
         return parent::getSignature() . ($this->appendSig ?: '');
     }
 
-    public function process() {
-        $this->currentStep = (int) $this->currentStep +1;
-        $object = $this->getObjectToCallMethodOn();
-        if ($object) {
-            $object->scheduled_job_instance = $this;
-            try {
-                $result = call_user_func_array([$object, $this->method], $this->arguments);
-                if($result) $this->addMessage(print_r($result, true));
-            } catch(Exception $e){
-                $this->addMessage(sprintf("%s::%s ERROR: %s (%s)", get_class($this->object), $this->method, $e->getCode(), $e->getMessage()));
+    public function process()
+    {
+        $this->currentStep++;
+
+        $objectOrClassName = $this->objectClass;
+        if($this->objectID){
+            $objectOrClassName = DataObject::get_by_id($this->objectClass, $this->objectID);
+            $objectOrClassName->scheduled_job_instance = $this;
+        }
+
+        try {
+            $result = call_user_func_array([$objectOrClassName, $this->method], $this->arguments);
+            if($result) {
+                $this->addMessage($result);
+            } else {
+                $this->addMessage(sprintf(
+                    "%s::%s call returned no result, may indicate that method doesnt exist",
+                    $this->objectClass,
+                    $this->method
+                ), 'WARNING');
             }
-            $this->addMessage(sprintf("%s::%s done", get_class($this->object), $this->method));
-        } else {
-            $this->addMessage(sprintf("%s::%s ERROR: NO OBJECT", $this->objectClass, $this->method));
+
+        } catch(Exception $e){
+            $this->addMessage(sprintf(
+                "%s::%s ERROR: %s (%s)",
+                $this->objectClass,
+                $this->method,
+                $e->getCode(),
+                $e->getMessage()
+            ));
             $this->jobStatus = self::STATUS_BROKEN;
             return;
         }
+
+//        $this->addMessage('Called: ' . $this->getContextDescription());
+
         if($this->currentStep >= $this->totalSteps){
             $this->isComplete = true;
         }

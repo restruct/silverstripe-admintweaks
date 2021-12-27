@@ -8,6 +8,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
     use SilverStripe\CMS\Model\SiteTreeExtension;
     use SilverStripe\Control\Controller;
     use SilverStripe\Control\Director;
+    use SilverStripe\Core\Extension;
     use SilverStripe\ORM\ArrayList;
     use SilverStripe\ORM\DataObject;
     use SilverStripe\Versioned\Versioned;
@@ -16,7 +17,8 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
     use SilverStripe\View\SSViewer;
     use SilverStripe\View\ThemeResourceLoader;
 
-    class PageHelpersExtension extends SiteTreeExtension
+    class PageHelpersExtension
+        extends Extension
     {
 
         public function BreadCrumbPath($append = null)
@@ -40,6 +42,16 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             return preg_replace("/[^a-zA-Z0-9\-\.\/\?\&\=]+/", "", $_SERVER['REQUEST_URI']);
         }
 
+        public function StaleCacheKey($delayInSeconds)
+        {
+            return (int)(time() / $delayInSeconds); // Returns a new number every five minutes
+        }
+
+        function RandomNumber($max = 4)
+        {
+            return random_int(1, $max);
+        }
+
         ///// GETTERS:
 
         public function PageByClass($ClassName = 'Page')
@@ -59,7 +71,8 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             ])->first();
         }
 
-        ////// GET ENVIRONMENT from templates
+        ////// GET ENVIRONMENT from template files
+
         public function IsDev()
         {
             return Director::isDev();
