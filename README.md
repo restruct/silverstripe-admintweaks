@@ -6,5 +6,3 @@ Currently it has been partially updated to SS4, most stuff is deactivated & will
 
 Provides a global $ThemeDir replacement, eg:
 `{$themeDirResourceURL('my-theme')}/videos/vid-{$RandomNumber}.mp4`
-
-@TODO: implement https://dev.to/andersbjorkland/query-me-some-google-books-api-1lic
