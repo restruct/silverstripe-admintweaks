@@ -1,0 +1,11 @@
+nl_NL:
+  # nl_NL specificity needed as SilverStripe\SiteConfig\SiteConfigLeftAndMain.MENUTITLE is defined that specific in siteconfig/lang/nl_NL.yml
+  GroupedCmsMenuLabel:
+    Advanced_Config: 'Geavanceerd'
+  SilverStripe\SiteConfig\SiteConfigLeftAndMain:
+    MENUTITLE: Site instellingen
+  SilverStripe\Admin\SecurityAdmin:
+    MENUTITLE: Toegang
+    Users: Accounts
+  Restruct\Silverstripe\AdminTweaks\Extensions:
+    ContactPage: Contactpagina

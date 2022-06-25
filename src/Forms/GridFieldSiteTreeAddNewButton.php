@@ -5,9 +5,13 @@ namespace Restruct\Silverstripe\AdminTweaks\Forms;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Lumberjack\Forms\GridFieldSiteTreeAddNewButton as LumberjackGridFieldSiteTreeAddNewButton;
+if (!class_exists(LumberjackGridFieldSiteTreeAddNewButton::class)) {
+    return;
+}
 
 class GridFieldSiteTreeAddNewButton
-    extends \SilverStripe\Lumberjack\Forms\GridFieldSiteTreeAddNewButton
+    extends LumberjackGridFieldSiteTreeAddNewButton
 {
     /**
      * Overriding classnames and titles allowed for a given parent object

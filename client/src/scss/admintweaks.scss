@@ -1,8 +1,6 @@
 // @TODO:
 // - Checkboxes
-// - Margin-left & small
 // - ModelAdmin advanced search
-// - Uploadfield background (transparnet imgs)
 // - etc (check ss3-tweaks.scss)
 
 
@@ -45,6 +43,7 @@
 //  }
 //}
 
+
 // Make inputs (almost) black instead of 50 shades of gray
 h1, h2, h3, h4, h5,
 label,
@@ -53,21 +52,13 @@ label,
   //color: black;
 }
 
-// Fix 'Elemental' popover width
-@media (min-width: 545px) {
-  .popover-option-set > .popover {
-    max-width: 60vw;
-  }
-  .cms-container--split-mode ~ div .popover-option-set > .popover {
-    max-width: 40vw;
-  }
-}
 
 //// Fix Tagfield multiple spacing
 //.multiple .Select--multi .Select-value {
 //  margin-left: 3px;
 //  margin-top: 3px;
 //}
+
 
 // Uploadfield thumbnails with transparent bg
 .uploadfield-item.uploadfield-item--image { // .uploadfield-item--missing
@@ -84,6 +75,7 @@ label,
     z-index: 1;
   }
 }
+
 
 // Fix editablecolumns enlarging GridField rows
 .grid-field.ss-gridfield-editable input.editable-column-field {
@@ -109,9 +101,8 @@ label,
   margin-bottom: 0;
 }
 
-//
+
 // Remove (faux) 'stacked' layout on Elemental blocks (:first-child -> just for 'Main' tab/content)
-//
 .elementalarea .element-editor-editform .tab-pane:first-child > div > .form-group {
   @media (min-width: 992px) {
     display: flex;
@@ -134,16 +125,15 @@ label,
   }
 }
 
-
-//
-// Additional margin-left & .small styles for CMS formfields -> instead (v4) just $field->removeExtraClass('stacked')->setRows(15)
-//
-
-//// FocusPoint module fixes & tweaks -> merged into module
-//#Form_fileSelectForm .focuspoint-picker {
-//  filter: grayscale(100%);
-//  opacity: .6;
-//}
+// Fix 'Elemental' popover width
+@media (min-width: 545px) {
+  .popover-option-set > .popover {
+    max-width: 60vw;
+  }
+  .cms-container--split-mode ~ div .popover-option-set > .popover {
+    max-width: 40vw;
+  }
+}
 
 //
 // PAGE ICONS
@@ -182,7 +172,7 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
 
   //&[class*="SiteTree"]:before { @include fa_page_icon("\f850"); }
   &[class*="Page"]:before, &[class*="SiteTree"]:before { @include fa_page_icon("\f15b",'far'); }
-  &[class*="HomePage"]:before { @include fa_page_icon("\f015"); }
+  &[class*="HomePage"]:before, &.homepage:before { @include fa_page_icon("\f015"); }
   &[class*="RedirectorPage"]:before { @include fa_page_icon("\f5eb"); }
   &[class*="VirtualPage"]:before { @include fa_page_icon("\f24d",'far'); }
   &[class*="UserDefinedForm"]:before { @include fa_page_icon("\f46d"); }
@@ -217,4 +207,105 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
   &[class*="SettingsPage"]:before { @include fa_page_icon("\f013"); }
   &[class*="DialogPage"]:before { @include fa_page_icon("\f086",'far'); }
   &[class*="HelpPage"]:before { @include fa_page_icon("\f1cd",'far'); }
+}
+
+
+//
+// Useful stuff from Bigfork
+//
+
+// Hide page types that can't be created
+#Form_AddForm_PageType .disabled {
+  display: none !important;
+}
+
+// Hide admin sections that clients rarely use
+#Menu-SilverStripe-CampaignAdmin-CampaignAdmin,
+#Menu-SilverStripe-Reports-ReportAdmin {
+  display: none !important;
+}
+
+// Fixes for grouped CMS menu
+.cms-menu__list {
+  .child-flyout-indicator {
+    display: none !important;
+  }
+  li.children {
+    & > a > .text {
+      margin-right: 34px;
+    }
+    &.current > a:hover,
+    &.opened a:hover {
+      background-color: #d8e4eb;
+    }
+    a .toggle-children {
+      inset: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+
+      .toggle-children-icon {
+        display: none;
+      }
+      &:hover {
+        background: rgba(85, 137, 167, 0.15);
+      }
+      &:after {
+        font-family: silverstripe !important;
+        font-style: normal !important;
+        font-weight: 400 !important;
+        font-variant: normal !important;
+        text-transform: none !important;
+        speak: none;
+        line-height: 26px;
+        -webkit-font-smoothing: antialiased;
+        content: '(';
+        position: absolute;
+        top: 50%;
+        right: 8px;
+        width: 26px;
+        height: 26px;
+        border-radius: 2px;
+        margin-top: -1px;
+        padding-top: 0;
+        font-size: 17px;
+        text-align: center;
+        line-height: 26px;
+        transform: translateY(-50%);
+      }
+      &.opened:after {
+        content: '*';
+      }
+    }
+
+    ul.collapsed-flyout {
+      margin-top: -52px;
+    }
+  }
+
+  &.collapsed .opened {
+    .child-flyout-indicator {
+      display: none !important;
+    }
+    ul.collapsed-flyout li.clone {
+      display: none !important;
+    }
+    ul.collapsed-flyout li a {
+      padding-right: 8px;
+      padding-left: 8px;
+    }
+  }
+
+  .menu__icon {
+    left: 13px;
+  }
+  span.text {
+    margin-left: 23px;
+  }
+}
+
+// ?
+fieldset.grid.grid-field.ss-gridfield.field {
+  margin-bottom: 2em !important;
 }

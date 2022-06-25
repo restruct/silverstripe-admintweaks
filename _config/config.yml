@@ -1,40 +1,40 @@
 ---
-name: admintweaks
+name: admintweaks-config
 ---
-SilverStripe\Admin\LeftAndMain:
-  extra_requirements_css:
-    - 'restruct/silverstripe-admintweaks:client/dist/css/admintweaks.css'
-#    - 'restruct/silverstripe-admintweaks:client/fonts/fontawesome-free-5.15.3-web/css/all.css'
-  extra_requirements_javascript:
-#    - framework/thirdparty/jquery-ui/jquery-ui.min.js
-    - 'restruct/silverstripe-admintweaks:client/dist/js/admintweaks.js'
-#    - 'restruct/silverstripe-admintweaks:client/dist/js/webpacktest.js'
+# Make UserForms NOT save form data by default
+SilverStripe\UserForms\Model\UserDefinedForm:
+  defaults:
+    DisableSaveSubmissions: true
 
-SilverStripe\Assets\File:
-  # apply_restrictions_to_admin: false
-  # NOTE: need to add these extensions to assets/.htaccess as well, else they can be uploaded but not downloaded
-  allowed_extensions:
-    - svg
-    - xlsm
-
-#SilverStripe\Forms\HTMLEditor\HTMLEditorField:
-#  insert_width: 1000
+# Make Session cookies only use secure connection
+SilverStripe\Control\Session:
+  cookie_secure: true
 
 SilverStripe\View\Parsers\URLSegmentFilter:
   default_replacements:
     '/&amp;/u': '-et-'
     '/&/u': '-et-'
 
-# Fix long strings in e-mails being split over multiple lines with default encoding 'quoted-printable'
-# (alternative 'base64' works OK as well, 'plain' equals no special encoding/quoting, eg plaintext which seems to work just fine)
-# NOTE: 'plain' is not valid, the only valid type are: Content-Transfer-Encoding := "BASE64" / "QUOTED-PRINTABLE" / "8BIT"   / "7BIT" / "BINARY"
-SilverStripe\Control\Email\Mailer:
-  default_message_encoding: 'base64'
+# Activate GoogleSitemap (& set some defaults)
+Wilr\GoogleSitemaps\GoogleSitemap:
+  enabled: true
+  objects_per_sitemap: 1000
+  google_notification_enabled: true
+  bing_notification_enabled: true
+  use_show_in_search: true
+
 
 # Various Extensions
+---
+name: admintweaks-extensions
+---
 SilverStripe\CMS\Model\SiteTree:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\PageHelpersExtension
+
+SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension
 
 #SilverStripe\Forms\FormField:
 #  extensions:
@@ -44,21 +44,10 @@ SilverStripe\CMS\Model\SiteTree:
 #  extensions:
 #    - DBStringExtension
 
-#
-# Alias/workaround some legacy/temporary missing Image Manipulations
-#
-SilverStripe\Assets\Image:
-  extensions:
-    - Restruct\Silverstripe\AdminTweaks\Extensions\Image\LegacyManipulationsExtension
-
-# Make UserForms NOT save form data by default
-SilverStripe\UserForms\Model\UserDefinedForm:
-  defaults:
-    DisableSaveSubmissions: true
 
 # Shortcodes
 ---
-name: admintweaks_shortcodables
+name: admintweaks-shortcodables
 Only:
   classexists: Shortcodable\Shortcodable
 ---
@@ -66,15 +55,4 @@ Shortcodable\Shortcodable:
   shortcodable_classes:
     - Restruct\Silverstripe\AdminTweaks\Shortcodes\CurrentYearShortcode
     - Restruct\Silverstripe\AdminTweaks\Shortcodes\FeaturedImageShortcode
----
 
-
-# Legacy: DynamicCache helper (cachebuster)
-#---
-#name: dyncasheext
-#Only:
-#  classexists: DynamicCache
-#---
-#DynamicCache:
-#  extensions:
-#    - BetterNavDynCacheExtension

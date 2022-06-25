@@ -1,0 +1,27 @@
+---
+name: admintweaks-leftandmain
+---
+SilverStripe\Admin\LeftAndMain:
+  extra_requirements_css:
+    - 'restruct/silverstripe-admintweaks:client/dist/css/admintweaks.css'
+  #    - 'restruct/silverstripe-admintweaks:client/fonts/fontawesome-free-5.15.3-web/css/all.css'
+  extra_requirements_javascript:
+    - 'restruct/silverstripe-admintweaks:client/dist/js/admintweaks.js'
+
+
+# Group some items in the admin menu under 'Advanced' (see: https://github.com/symbiote/silverstripe-grouped-cms-menu)
+---
+Name: admintweaks-menugroups
+Only:
+  moduleexists: 'symbiote/silverstripe-grouped-cms-menu'
+---
+SilverStripe\Admin\LeftAndMain:
+  menu_groups:
+    Advanced Config:
+      icon: 'cog'
+      children:
+        - SilverStripe-RedirectedURLs-Admin-RedirectedURLAdmin
+        - SilverStripe-VersionedAdmin-ArchiveAdmin
+        - Symbiote-QueuedJobs-Controllers-QueuedJobsAdmin
+        - SilverStripe-Subsites-Admin-SubsiteAdmin
+        - SilverStripe-SiteConfig-SiteConfigLeftAndMain

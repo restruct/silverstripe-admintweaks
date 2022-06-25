@@ -1,0 +1,82 @@
+# Fix long strings in e-mails being split over multiple lines with default encoding 'quoted-printable'
+# (alternative 'base64' works OK as well, 'plain' equals no special encoding/quoting, eg plaintext which seems to work just fine)
+# NOTE: 'plain' is not valid, the only valid type are: Content-Transfer-Encoding := "BASE64" / "QUOTED-PRINTABLE" / "8BIT"   / "7BIT" / "BINARY"
+SilverStripe\Control\Email\Mailer:
+  default_message_encoding: 'base64'
+
+
+# Email config: system email sender
+---
+Name: admintweaks-emailconfig
+After:
+  - '#emailconfig'
+Only:
+  envvarset:
+    - APP_SYSTEM_EMAIL_SENDER
+    - APP_SYSTEM_EMAIL_ADDRESS
+---
+SilverStripe\Control\Email\Email:
+#  admin_email: ''
+  admin_email:
+    '`APP_SYSTEM_EMAIL_ADDRESS`': '`APP_SYSTEM_EMAIL_SENDER`'
+
+
+# SMTP mailer config (define `APP_SMTP_USERNAME` etc in .env)
+---
+Name: admintweaks-smtp-email-transport
+Only:
+  envvarset:
+    - APP_SMTP_HOST
+    - APP_SMTP_PORT
+    - APP_SMTP_ENCRYPTION
+    - APP_SMTP_USERNAME
+    - APP_SMTP_PASSWORD
+---
+SilverStripe\Core\Injector\Injector:
+  Swift_Transport:
+    # WORKING: php mail, default SS4 but to be deprecated in SwiftMailer 6
+#    class: Swift_MailTransport
+    # NOT WORKING on live: Sendmail binary
+#    class: Swift_SendmailTransport
+    # SMTP transport:
+    class: Swift_SmtpTransport
+    properties:
+      Host: '`APP_SMTP_HOST`'
+      # Mailgun servers listen on ports 25, 465 (SSL/TLS), 587 (STARTTLS), and 2525
+      Port: '`APP_SMTP_PORT`'
+      # NOTE: SwiftMail 'ssl' => SMTP over SSL/TLS / 'tls' => STARTTLS
+      Encryption: '`APP_SMTP_ENCRYPTION`'
+    calls:
+      Username: [ setUsername, ['`APP_SMTP_USERNAME`'] ]
+      Password: [ setPassword, ['`APP_SMTP_PASSWORD`'] ]
+      AuthMode: [ setAuthMode, ['login'] ]
+
+
+# Add email error handler (if no Sentry etc)
+---
+Name: admintweaks-error-email-logger
+Only:
+  envvarset:
+    - APP_LOG_MAIL_RECIPIENT
+    - APP_LOG_MAIL_SUBJECT
+    - APP_LOG_MAIL_SENDER
+    - APP_LOG_MAIL_LEVEL
+---
+SilverStripe\Core\Injector\Injector:
+  Psr\Log\LoggerInterface:
+    calls:
+      MailHandler: [ pushHandler, [ '%$MailHandler' ] ]
+  MailHandler:
+    class: Monolog\Handler\NativeMailerHandler
+    constructor:
+#      - dev@[UNCONFIGURED].nl
+      - '`APP_LOG_MAIL_RECIPIENT`'
+#      - Error on [UNCONFIGURED]
+      - '`APP_LOG_MAIL_SUBJECT`'
+#      - noreply-logger@[UNCONFIGURED].nl
+      - '`APP_LOG_MAIL_SENDER`'
+      - error # minimum logging level at which this handler will be triggered: info / warning / error / ...
+      - '`APP_LOG_MAIL_LEVEL`'
+    properties:
+      ContentType: text/html
+      Formatter: '%$SilverStripe\Logging\DetailedErrorFormatter'

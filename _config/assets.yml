@@ -1,0 +1,36 @@
+---
+Name: admintweaks-assets
+---
+SilverStripe\Core\Injector\Injector:
+#  Intervention\Image\ImageManager:
+#    constructor:
+#      - { driver: imagick }
+  SilverStripe\Assets\Image_Backend:
+    properties:
+      Quality: 90
+
+
+# Enable WEBP images if module is installed
+---
+Name: admintweaks-assets-webp
+Only:
+  moduleexists: 'webmen/silverstripe-webp-images'
+---
+SilverStripe\Core\Injector\Injector:
+  TheWebmen\WebpImages\Assets\WebpGenerator:
+    properties:
+      enabled: true
+      quality: 80
+
+
+# Checks if file contents roughly match with extension
+---
+Name: admintweaks-mimeuploadvalidator
+After: '#mimeuploadvalidator'
+Only:
+  moduleexists: 'silverstripe/mimevalidator'
+---
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Assets\Upload_Validator:
+    class: SilverStripe\MimeValidator\MimeUploadValidator
+

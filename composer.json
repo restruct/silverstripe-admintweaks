@@ -35,8 +35,7 @@
     "expose": [
       "client/imgs",
       "client/fonts",
-      "client/dist",
-      "client/js"
+      "client/dist"
     ]
   }
 }

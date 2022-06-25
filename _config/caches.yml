@@ -1,0 +1,38 @@
+---
+Name: admintweaks-caches
+After: corecache
+---
+SilverStripe\Core\Injector\Injector:
+
+  # Make default cacheblock last 24h instead of 10m
+  Psr\SimpleCache\CacheInterface.cacheblock:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "cacheblock"
+      defaultLifetime: 86400
+
+  # Create general "appcache" namespace (default lifetime 1h)
+  Psr\SimpleCache\CacheInterface.appcache:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "appcache"
+      defaultLifetime: 3600
+
+  # Create "adminCache" namespace for CacheHelpers methods (lifetime 1h)
+  Psr\SimpleCache\CacheInterface.adminCache:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "adminCache"
+      defaultLifetime: 3600
+
+
+## Legacy: DynamicCache helper (cachebuster)
+#---
+#name: dyncasheext
+#Only:
+#  classexists: DynamicCache
+#---
+#DynamicCache:
+#  extensions:
+#    - BetterNavDynCacheExtension
+

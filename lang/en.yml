@@ -1,0 +1,10 @@
+en:
+  GroupedCmsMenuLabel:
+    Advanced_Config: 'Advanced'
+  SilverStripe\SiteConfig\SiteConfigLeftAndMain:
+    MENUTITLE: Config
+  SilverStripe\Admin\SecurityAdmin:
+    MENUTITLE: Access
+    Users: Accounts
+  Restruct\Silverstripe\AdminTweaks\Extensions:
+    ContactPage: Contact page
