@@ -39,12 +39,11 @@ mix.sass('client/src/scss/admintweaks.scss', 'css');
 // mix.js([ 'client/src/js/one.js', 'client/src/js/two.js', ], 'js/app.js').extract();
 mix.js([ 'client/src/js/admintweaks.js', ], 'js');
 
-// Make a module available as a variable in every other module required by webpack
-// Makes webpack prepend var $ = require('jquery') to every $, jQuery or window.jQuery
-// This will result in jQuery being compiled-in, even though it may be provided externally (see webpack.externals)
-mix.autoload({
-//    jquery: ['$', 'jQuery', 'window.jQuery'],
-//    underscore: ['_', 'underscore'],
+// Autoload makes a module available as a variable in every other module required by webpack
+// Will result in eg jQuery being compiled-in, even though it may be provided externally (see webpack.externals)
+mix.autoload({ // Configures webpack's ProvidePlugin
+  // jquery: ['$', 'jQuery', 'window.jQuery'], // prepends var $ = require('jquery') to every $, jQuery or window.jQuery
+  // underscore: ['_', 'underscore']
 });
 
 // Webpack config overrides, mix will deep merge https://laravel-mix.com/docs/2.1/quick-webpack-configuration#using-a-callback-function
