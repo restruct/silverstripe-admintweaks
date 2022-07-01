@@ -5,7 +5,18 @@ nl_NL:
   SilverStripe\SiteConfig\SiteConfigLeftAndMain:
     MENUTITLE: Site instellingen
   SilverStripe\Admin\SecurityAdmin:
-    MENUTITLE: Toegang
+    MENUTITLE: Toegangsrechten
     Users: Accounts
-  Restruct\Silverstripe\AdminTweaks\Extensions:
-    ContactPage: Contactpagina
+  Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension:
+    Contact: 'Contactgegevens'
+    Email: 'E-mail'
+    Phone: 'Telefoon'
+    Address: 'Adres'
+    ContactPage: 'Contactpagina'
+    ExtraHTMLTags: 'Extra HTML'
+    ExtraHTML_HeadHeader: 'Voeg extra html tags toe aan <head> sectie'
+    ExtraHTML_HeadStart: 'Na head open-tag'
+    ExtraHTML_HeadEnd: 'Voor head sluit-tag'
+    ExtraHTML_BodyHeader: 'Voeg extra html tags toe aan <body> sectie'
+    ExtraHTML_BodyStart: 'Na body open-tag'
+    ExtraHTML_BodyEnd: 'Voor body sluit-tag'

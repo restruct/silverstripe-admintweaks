@@ -7,6 +7,9 @@ Currently it has been partially updated to SS4, most stuff is deactivated & will
 
 ## Functionality:
 
+- Contact & social media fields in SiteConfig (optional/configurable)
+- Raw html head/body tag fields in SiteConfig (optional/configurable)
+- Browser-chrome colorpicker field in SiteConfig (optional/configurable)
 - Provides a global $themeDirResourceURL ($ThemeDir replacement, eg: `{$themeDirResourceURL('my-theme')}/videos/vid-{$RandomNumber}.mp4`)
 - SSViewer_ExtraIterators (eg "col-2-of-4"): GroupSize, PosInGroup, FirstOfGroup, LastOfGroup, FirstLastOfGroup, GroupOfGroups
 - CacheHelpers::cached_http_request(), cached_json_request() & cached_jsonLD_request()
@@ -34,6 +37,7 @@ Currently it has been partially updated to SS4, most stuff is deactivated & will
 - Groups RedirectedURLAdmin, ArchiveAdmin, QueuedJobsAdmin, SubsiteAdmin and SiteConfig nav-buttons under "Advanced" dropdown (if symbiote/silverstripe-grouped-cms-menu is installed)
 - ...
 
+
 ## Untested / dropped-in functionality
 
 Stuff quickly copied into this module for portability but may need some tweaking/generalization before being actually usable:
@@ -42,9 +46,24 @@ Stuff quickly copied into this module for portability but may need some tweaking
 - DBNullableInt & MySQLSchemaManagerNullable
 - ...
 
+
 ## Notes:
 
 - Legacy .margin-left & .small formfield styling -> (v4) just $field->removeExtraClass('stacked')->setRows(15)
+
+
+## SiteConfig ... config
+
+Set wether to 'decorate' siteconfig or not:
+
+```yml
+SilverStripe\SiteConfig\SiteConfig:
+  # move 'access' fields to main tab & remove 'access' tab
+  rearrange_access_fields: true
+  enable_contact_social_media_fields: true
+  # use in templates: {$SiteConfig.ExtraHTML_HeadStart.RAW}
+  enable_raw_head_body_fields: true
+
 
 ## Email config
 

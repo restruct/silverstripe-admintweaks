@@ -4,7 +4,18 @@ en:
   SilverStripe\SiteConfig\SiteConfigLeftAndMain:
     MENUTITLE: Config
   SilverStripe\Admin\SecurityAdmin:
-    MENUTITLE: Access
+    MENUTITLE: Access rights
     Users: Accounts
-  Restruct\Silverstripe\AdminTweaks\Extensions:
-    ContactPage: Contact page
+  Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension:
+    Contact: 'Contact'
+    Email: 'Email'
+    Phone: 'Phone'
+    Address: 'Address'
+    ContactPage: 'Contact page'
+    ExtraHTMLTags: 'Extra HTML'
+    ExtraHTML_HeadHeader: 'Insert extra html tags in <head> section'
+    ExtraHTML_HeadStart: 'After head open-tag'
+    ExtraHTML_HeadEnd: 'Before head close-tag'
+    ExtraHTML_BodyHeader: 'Insert extra html tags in <body> section'
+    ExtraHTML_BodyStart: 'After body open-tag'
+    ExtraHTML_BodyEnd: 'Before body close-tag'

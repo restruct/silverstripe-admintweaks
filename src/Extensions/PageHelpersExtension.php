@@ -20,6 +20,11 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
     class PageHelpersExtension
         extends Extension
     {
+        // Little helper to insert unique IDs per page without directly conveying exact DB ID
+        public function PageIDMD5()
+        {
+            return md5($this->owner->ID);
+        }
 
         public function BreadCrumbPath($append = null)
         {

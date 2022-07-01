@@ -1,8 +1,19 @@
+// Variables named so they will be auto-resolved when included in a Boostrap context
 $spacer: 1rem !default;
-$img-margin-side: 1.5 * $spacer !default;
-$img-margin-bottom: .5 * $spacer !default;
-$img-margin-top: .3 * $spacer !default;
+$border-color: #dee2e6 !default;
 
+$base-typo-screen-mobile-max: 767px !default;
+// Get actual width from bootstraps $breakpoints if defined
+$breakpoints: false !default; // set to false if undefined to prevent error upon checking @if
+@if $breakpoints {
+  $base-typo-screen-mobile-max: map-get($breakpoints, 'sm') -1 !default;
+}
+
+$base-typo-img-margin-side: 1.5 * $spacer !default;
+$base-typo-img-margin-bottom: .5 * $spacer !default;
+$base-typo-img-margin-top: .3 * $spacer !default;
+
+// Check: https://www.drupal.org/project/wysiwyg/issues/1665986
 @mixin editor-wysiwym-layout {
   background: #f3f3fa;
   padding: 10px 20px 20px;
@@ -17,9 +28,14 @@ $img-margin-top: .3 * $spacer !default;
   & > ul,
   & > ol,
   & > pre,
+  & > div.captionImage,
   & > blockquote {
     background: #fff;
     border: 4px solid #fff;
+  }
+
+  & > div.captionImage {
+    outline: 1px dashed lightgrey;
   }
 }
 
@@ -38,31 +54,44 @@ $img-margin-top: .3 * $spacer !default;
     display: none;
   }
 
+  blockquote, body.mce-content-body > blockquote {
+    margin: 2rem 0.35rem;
+    border-left: 4px solid $border-color;
+    padding-left: 1rem;
+  }
+
   img, .articleText img, .articleText picture {
-    &.right {
-      float:right;
-      margin: $img-margin-top 0 $img-margin-bottom $img-margin-side;
-    }
     &.left {
       float:left;
-      margin: $img-margin-top $img-margin-side $img-margin-bottom 0;
+      margin: $base-typo-img-margin-top $base-typo-img-margin-side $base-typo-img-margin-bottom 0 !important;
       max-width: 50%;
-
-      //@media (max-width: $screen-xs-max) {
-      //  width: 100%;
-      //  max-width: none;
-      //  float: none;
-      //}
+    }
+    &.right {
+      float:right;
+      margin: $base-typo-img-margin-top 0 $base-typo-img-margin-bottom $base-typo-img-margin-side !important;
+    }
+    &.left, &.right {
+      @media (max-width: $base-typo-screen-mobile-max) {
+        width: 100%;
+        max-width: none;
+        float: none;
+      }
     }
     &.leftAlone {
-      margin: 0 $img-margin-side $img-margin-bottom 0;
-      float: none;
       display: block;
+      margin: $base-typo-img-margin-top auto $base-typo-img-margin-bottom 0 !important;
+      float: none;
+      clear: both;
+    }
+    &.rightAlone {
+      display: block;
+      margin: $base-typo-img-margin-top 0 $base-typo-img-margin-bottom auto !important;
+      //float: none;
       clear: both;
     }
     &.center {
       display:block;
-      margin: $img-margin-top auto $img-margin-bottom auto !important;
+      margin: $base-typo-img-margin-top auto $base-typo-img-margin-bottom auto !important;
       clear: both;
     }
   }
@@ -71,30 +100,25 @@ $img-margin-top: .3 * $spacer !default;
     width: 100%;
     &.left {
       float: left;
-      margin: $img-margin-top $img-margin-side $img-margin-bottom 0;
+      margin: $base-typo-img-margin-top $base-typo-img-margin-side $base-typo-img-margin-bottom 0 !important;
     }
     &.right{
       float:right;
-      margin: $img-margin-top 0 $img-margin-bottom $img-margin-side;
+      margin: $base-typo-img-margin-top 0 $base-typo-img-margin-bottom $base-typo-img-margin-side !important;
     }
     &.leftAlone{
       float:none;
-      margin: $img-margin-top $img-margin-side $img-margin-bottom 0px;
+      margin: $base-typo-img-margin-top auto $base-typo-img-margin-bottom 0 !important;
+    }
+    &.rightAlone{
+      float:none;
+      margin: $base-typo-img-margin-top 0 $base-typo-img-margin-bottom auto !important;
     }
     &.center{
-      margin: $img-margin-top auto $img-margin-bottom;
+      margin: $base-typo-img-margin-top auto $base-typo-img-margin-bottom auto !important;
     }
     .caption {
       font-style: italic;
-    }
-  }
-
-  blockquote, body.mce-content-body > blockquote {
-    margin: 2rem 0.35rem;
-    border-left: 4px solid var(--accentcolor);
-    padding-left: 1rem;
-    strong {
-      color: var(--accentcolor);
     }
   }
 
