@@ -61,6 +61,8 @@ $base-typo-img-margin-top: .3 * $spacer !default;
   }
 
   img, .articleText img, .articleText picture {
+    max-width: 100%;
+    height: auto;
     &.left {
       float:left;
       margin: $base-typo-img-margin-top $base-typo-img-margin-side $base-typo-img-margin-bottom 0 !important;
@@ -69,11 +71,12 @@ $base-typo-img-margin-top: .3 * $spacer !default;
     &.right {
       float:right;
       margin: $base-typo-img-margin-top 0 $base-typo-img-margin-bottom $base-typo-img-margin-side !important;
+      max-width: 50%;
     }
     &.left, &.right {
       @media (max-width: $base-typo-screen-mobile-max) {
         width: 100%;
-        max-width: none;
+        max-width: 100%;
         float: none;
       }
     }
@@ -98,6 +101,10 @@ $base-typo-img-margin-top: .3 * $spacer !default;
 
   .captionImage {
     width: 100%;
+    max-width: 100%;
+    img, img.left, img.right {
+      max-width: 100%;
+    }
     &.left {
       float: left;
       margin: $base-typo-img-margin-top $base-typo-img-margin-side $base-typo-img-margin-bottom 0 !important;

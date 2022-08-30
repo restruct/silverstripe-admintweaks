@@ -20,8 +20,22 @@ SilverStripe\Admin\LeftAndMain:
     Advanced Config:
       icon: 'cog'
       children:
+        - SilverStripe-SiteConfig-SiteConfigLeftAndMain
+        - SilverStripe-Subsites-Admin-SubsiteAdmin
         - SilverStripe-RedirectedURLs-Admin-RedirectedURLAdmin
+        - Restruct-Silverstripe-BlockBase-Admin-BlockAdmin
         - SilverStripe-VersionedAdmin-ArchiveAdmin
         - Symbiote-QueuedJobs-Controllers-QueuedJobsAdmin
-        - SilverStripe-Subsites-Admin-SubsiteAdmin
-        - SilverStripe-SiteConfig-SiteConfigLeftAndMain
+
+SilverStripe\SiteConfig\SiteConfigLeftAndMain:
+  menu_priority: -1
+Restruct\Silverstripe\BlockBase\Admin\BlockAdmin:
+  menu_priority: -2
+SilverStripe\VersionedAdmin\ArchiveAdmin:
+  menu_priority: -3
+SilverStripe\RedirectedURLs\Admin\RedirectedURLAdmin:
+  menu_priority: -4
+SilverStripe\Subsites\Admin\SubsiteAdmin:
+  menu_priority: -5
+Symbiote\QueuedJobs\Controllers\QueuedJobsAdmin:
+  menu_priority: -6

@@ -9,9 +9,55 @@ use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\Storage\AssetStore;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Tab;
 
 class GeneralHelpers
 {
+    /**
+     * Insert a tab at a certain position (if it doesnt exist yet)
+     *
+     * @param $fields FieldList
+     * @param $tabName string Tab.Subtab.Subsubtab notation
+     * @param $tabTitle string
+     * @param $insertAfter string
+     * @return void
+     */
+    public static function add_tab_if_not_exists($fields, $tabName, $tabTitle=null, $insertAfter=null)
+    {
+        $tabPath = strpos($tabName, 'Root.')===0 ? $tabName : "Root.{$tabName}";
+        if($fields->findTab($tabPath)) {
+            return;
+        }
+
+        if(!$insertAfter){
+            $fields->findOrMakeTab($tabPath, $tabTitle);
+        } else {
+            $fields->insertAfter('Main',
+                Tab::create($tabName, $tabTitle),
+                true
+            );
+        }
+    }
+
+    /**
+     * Get translations for options array, eg for translating dropdown options
+     * Falls back to raw option value in case no translation exists
+     *
+     * @param array $options eg [ 'left', 'right', 'below' ]
+     * @param string $prefix eg ClassName . '.FieldName_'
+     * @return array
+     */
+    public static function get_options_translations(array $options, $prefix='')
+    {
+        $translations = array_combine($options, $options);
+        foreach ($options as $option){
+            $translations[$option] = _t("{$prefix}{$option}", $option);
+        }
+
+        return $translations;
+    }
+
     // safely get nested properties (returns null if not exists at some point)
     public static function safelyGetProperty($object, $prop_arr)
     {

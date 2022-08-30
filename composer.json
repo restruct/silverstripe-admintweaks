@@ -31,11 +31,9 @@
     }
   },
   "extra": {
-    "installer-name": "admintweaks",
-    "expose": [
-      "client/imgs",
-      "client/fonts",
-      "client/dist"
+    "expose-deact": [
+      "client/dist",
+      "client/imgs"
     ]
   }
 }

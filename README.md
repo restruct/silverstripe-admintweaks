@@ -7,6 +7,7 @@ Currently it has been partially updated to SS4, most stuff is deactivated & will
 
 ## Functionality:
 
+- ImagePlaceholder functionality (SVG)
 - Contact & social media fields in SiteConfig (optional/configurable)
 - Raw html head/body tag fields in SiteConfig (optional/configurable)
 - Browser-chrome colorpicker field in SiteConfig (optional/configurable)
@@ -35,6 +36,7 @@ Currently it has been partially updated to SS4, most stuff is deactivated & will
 - (Bigfork:) Hides pagetypes that cannot be created & admin sections that clients rarely use
 - Hides CampaignAdmin & ReportAdmin in nav (rarely used by clients)
 - Groups RedirectedURLAdmin, ArchiveAdmin, QueuedJobsAdmin, SubsiteAdmin and SiteConfig nav-buttons under "Advanced" dropdown (if symbiote/silverstripe-grouped-cms-menu is installed)
+- Various Block (Elemental) tweaks (+ block icon/thumbnail preview route at `admin/blocktypeicons`)
 - ...
 
 
@@ -64,6 +66,22 @@ SilverStripe\SiteConfig\SiteConfig:
   # use in templates: {$SiteConfig.ExtraHTML_HeadStart.RAW}
   enable_raw_head_body_fields: true
 
+## Image placeholder
+
+<img width="191" src="https://user-images.githubusercontent.com/1005986/177027008-2c711cad-9c0c-47ea-a56a-1dc6f4861ba7.png">
+
+Include SVG directly in template:
+```
+<% include ImagePlaceholder W=180, H=50, Label='logo', AddClass='rounded' %>
+```
+Include SVG via SiteConfig:
+```
+$SiteConfig.ImagePlaceholder(180, 50, 'logo', '', 'rounded')
+```
+Include SVG as img src (base64 data-uri):
+```
+<img class="rounded" src="$SiteConfig.ImagePlaceholder(180, 50, 'logo', true)" alt="logo" width="180" height="50">
+```
 
 ## Email config
 
@@ -88,6 +106,26 @@ APP_LOG_MAIL_SUBJECT=""
 APP_LOG_MAIL_SENDER=""
 APP_LOG_MAIL_LEVEL=""
 ```
+
+## Show Block design/thumbnails instead of icons in admin UI (Elemental)
+
+1. copy & adapt below section to specific project code css to show designed block previews instead of icons
+2. set private static $icon to 'block-design block-section {block-name-offset}'
+3. add stacked blocks img to app/client (.block-name-offset sets offset if multiple stacked in one image)
+
+```scss
+i.block-section, button.block-section:before {
+  background-image: url(~app/client/imgs/block-group-designs_stacked.png);
+  background-position: 0 0;
+}
+i.block-section, button.block-section {
+  &.block-name-offset {&, &:before {
+    background-position: 0 -128px;
+  }}
+  &.block-othername-offset {&, &:before {
+    background-position: 0 -28px;
+  }}
+}
 
 ## TODO/REACTIVEATE/UPDATE for SS4:
 

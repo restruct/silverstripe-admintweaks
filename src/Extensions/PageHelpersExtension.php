@@ -21,7 +21,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
         extends Extension
     {
         // Little helper to insert unique IDs per page without directly conveying exact DB ID
-        public function PageIDMD5()
+        public function PageID_MD5()
         {
             return md5($this->owner->ID);
         }
