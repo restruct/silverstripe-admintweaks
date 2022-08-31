@@ -31,7 +31,7 @@
     }
   },
   "extra": {
-    "expose-deact": [
+    "expose": [
       "client/dist",
       "client/imgs"
     ]
