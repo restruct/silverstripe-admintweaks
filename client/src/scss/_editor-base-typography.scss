@@ -61,6 +61,20 @@ $base-typo-img-margin-top: .3 * $spacer !default;
     padding-left: 1rem;
   }
 
+  iframe {
+    max-width: 100%;
+    &.fullwidth {
+      width: 100%;
+    }
+  }
+
+  // apply clearfix to probable img parent elements (just paragraph for now) to make them span any floated images
+  p:after {
+    display: block;
+    clear: both;
+    content: "";
+  }
+
   img, .articleText img, .articleText picture {
     max-width: 100%;
     height: auto;
