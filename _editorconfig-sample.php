@@ -171,39 +171,57 @@ $editor->setOption('style_formats', [
         'title' => 'Beelden',
         'items' => [
             [
-                'title' => 'Links',
+                'title' => 'Links met tekstomloop',
                 'selector' => 'img,div',
                 'classes' => 'left',
                 'styles' => $fontreset,
             ],
             [
-                'title' => 'Gecentreerd',
-                'selector' => 'img,div',
-                'classes' => 'center',
-                'styles' => $fontreset,
-            ],
-            [
-                'title' => 'Rechts',
+                'title' => 'Rechts met tekstomloop',
                 'selector' => 'img,div',
                 'classes' => 'right',
                 'styles' => $fontreset,
             ],
             [
-                'title' => 'Links zonder tekst eromheen',
+                'title' => 'Links zonder tekstomloop',
                 'selector' => 'img,div',
                 'classes' => 'leftAlone',
                 'styles' => $fontreset,
             ],
             [
-                'title' => 'Rechts zonder tekst eromheen',
+                'title' => 'Rechts zonder tekstomloop',
                 'selector' => 'img,div',
                 'classes' => 'rightAlone',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Gecentreerd zonder tekstomloop',
+                'selector' => 'img,div',
+                'classes' => 'center',
                 'styles' => $fontreset,
             ],
             [
                 'title' => 'Volledige breedte',
                 'selector' => 'img,div',
                 'classes' => 'fullwidth',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => '+ Kader/outline',
+                'selector' => 'img',
+                'classes' => 'img-thumbnail',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => '+ Afgeronde hoeken',
+                'selector' => 'img',
+                'classes' => 'rounded',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => '+ Cirkel (uitsnede)',
+                'selector' => 'img',
+                'classes' => 'rounded-circle',
                 'styles' => $fontreset,
             ],
         ],
@@ -252,6 +270,12 @@ $editor->setOption('style_formats', [
     [
         'title' => 'Overig',
         'items' => [
+            [
+                'title' => 'Stop tekstomloop (forceer naar onder)',
+                'selector' => 'p,blockquote,h1,h2,h3,h4,h5',
+                'classes' => 'clearfloat',
+                'styles' => $fontreset,
+            ],
             [
                 'title' => 'iframe volledige breedte',
                 'selector' => 'iframe',
