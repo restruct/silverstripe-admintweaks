@@ -98,6 +98,12 @@ $base-typo-img-margin-top: .3 * $spacer !default;
       margin: $base-typo-img-margin-top auto $base-typo-img-margin-bottom auto !important;
       clear: both;
     }
+    &.fullwidth {
+      display:block;
+      margin: $base-typo-img-margin-top 0 $base-typo-img-margin-bottom 0 !important;
+      width: 100%;
+      clear: both;
+    }
   }
 
   .captionImage {
@@ -124,6 +130,13 @@ $base-typo-img-margin-top: .3 * $spacer !default;
     }
     &.center{
       margin: $base-typo-img-margin-top auto $base-typo-img-margin-bottom auto !important;
+    }
+    &.fullwidth {
+      margin: $base-typo-img-margin-top 0 $base-typo-img-margin-bottom 0 !important;
+      clear: both;
+      &, & > img {
+        width: 100%;
+      }
     }
     .caption {
       font-style: italic;
