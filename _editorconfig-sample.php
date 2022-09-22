@@ -39,11 +39,12 @@ $editor->setOption('style_formats', [
 //
 //    # Item options:
 //    'title' => 'Document link', // title in dropdown
-//    'classes' => 'doc_link', // CSS class of .doc_link will be toggled on or off, will not remove or affect other classes on this element
+//    'selector' => 'a', // specify which elements a style can be applied to
+//    'block' => 'h3', // block element to wrap selection in (instead of 'selector' for pre-existing elements)
+//    'classes' => 'doc_link', // CSS class of .doc_link will be toggled on or off (will not remove or affect other classes on this element)
+//    'attributes' => [ 'class' => 'table table-borderless' ], //
 //    'wrapper' => true, // expand to closest block element
 //    'merge_siblings' => false, // merge adjacent elements with this class into one
-//    'selector' => 'a', // If no text is selected but cursor is within one of these elements, apply class to element
-//    'block' => 'h3', // block element to wrap selection in
 //    'inline' => 'span', // Allow applying this style inline to selected text by using a span tag
 //
 //    [   'title' => 'Headings', # Set a title to be displayed above the following options in the dropdown menu
@@ -63,6 +64,7 @@ $editor->setOption('style_formats', [
 //            ],
 //        ]
 //    ],
+
     [
         'title' => 'Paragrafen',
         'items' => [
@@ -104,21 +106,67 @@ $editor->setOption('style_formats', [
             ],
         ],
     ],
+
     [
-        'title' => 'Layout',
+        'title' => 'Button links',
         'items' => [
             [
-                'title' => 'Uitklap item (onderaan)',
-                'block' => 'h3',
-                'classes' => 'accordion',
+                'title' => 'Button primary',
+                'classes' => 'btn btn-primary',
+                'selector' => 'a',
+                'styles' => $fontreset,
             ],
             [
-                'title' => 'Document link',
+                'title' => 'Button secondary',
+                'classes' => 'btn btn-secondary',
                 'selector' => 'a',
-                'classes' => 'doc_link',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Button dark',
+                'classes' => 'btn btn-dark',
+                'selector' => 'a',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Button light',
+                'classes' => 'btn btn-light',
+                'selector' => 'a',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Button info',
+                'classes' => 'btn btn-info',
+                'selector' => 'a',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Button success',
+                'classes' => 'btn btn-success',
+                'selector' => 'a',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Button warning',
+                'classes' => 'btn btn-warning',
+                'selector' => 'a',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Button danger',
+                'classes' => 'btn btn-danger',
+                'selector' => 'a',
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Button link',
+                'classes' => 'btn btn-link',
+                'selector' => 'a',
+                'styles' => $fontreset,
             ],
         ],
     ],
+
     [
         'title' => 'Beelden',
         'items' => [
@@ -160,65 +208,106 @@ $editor->setOption('style_formats', [
             ],
         ],
     ],
-    [
-        'title' => 'Lijsten',
-        'items' => [
-            [
-                'title' => 'Link lijst (o.a. footer)',
-                'selector' => 'ul',
-                'classes' => 'items-menu',
-            ],
-            [
-                'title' => 'Links met tekst eromheen',
-                'selector' => 'img,div',
-                'classes' => 'left',
-            ],
-            [
-                'title' => 'Gecentreerd',
-                'selector' => 'img,div',
-                'classes' => 'center',
-            ],
-            [
-                'title' => 'Volledige breedte',
-                'selector' => 'img,div',
-                'classes' => 'fullwidth',
-            ],
-        ],
-    ],
-    [
-        'title' => 'Gezonde Leefstijl',
-        'items' => [
-            [
-                'title' => 'Omkaderd (outline)',
-                'wrapper' => true,
-                'merge_siblings' => false,
-                'block' => 'div',
-                'classes' => 'border-block',
-            ],
-            [
-                'title' => 'Vinkjes-lijstje',
-                'selector' => 'ul',
-                'classes' => 'check-list',
-            ],
-//            [ // Removed: instead styling simply applied to any image inside a .border-block
-//                'title' => 'Recept-plaatje (rechts in kader)',
-//                'selector' => 'img',
-//                'classes' => 'recipe-image',
-//            ],
-            [
-                'title' => 'In-/uitklap item (los)',
-                'wrapper' => true,
-                'block' => 'div',
-                'merge_siblings' => false,
-                'classes' => 'collapse-expand',
-            ],
-            [
-                'title' => 'Meer-info blok (volvlak achtergrond)',
-                'wrapper' => true,
-                'block' => 'div',
-                'classes' => 'info-block',
-            ],
-        ],
-    ],
-]);
 
+    [
+        'title' => 'Tabelstyling',
+        'items' => [
+            [
+                'title' => 'Tabel - lijnen',
+                'selector' => 'table',
+//                'classes' => 'table',
+                'attributes' => [ 'class' => 'table' ],
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Tabel - zebra',
+                'selector' => 'table',
+//                'classes' => 'table table-striped',
+                'attributes' => [ 'class' => 'table table-striped' ],
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Tabel - cellen',
+                'selector' => 'table',
+//                'classes' => 'table table-bordered',
+                'attributes' => [ 'class' => 'table table-bordered' ],
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Tabel - lijnloos',
+                'selector' => 'table',
+//                'classes' => 'table table-borderless',
+                'attributes' => [ 'class' => 'table table-borderless' ],
+                'styles' => $fontreset,
+            ],
+            [
+                'title' => 'Tabel - compact',
+                'selector' => 'table',
+                'classes' => 'table table-sm',
+                'styles' => $fontreset,
+            ],
+        ],
+    ],
+
+    [
+        'title' => 'Overig',
+        'items' => [
+            [
+                'title' => 'iframe volledige breedte',
+                'selector' => 'iframe',
+                'classes' => 'fullwidth',
+                'styles' => $fontreset,
+            ],
+//            [
+//                'title' => 'Omkaderd (outline)',
+//                'wrapper' => true,
+//                'merge_siblings' => false,
+//                'block' => 'div',
+//                'classes' => 'bg-light',
+//            ],
+//            [
+//                'title' => 'In-/uitklap item',
+//                'wrapper' => true,
+//                'block' => 'div',
+//                'merge_siblings' => false,
+//                'classes' => 'collapse-expand',
+//            ],
+        ],
+    ],
+
+//    [
+//        'title' => 'Gezonde Leefstijl',
+//        'items' => [
+//            [
+//                'title' => 'Omkaderd (outline)',
+//                'wrapper' => true,
+//                'merge_siblings' => false,
+//                'block' => 'div',
+//                'classes' => 'border-block',
+//            ],
+//            [
+//                'title' => 'Vinkjes-lijstje',
+//                'selector' => 'ul',
+//                'classes' => 'check-list',
+//            ],
+////            [ // Removed: instead styling simply applied to any image inside a .border-block
+////                'title' => 'Recept-plaatje (rechts in kader)',
+////                'selector' => 'img',
+////                'classes' => 'recipe-image',
+////            ],
+//            [
+//                'title' => 'In-/uitklap item (los)',
+//                'wrapper' => true,
+//                'block' => 'div',
+//                'merge_siblings' => false,
+//                'classes' => 'collapse-expand',
+//            ],
+//            [
+//                'title' => 'Meer-info blok (volvlak achtergrond)',
+//                'wrapper' => true,
+//                'block' => 'div',
+//                'classes' => 'info-block',
+//            ],
+//        ],
+//    ],
+]);
