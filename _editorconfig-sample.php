@@ -210,7 +210,7 @@ $editor->setOption('style_formats', [
     ],
 
     [
-        'title' => 'Tabelstyling',
+        'title' => 'Tabellen',
         'items' => [
             [
                 'title' => 'Tabel - lijnen',
