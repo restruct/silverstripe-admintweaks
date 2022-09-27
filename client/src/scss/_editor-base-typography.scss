@@ -27,12 +27,14 @@ $base-typo-img-margin-top: .3 * $spacer !default;
   & > p,
   & > ul,
   & > ol,
+  & > table,
   & > pre,
   & > div.captionImage,
   & > blockquote,
-  & > address {
+  & > iframe {
     background: #fff;
-    border: 4px solid #fff;
+    outline: 4px solid #fff;
+    margin-bottom: 1rem;
   }
 
   & > div.captionImage {
@@ -55,16 +57,42 @@ $base-typo-img-margin-top: .3 * $spacer !default;
     display: none;
   }
 
-  blockquote, body.mce-content-body > blockquote {
+  // mimick BS .blockquote (font-size) + apply border to left side
+  blockquote,
+  &.mce-content-body > blockquote {
     margin: 2rem 0.35rem;
-    border-left: 4px solid $border-color;
+    padding-top: .6rem;
+    font-size: 1.25rem;
     padding-left: 1rem;
+    border-left: 4px solid $border-color;
+  }
+  // Hack/fix editor-wysiwym-layout (apply border to content-before in editor)
+  &.mce-content-body > blockquote {
+    height: 100%;
+    position: relative;
+    border-color: white;
+    &:before {
+      content: "";
+      width: 4px;
+      height: 100%;
+      background-color: $border-color;
+      position: absolute;
+      margin-top: -.6rem;
+      margin-left: -1rem;
+    }
   }
 
   iframe {
     max-width: 100%;
     &.fullwidth {
       width: 100%;
+    }
+  }
+
+  &.mce-content-body table {
+    th, td {
+      padding-left: .4rem;
+      padding-right: .4rem;
     }
   }
 
