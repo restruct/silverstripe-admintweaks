@@ -175,6 +175,7 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
   &[class*="HomePage"]:before, &.homepage:before { @include fa_page_icon("\f015"); }
   &[class*="RedirectorPage"]:before { @include fa_page_icon("\f5eb"); }
   &[class*="VirtualPage"]:before { @include fa_page_icon("\f24d",'far'); }
+  &[class*="SubsitesVirtualPage"]:before, &[class*="CrossSubsiteVirtualPage"]:before { @include fa_page_icon("\f24d"); }
   &[class*="UserDefinedForm"]:before { @include fa_page_icon("\f46d"); }
   &[class*="ErrorPage"]:before { @include fa_page_icon("\f06a"); }
   &[class*="Profile"]:before { @include fa_page_icon("\f2bb"); }
