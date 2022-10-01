@@ -59,12 +59,19 @@ Stuff quickly copied into this module for portability but may need some tweaking
 Set wether to 'decorate' siteconfig or not:
 
 ```yml
+# NOTE: this extension adds various extra fields & functionality to siteadmin, activate on a per-project basis
 SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension
   # move 'access' fields to main tab & remove 'access' tab
-  rearrange_access_fields: true
-  enable_contact_social_media_fields: true
-  # use in templates: {$SiteConfig.ExtraHTML_HeadStart.RAW}
-  enable_raw_head_body_fields: true
+  rearrange_access_fields: false # (default true)
+  enable_browser_color_theme_field: false # (default true)
+  enable_subnav_activation_field: false # (default true)
+  enable_contact_social_media_fields: false # (default true)
+  # use in templates: {$SiteConfig.ExtraHTML_HeadStart.RAW} to include extra html
+  enable_raw_head_body_fields: false # (default true)
+  # deactivate container classes (or set array to override)
+  theme_container_classes: false # default bootstrap container classes
 
 ## Image placeholder
 
@@ -74,13 +81,13 @@ Include SVG directly in template:
 ```
 <% include ImagePlaceholder W=180, H=50, Label='logo', AddClass='rounded' %>
 ```
-Include SVG via SiteConfig:
+Include SVG directly:
 ```
-$SiteConfig.ImagePlaceholder(180, 50, 'logo', '', 'rounded')
+$ImagePlaceholder(180, 50, 'logo', '', 'rounded')
 ```
 Include SVG as img src (base64 data-uri):
 ```
-<img class="rounded" src="$SiteConfig.ImagePlaceholder(180, 50, 'logo', true)" alt="logo" width="180" height="50">
+<img class="rounded" src="$ImagePlaceholder(180, 50, 'logo', true)" alt="logo" width="180" height="50">
 ```
 
 ## Email config

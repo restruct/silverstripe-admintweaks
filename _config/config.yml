@@ -32,9 +32,10 @@ SilverStripe\CMS\Model\SiteTree:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\PageHelpersExtension
 
-SilverStripe\SiteConfig\SiteConfig:
-  extensions:
-    - Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension
+# NOTE: this extension adds various extra fields & functionality to siteadmin, activate on a per-project basis
+#SilverStripe\SiteConfig\SiteConfig:
+#  extensions:
+#    - Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension
 
 #SilverStripe\Forms\FormField:
 #  extensions:

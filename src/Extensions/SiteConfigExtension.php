@@ -252,22 +252,4 @@ class SiteConfigExtension extends DataExtension
         }
     }
 
-    public function ImagePlaceholder($W, $H, $Label='', $AddClass='', $DataUriBase64=false)
-    {
-        $svgStr = $this->owner
-            ->customise([
-                'W' => (int) $W,
-                'H' => (int) $H,
-                'Label' => Convert::raw2xml($Label),
-                'AddClass' => Convert::raw2att($AddClass)
-            ])
-            ->renderWith('Includes\ImagePlaceholder');
-        $svgStr = str_replace('<br />', '', $svgStr);
-        $svgStr = str_replace("\n", '', $svgStr);
-
-        // just always base64 escape to circumvent issues with svg-in-html-attribute (eg '"'s)
-//        return $Base64 ? "data:image/svg+xml;base64,".base64_encode($svgStr) : "data:image/svg+xml;utf8,{$svgStr}";
-        return $DataUriBase64 ? "data:image/svg+xml;base64,".base64_encode($svgStr) : DBHTMLVarchar::create()->setValue($svgStr);
-    }
-
 }
