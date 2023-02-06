@@ -95,13 +95,14 @@ $base-typo-img-margin-top: .3 * $spacer !default;
       padding-right: .4rem;
     }
   }
-
-  // apply clearfix to probable img parent elements (just paragraph for now) to make them span any floated images
-  p:after {
-    display: block;
-    clear: both;
-    content: "";
-  }
+  
+  //// apply clearfix to probable img parent elements (just paragraph for now) to make them span any floated images
+  //// DEACTIVATED as this leads to undesirable behaviour for clients, instead specific elements can be marked as '.clearfloat'
+  //p:after {
+  //  display: block;
+  //  clear: both;
+  //  content: "";
+  //}
 
   img, .articleText img, .articleText picture {
     max-width: 100%;

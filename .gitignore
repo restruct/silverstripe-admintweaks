@@ -12,6 +12,7 @@
 /themes/simple/
 _ss_environment.php
 silverstripe-cache
+_manifest_exclude
 node_modules
 *.map
 *.log
