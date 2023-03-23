@@ -25,15 +25,15 @@
     //   }
     // });
 
-    // // insert labels after gridfield checkboxes
-    // $('.ss-gridfield-item input.styled-checkbox').entwine({
-    //   onadd: function (e) {
-    //     if (this.hasClass('styled-checkbox-hide')) return;
-    //     this.addClass('styled-checkbox-hide').after($('<label></label>').attr({for: this.attr('id')}));
-    //     this._super();
-    //   }
-    // });
-    //
+    // insert labels after gridfield checkboxes
+    $('input.styled-checkbox').entwine({
+      onadd: function (e) {
+        if (this.hasClass('styled-checkbox-hide')) return;
+        this.addClass('styled-checkbox-hide').after($('<label></label>').attr({for: this.attr('id')}));
+        this._super();
+      }
+    });
+    
     // // missing button icons in gridfield... workaround
     // //	$('button.gridfield-button-delete').entwine({
     // //		onadd: function(e){
