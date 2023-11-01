@@ -33,7 +33,7 @@
         this._super();
       }
     });
-    
+
     // // missing button icons in gridfield... workaround
     // //	$('button.gridfield-button-delete').entwine({
     // //		onadd: function(e){
@@ -45,6 +45,33 @@
     // //			this.append('<span class="ui-button-icon-primary ui-icon btn-icon-chain--minus"></span>');
     // //		}
     // //	})
+
+    // Workaround: set attribute data-setactivecheckboxvalues to force a value onto checkboxsetfields,
+    // works around checkboxes being unset by ~$form->loadData() because they dont have an 1:1 fieldname to the object
+    $('[data-setactivecheckboxvalues]').entwine({
+      onmatch: function(e) {
+        this.find('[value="' + this.data('setactivecheckboxvalues').join('"], [value="') + '"]').prop('checked', true);
+      },
+    });
+
+    // FIX: https://github.com/symbiote/silverstripe-gridfieldextensions/issues/77
+    // make empty/unchecked checkboxfields (inside GridFieldEditableColumns) submit '0' instead of not submit anything
+    $('.ss-gridfield-item input[type="checkbox"]').entwine({
+      onchange: function (e) {
+        // insert/remove a hidden input with value '' to submit a value for unchecked checkboxes
+        if(this.prop( "checked" )){
+          this.siblings('.checkbox_zero_input').remove();
+        } else {
+          $('<input>').attr({
+            class: 'checkbox_zero_input',
+            type: 'hidden',
+            name: this.attr('name')
+          }).insertAfter(this);
+        }
+        this._super();
+      }
+    });
+
 
     // @TODO: fix this based on HLCL publisher update publications action
     // Add optional loading feedback overlay to buttons
