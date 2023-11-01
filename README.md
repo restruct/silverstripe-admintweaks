@@ -37,6 +37,8 @@ Currently it has been partially updated to SS4, most stuff is deactivated & will
 - Hides CampaignAdmin & ReportAdmin in nav (rarely used by clients)
 - Groups RedirectedURLAdmin, ArchiveAdmin, QueuedJobsAdmin, SubsiteAdmin and SiteConfig nav-buttons under "Advanced" dropdown (if symbiote/silverstripe-grouped-cms-menu is installed)
 - Various Block (Elemental) tweaks (+ block icon/thumbnail preview route at `admin/blocktypeicons`)
+- Fix to make empty/unchecked checkboxes in editablegridfields submit data (eg unset)
+- Workaround checkboxes being unset by $form->loadData() when they dont have a 1:1 fieldname/relation on object (set attribute data-setactivecheckboxvalues to force a value onto checkboxsetfields)
 - ...
 
 
