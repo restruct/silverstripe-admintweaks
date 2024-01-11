@@ -47,9 +47,10 @@ SilverStripe\Core\Injector\Injector:
       # NOTE: SwiftMail 'ssl' => SMTP over SSL/TLS / 'tls' => STARTTLS
       Encryption: '`APP_SMTP_ENCRYPTION`'
     calls:
-      Username: [ setUsername, ['`APP_SMTP_USERNAME`'] ]
-      Password: [ setPassword, ['`APP_SMTP_PASSWORD`'] ]
-      AuthMode: [ setAuthMode, ['login'] ]
+      # Prefix Username/Password/AuthMode to prevent https://github.com/silverstripe/silverstripe-framework/issues/9075
+      MyUsername: [ setUsername, ['`APP_SMTP_USERNAME`'] ]
+      MyPassword: [ setPassword, ['`APP_SMTP_PASSWORD`'] ]
+      MyAuthMode: [ setAuthMode, ['login'] ]
 
 
 # Add email error handler (if no Sentry etc)
