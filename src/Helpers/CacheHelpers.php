@@ -14,9 +14,9 @@ class CacheHelpers
     const INVALID_JSON_EXCEPTION = 2;
     const NO_JSONLD_FOUND_EXCEPTION = 3;
 
-    private static function get_cache()
+    public static function get_cache($cacheNameSpace = 'adminCache')
     {
-        return Injector::inst()->get(CacheInterface::class . '.adminCache');
+        return Injector::inst()->get(CacheInterface::class . '.' . $cacheNameSpace);
     }
 
 //    public static function curl_get($requestUrl, $timeout=10)
