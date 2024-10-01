@@ -41,9 +41,9 @@ SilverStripe\CMS\Model\SiteTree:
 #  extensions:
 #    - FormFieldExtension
 #
-#Text:
-#  extensions:
-#    - DBStringExtension
+SilverStripe\ORM\FieldType\DBString:
+    extensions:
+        - Restruct\Silverstripe\AdminTweaks\Extensions\DBStringExtension
 
 
 # Shortcodes
