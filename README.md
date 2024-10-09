@@ -74,6 +74,7 @@ SilverStripe\SiteConfig\SiteConfig:
   enable_raw_head_body_fields: false # (default true)
   # deactivate container classes (or set array to override)
   theme_container_classes: false # default bootstrap container classes
+```
 
 ## Image placeholder
 
