@@ -14,7 +14,22 @@ class CacheHelpers
     const INVALID_JSON_EXCEPTION = 2;
     const NO_JSONLD_FOUND_EXCEPTION = 3;
 
+    /**
+     * @deprecated use load_cache for clarity (difference between loading cache object and getting/setting a value)
+     */
     public static function get_cache($cacheNameSpace = 'adminCache')
+    {
+        return self::load_cache($cacheNameSpace);
+    }
+
+    /**
+     * 'Load' and return a cache instance
+     *
+     * @param $cacheNameSpace
+     * @return CacheInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public static function load_cache($cacheNameSpace = 'adminCache')
     {
         return Injector::inst()->get(CacheInterface::class . '.' . $cacheNameSpace);
     }
