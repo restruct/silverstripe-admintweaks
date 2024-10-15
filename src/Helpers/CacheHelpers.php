@@ -78,7 +78,6 @@ class CacheHelpers
             try {
                 $client = new Client();
                 // Making Guzzle requests: https://docs.guzzlephp.org/en/stable/
-                $res = $client->request('GET', $reqUrl);
                 $options['on_stats'] = function (TransferStats $stats) use (&$effectiveUrl) {
                     $effectiveUrl = $stats->getEffectiveUri();
                 };
