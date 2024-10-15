@@ -71,7 +71,7 @@ class CacheHelpers
         // HTTPlug allows you to write reusable libraries and applications that need an HTTP client without
         // binding to a specific implementation (https://docs.php-http.org/en/latest/httplug/introduction.html)
         // Using an adapter makes Guzzle conform to PSR-18 https://www.php-fig.org/psr/psr-18/ (Guzzle7 does out of the box)
-        $responseBody = self::get_cache()->get(md5($reqUrl));
+        $responseBody = self::load_cache()->get(md5($reqUrl));
         if ( !$responseBody ) {
             $responseCode = null;
 
@@ -93,7 +93,7 @@ class CacheHelpers
 
             // write to cache if OK
             if($responseCode === 200) {
-                self::get_cache()->set(md5($reqUrl), $responseBody, $cacheDuration);
+                self::load_cache()->set(md5($reqUrl), $responseBody, $cacheDuration);
             }
         }
 
@@ -122,7 +122,7 @@ class CacheHelpers
         // invalidate cache if invalid JSON
         $jsonDataParsed = json_decode($jsonData['body'], true);
         if(json_last_error() !== JSON_ERROR_NONE) {
-            self::get_cache()->delete(md5($reqUrl));
+            self::load_cache()->delete(md5($reqUrl));
 
             throw new Exception("EXCEPTION (INVALID JSON RESPONSE) {$reqUrl}", self::INVALID_JSON_EXCEPTION);
         }
@@ -163,7 +163,7 @@ class CacheHelpers
 
         // invalidate cache if no valid json+ld found
         if(!count($jsonLDparts)){
-            self::get_cache()->delete(md5($reqUrl));
+            self::load_cache()->delete(md5($reqUrl));
             throw new Exception("EXCEPTION (NO JSON+LD found in RESPONSE) {$reqUrl}");
         }
 
