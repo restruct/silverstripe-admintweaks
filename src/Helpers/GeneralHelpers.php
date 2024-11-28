@@ -126,4 +126,17 @@ class GeneralHelpers
 
         return $File;
     }
+
+    // Get file assets file, also when not published yet
+    public function getFileAssetsPath($file)
+    {
+        $meta = $file->getMetaData();
+        $file_path = null;
+        if ($meta != null) {
+            if ($path = $meta['path']) {
+                $file_path = ASSETS_PATH . DIRECTORY_SEPARATOR . $path;
+            }
+        }
+        return $file_path;
+    }
 }
