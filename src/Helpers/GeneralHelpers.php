@@ -128,7 +128,7 @@ class GeneralHelpers
     }
 
     // Get file assets file, also when not published yet
-    public function getFileAssetsPath($file)
+    public static function getFileAssetsPath($file)
     {
         $meta = $file->getMetaData();
         $file_path = null;
