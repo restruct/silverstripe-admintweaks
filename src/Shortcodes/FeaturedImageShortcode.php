@@ -61,7 +61,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
          * @param $shortcode
          * @return string
          */
-        public static function parse_shortcode($attrs, $content=null, $parser=null, $shortcode, $info=null)
+        public static function parse_shortcode($attrs, $content=null, $parser=null, $shortcode=null, $info=null)
         {
             $ctrl = Controller::curr();
             $size = isset($attrs['size']) && $attrs['size']=='full' ? '1000, 600' : '640, 480';

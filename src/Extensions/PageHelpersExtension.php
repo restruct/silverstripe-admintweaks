@@ -47,7 +47,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             return preg_replace("/[^a-zA-Z0-9\-\.\/\?\&\=]+/", "", $_SERVER['REQUEST_URI']);
         }
 
-        public function StaleCacheKey($delayInSeconds)
+        public function StaleCacheKey($delayInSeconds = 300)
         {
             return (int)(time() / $delayInSeconds); // Returns a new number every five minutes
         }

@@ -9,6 +9,7 @@ use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\Storage\AssetStore;
+use SilverStripe\Core\Environment;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
 
@@ -125,5 +126,21 @@ class GeneralHelpers
         }
 
         return $File;
+    }
+
+    // Get file assets file, also when not published yet
+    public static function getFileAssetsPath($file)
+    {
+        $meta = $file->getMetaData();
+        $file_path = null;
+        if ($meta != null) {
+            if ($path = $meta['path']) {
+                if ($rootpath = Environment::getEnv('SS_PROTECTED_ASSETS_PATH')) {
+                    return $rootpath . DIRECTORY_SEPARATOR . $path;
+                } else {
+                    return ASSETS_PATH . '/.protected' . DIRECTORY_SEPARATOR . $path;
+                }
+            }
+        }
     }
 }

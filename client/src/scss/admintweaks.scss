@@ -77,6 +77,68 @@ label,
 }
 
 
+// Fix .ui-dialog/.add-existing-search-dialog close icon (maybe only necessary if no title?)
+.add-existing-search-dialog {
+
+  .ui-dialog-titlebar-close {
+    z-index: 10;
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    right: 0;
+    top: .1rem;
+    padding: 0;
+    margin: 0;
+
+    &, &:hover, &:focus {
+      border: transparent;
+      background: transparent;
+    }
+
+    .ui-button-icon {
+      font-family: "silverstripe" !important;
+      font-style: normal !important;
+      font-weight: normal !important;
+      font-variant: normal !important;
+      text-transform: none !important;
+      speak: none;
+      line-height: 1;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+
+      text-indent: 0;
+      background-image: none;
+      margin: 0;
+      top: 0;
+      left: unset;
+
+      opacity: .6;
+      &:hover {
+        opacity: 1;
+      }
+
+      &:before {
+        // https://gbaumeister.github.io/ss4-icons/
+        content: "\e005";
+        position: absolute;
+        right: 0;
+
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+      }
+    }
+
+    .ui-button-icon-space {
+      display: none;
+    }
+  }
+  .add-existing-search-form {
+    margin-right: 34px;
+  }
+}
+
+
 // Fix editablecolumns enlarging GridField rows
 .grid-field.ss-gridfield-editable input.editable-column-field {
   margin-top: -.6rem !important;

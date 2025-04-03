@@ -31,6 +31,9 @@ name: admintweaks-extensions
 SilverStripe\CMS\Model\SiteTree:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\PageHelpersExtension
+SilverStripe\ORM\DataObject:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\DataObjectExtension
 
 # NOTE: this extension adds various extra fields & functionality to siteadmin, activate on a per-project basis
 #SilverStripe\SiteConfig\SiteConfig:
@@ -44,6 +47,9 @@ SilverStripe\CMS\Model\SiteTree:
 SilverStripe\ORM\FieldType\DBString:
     extensions:
         - Restruct\Silverstripe\AdminTweaks\Extensions\DBStringExtension
+SilverStripe\ORM\FieldType\DBTime:
+    extensions:
+        - Restruct\Silverstripe\AdminTweaks\Extensions\DBTimeExtension
 
 
 # Shortcodes

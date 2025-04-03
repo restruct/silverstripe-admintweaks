@@ -71,10 +71,10 @@ class CacheHelpers
         // HTTPlug allows you to write reusable libraries and applications that need an HTTP client without
         // binding to a specific implementation (https://docs.php-http.org/en/latest/httplug/introduction.html)
         // Using an adapter makes Guzzle conform to PSR-18 https://www.php-fig.org/psr/psr-18/ (Guzzle7 does out of the box)
-        $responseBody = self::load_cache()->get(md5($reqUrl));
-        if ( !$responseBody ) {
-            $responseCode = null;
 
+        $cacheKey = md5("cachedResponse_{$reqUrl}");
+        $cachedResponse = self::load_cache()->get($cacheKey);
+        if ( !$cachedResponse ) {
             try {
                 $client = new Client();
                 // Making Guzzle requests: https://docs.guzzlephp.org/en/stable/
@@ -82,8 +82,12 @@ class CacheHelpers
                     $effectiveUrl = $stats->getEffectiveUri();
                 };
                 $response = $client->request($reqMethod, $reqUrl, $options);
-                $responseCode = $response->getStatusCode();
-                $responseBody = $response->getBody()->getContents();
+                $cachedResponse = [
+                    'body' => $response->getBody()->getContents(),
+                    'statuscode' => $response->getStatusCode(),
+                    'requesturl' => $reqUrl,
+                    'effectiveurl' => $effectiveUrl,
+                ];
 
             } catch ( \GuzzleHttp\Exception\RequestException $exception ) {
 //                user_error("GUZZLE EXCEPTION [{$exception->getCode()}]: {$exception->getMessage()}");
@@ -91,17 +95,12 @@ class CacheHelpers
             }
 
             // write to cache if OK
-            if($responseCode === 200) {
-                self::load_cache()->set(md5($reqUrl), $responseBody, $cacheDuration);
+            if($cachedResponse['statuscode'] === 200) {
+                self::load_cache()->set($cacheKey, $cachedResponse, $cacheDuration);
             }
         }
 
-        return [
-            'body' => $responseBody,
-            'statuscode' => $responseCode,
-            'requesturl' => $reqUrl,
-            'effectiveurl' => $effectiveUrl,
-        ];
+        return $cachedResponse;
     }
 
     /**
