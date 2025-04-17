@@ -67,35 +67,19 @@ class CacheHelpers
      */
     public static function cached_http_request($reqUrl, $reqMethod = 'GET', array $options = [], $cacheDuration=900)
     {
-        // Note: Guzzle is a HTTP client, either require guzzle directly or via a (Guzzle)HTTPlug (adapter)
-        // HTTPlug allows you to write reusable libraries and applications that need an HTTP client without
-        // binding to a specific implementation (https://docs.php-http.org/en/latest/httplug/introduction.html)
-        // Using an adapter makes Guzzle conform to PSR-18 https://www.php-fig.org/psr/psr-18/ (Guzzle7 does out of the box)
+        // Caching is optional...
+        if(!$cacheDuration) {
+            return GeneralHelpers::perform_http_request($reqUrl, $reqMethod, $options);
+        }
 
         $cacheKey = md5("cachedResponse_{$reqUrl}");
+        $cache = self::load_cache();
         $cachedResponse = self::load_cache()->get($cacheKey);
-        if ( !$cachedResponse ) {
-            try {
-                $client = new Client();
-                // Making Guzzle requests: https://docs.guzzlephp.org/en/stable/
-                $options['on_stats'] = function (TransferStats $stats) use (&$effectiveUrl) {
-                    $effectiveUrl = $stats->getEffectiveUri();
-                };
-                $response = $client->request($reqMethod, $reqUrl, $options);
-                $cachedResponse = [
-                    'body' => $response->getBody()->getContents(),
-                    'statuscode' => $response->getStatusCode(),
-                    'requesturl' => $reqUrl,
-                    'effectiveurl' => $effectiveUrl,
-                ];
 
-            } catch ( \GuzzleHttp\Exception\RequestException $exception ) {
-//                user_error("GUZZLE EXCEPTION [{$exception->getCode()}]: {$exception->getMessage()}");
-                throw new Exception("GUZZLE EXCEPTION [{$exception->getCode()}]: {$exception->getMessage()}", self::HTTP_REQUEST_EXCEPTION);
-            }
-
+        if (!$cachedResponse) {
+            $cachedResponse = GeneralHelpers::perform_http_request($reqUrl, $reqMethod, $options);
             // write to cache if OK
-            if($cachedResponse['statuscode'] === 200) {
+            if ($cachedResponse['statuscode'] === 200) {
                 self::load_cache()->set($cacheKey, $cachedResponse, $cacheDuration);
             }
         }
