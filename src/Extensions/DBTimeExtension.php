@@ -40,7 +40,7 @@ class DBTimeExtension
      * @param string $formaString (default 'H:mm') see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#date-field-symbol-table
      * @return false|string
      */
-    public static function format_seconds_as_time($seconds, $formaString = 'H:mm')
+    public static function format_seconds_as_time($seconds, $formaString = 'H:i')
     {
         return date($formaString, strtotime("1-1-1970 0:00:00") + $seconds);
     }
