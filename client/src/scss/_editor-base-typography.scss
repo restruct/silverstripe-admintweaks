@@ -49,9 +49,10 @@ $base-typo-img-margin-top: .3 * $spacer !default;
     height: auto;
   }
 
-  ol, ul {
-    padding-left: 1.4rem;
-  }
+  // deactivating -- too broad/possibly interfering
+  //ol, ul {
+  //  padding-left: 1.4rem;
+  //}
 
   p.hidden {
     display: none;
