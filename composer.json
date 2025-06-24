@@ -14,7 +14,6 @@
     }
   ],
   "require": {
-    "silverstripe/vendor-plugin": "^3.0",
     "silverstripe/framework": "^5",
     "guzzlehttp/guzzle": "^7.5"
   },
