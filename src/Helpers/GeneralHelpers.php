@@ -90,7 +90,7 @@ class GeneralHelpers
         $meta = $file->getMetaData();
         $file_path = null;
         if ($meta != null) {
-            if ($path = $meta['path']) {
+            if (isset($meta['path']) && $path = $meta['path']) {
                 if ($rootpath = Environment::getEnv('SS_PROTECTED_ASSETS_PATH')) {
                     return $rootpath . DIRECTORY_SEPARATOR . $path;
                 } else {
