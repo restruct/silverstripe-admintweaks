@@ -110,13 +110,13 @@ class GeneralHelpers
      * @return File|Image|null
      * @throws Exception
      */
-    public static function import_file_asset(string $filePathOrUrl, string $assetPath=null, bool $publish=true)
+    public static function import_file_asset(string $filePathOrUrl, string $assetPath=null, bool $publish=true, $conflictResolution=AssetStore::CONFLICT_OVERWRITE)
     {
-        return self::download_and_save_asset($filePathOrUrl, $assetPath, $publish);
+        return self::download_and_save_asset($filePathOrUrl, $assetPath, $publish, $conflictResolution);
     }
 
     // Download/load a file into assets (set to private and replaced with add_file_to_assets in order to phase out $write argument)
-    private static function download_and_save_asset($filePathOrUrl, $assetPath=null, $publish=true)
+    private static function download_and_save_asset($filePathOrUrl, $assetPath=null, $publish=true, $conflictResolution=AssetStore::CONFLICT_OVERWRITE)
     {
         // fallback to just filename of original file
         $fileName = basename($assetPath ?: $filePathOrUrl);
@@ -149,7 +149,7 @@ class GeneralHelpers
         // setFromLocalFile(string $path, string $filename = null, string $hash = null, string $variant = null, array $config = []) Assign a local file to the backend.
         // setFromStream(resource $stream, string $filename, string $hash = null, string $variant = null, array $config = []) Assign a stream to the backend
         // setFromString(string $data, string $filename, string $hash = null, string $variant = null, array $config = []) Assign a set of data to the backend
-        $File->setFromLocalFile($localFilePath, $assetPath, null, null, [ 'conflict' => AssetStore::CONFLICT_OVERWRITE, ]);
+        $File->setFromLocalFile($localFilePath, $assetPath, null, null, [ 'conflict' => $conflictResolution, ]);
 
         // ->generateThumbnails for asset manager (for some reason only works after first ->write())
         $File->write();
