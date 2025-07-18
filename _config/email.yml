@@ -19,6 +19,8 @@ SilverStripe\Control\Email\Email:
 #  admin_email: ''
   admin_email:
     '`APP_SYSTEM_EMAIL_ADDRESS`': '`APP_SYSTEM_EMAIL_SENDER`'
+  queued_job_admin_email:
+    '`APP_SYSTEM_EMAIL_ADDRESS`': '`APP_SYSTEM_EMAIL_SENDER`'
 
 
 # SMTP mailer config (define `APP_SMTP_USERNAME` etc in .env)
