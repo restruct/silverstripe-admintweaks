@@ -6,6 +6,7 @@ SilverStripe\Control\Email\Mailer:
 
 
 # Email config: system email sender
+# NOTE: moved/duplicated in _config.php since BACKTICKS ENV VARS are only supported via Injector and Email doesn't use injector
 ---
 Name: admintweaks-emailconfig
 After:
@@ -15,12 +16,26 @@ Only:
     - APP_SYSTEM_EMAIL_SENDER
     - APP_SYSTEM_EMAIL_ADDRESS
 ---
-SilverStripe\Control\Email\Email:
-#  admin_email: ''
-  admin_email:
-    '`APP_SYSTEM_EMAIL_ADDRESS`': '`APP_SYSTEM_EMAIL_SENDER`'
-  queued_job_admin_email:
-    '`APP_SYSTEM_EMAIL_ADDRESS`': '`APP_SYSTEM_EMAIL_SENDER`'
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Control\Email\Email:
+  #  admin_email: ''
+    admin_email:
+      '`APP_SYSTEM_EMAIL_ADDRESS`': '`APP_SYSTEM_EMAIL_SENDER`'
+
+
+# Queuedjobs email notification config (use same address as error logger)
+# NOTE: moved/duplicated in _config.php since BACKTICKS ENV VARS are only supported via Injector and Email doesn't use injector
+---
+Name: admintweaks-qjobsemailconfig
+After:
+  - '#queuedjobsettings'
+Only:
+  envvarset:
+    - APP_LOG_MAIL_SENDER
+---
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\Control\Email\Email:
+    queued_job_admin_email: '`APP_LOG_MAIL_SENDER`'
 
 
 # SMTP mailer config (define `APP_SMTP_USERNAME` etc in .env)
