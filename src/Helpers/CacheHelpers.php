@@ -34,6 +34,17 @@ class CacheHelpers
         return Injector::inst()->get(CacheInterface::class . '.' . $cacheNameSpace);
     }
 
+    /**
+     * 'Load' and return 'appcache' cache instance
+     *
+     * @return CacheInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public static function load_appcache()
+    {
+        return Injector::inst()->get(CacheInterface::class . '.appcache');
+    }
+
 //    public static function curl_get($requestUrl, $timeout=10)
 //    {
 //        $ch = curl_init();
