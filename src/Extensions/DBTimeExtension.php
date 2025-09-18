@@ -10,6 +10,11 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 class DBTimeExtension
     extends Extension
 {
+    public function LegacyFormat($formatString)
+    {
+        return date($formatString, $this->owner->getTimestamp());
+    }
+
     /**
      * Return seconds (since start of day instead of since unix epoch)
      *
@@ -34,15 +39,15 @@ class DBTimeExtension
     }
 
     /**
-     * Format an amount of seconds using $formaString
+     * Format an amount of seconds using $formatString
      *
      * @param int $seconds eg result of AsSeconds()
      * @param string $formaString (default 'H:mm') see https://unicode-org.github.io/icu/userguide/format_parse/datetime/#date-field-symbol-table
      * @return false|string
      */
-    public static function format_seconds_as_time($seconds, $formaString = 'H:i')
+    public static function format_seconds_as_time($seconds, $formatString = 'H:mm')
     {
-        return date($formaString, strtotime("1-1-1970 0:00:00") + $seconds);
+        return date($formatString, strtotime("1-1-1970 0:00:00") + $seconds);
     }
 
     //

@@ -2,7 +2,7 @@
 
 This module serves as a portable set of small Silverstripe functionality & styling tweaks by Restruct.
 
-Currently it has been partially updated to SS4, most stuff is deactivated & will be reactivated when needed in projects.
+Currently it has been partially updated to SS4+, most stuff is deactivated & will be reactivated when needed in projects.
 
 
 ## Functionality:
@@ -39,6 +39,7 @@ Currently it has been partially updated to SS4, most stuff is deactivated & will
 - Various Block (Elemental) tweaks (+ block icon/thumbnail preview route at `admin/blocktypeicons`)
 - Fix to make empty/unchecked checkboxes in editablegridfields submit data (eg unset)
 - Workaround checkboxes being unset by $form->loadData() when they dont have a 1:1 fieldname/relation on object (set attribute data-setactivecheckboxvalues to force a value onto checkboxsetfields)
+- DBDatetime::LegacyFormat() adds back Silverstripe 3/PHP datetime formatting support (SS4 switched to CLDR)
 - ...
 
 

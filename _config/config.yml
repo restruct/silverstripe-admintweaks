@@ -50,6 +50,9 @@ SilverStripe\ORM\FieldType\DBString:
 SilverStripe\ORM\FieldType\DBTime:
     extensions:
         - Restruct\Silverstripe\AdminTweaks\Extensions\DBTimeExtension
+SilverStripe\ORM\FieldType\DBDatetime:
+    extensions:
+        - Restruct\Silverstripe\AdminTweaks\Extensions\DBDatetimeExtension
 
 
 # Shortcodes
