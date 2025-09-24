@@ -33,15 +33,20 @@
 
 
 // nicely stack optionsets into columns
-//.optionset {
-//  ul {
-//    column-count: 4;
-//  }
-//  li {
-//    float: none;
-//    width: auto;
-//  }
-//}
+@media (min-width: 992px) {
+  .optionset {
+    ul {
+      margin: 0;
+      padding: 0;
+      column-count: 4;
+    }
+    li {
+      list-style: none;
+      float: none;
+      width: auto;
+    }
+  }
+}
 
 
 // Make inputs (almost) black instead of 50 shades of gray
