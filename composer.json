@@ -22,6 +22,9 @@
     "restruct/silverstripe-cmstweaks": "*"
   },
   "suggest": {
+    "restruct/silverstripe-login-branding": "Reduce Silverstripe branding of the admin login and make it easily configurable",
+    "symbiote/silverstripe-grouped-cms-menu": "Group CMS menu items into nested lists",
+    "wedevelopnl/silverstripe-webp-images": "WEBP image support (output resized jpeg/png images as webp, GD with WEBP required)",
     "axllent/silverstripe-cms-tweaks": "Some complemental tweaks by Axllent"
   },
   "autoload": {
