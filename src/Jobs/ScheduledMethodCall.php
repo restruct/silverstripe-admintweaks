@@ -10,7 +10,6 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
 use Symbiote\QueuedJobs\Services\QueuedJob;
 use Symbiote\QueuedJobs\Services\QueuedJobService;
-use VacancyPortal\VacancyPortalController;
 
 //use SilverStripe\GraphQL\TypeCreator;
 //if (!class_exists(TypeCreator::class)) {
@@ -40,7 +39,7 @@ class ScheduledMethodCall
     {
         return QueuedJobService::singleton()->queueJob(
             Injector::inst()->create(ScheduledMethodCall::class, $ObjectOrClass, $method, $args, $options),
-            DBDatetime::create()->setValue(strtotime($when))->Rfc2822()
+            DBDatetime::create()->setValue(strtotime((string) $when))->Rfc2822()
         );
     }
 
@@ -66,7 +65,7 @@ class ScheduledMethodCall
                 $this->objectID = $ObjectOrClass->ID;
                 $this->objectClass = $ObjectOrClass->ClassName;
             } elseif (is_object($ObjectOrClass)) {
-                $this->objectClass = get_class($ObjectOrClass);
+                $this->objectClass = $ObjectOrClass::class;
             } else {
                 $this->objectClass = $ObjectOrClass;
             }
@@ -98,7 +97,7 @@ class ScheduledMethodCall
             "method %s on %s (%s)",
             $this->method,
             $this->objectClass,
-            $this->objectID ? "ID:{$this->objectID}" : 'statically'
+            $this->objectID ? 'ID:' . $this->objectID : 'statically'
         );
     }
 
@@ -145,13 +144,13 @@ class ScheduledMethodCall
                 ), 'WARNING');
             }
 
-        } catch(Exception $e){
+        } catch(Exception $exception){
             $this->addMessage(sprintf(
                 "%s::%s ERROR: %s (%s)",
                 $this->objectClass,
                 $this->method,
-                $e->getCode(),
-                $e->getMessage()
+                $exception->getCode(),
+                $exception->getMessage()
             ));
             $this->jobStatus = self::STATUS_BROKEN;
             return;

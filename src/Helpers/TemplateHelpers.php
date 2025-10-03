@@ -1,14 +1,13 @@
 <?php
 
+use SilverStripe\Model\ModelData;
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\View\TemplateGlobalProvider;
 use SilverStripe\View\ThemeResourceLoader;
-use SilverStripe\View\ViewableData;
 
-class TemplateHelpers
-    implements TemplateGlobalProvider
+class TemplateHelpers implements TemplateGlobalProvider
 {
     public static function get_template_global_variables()
     {
@@ -40,7 +39,7 @@ class TemplateHelpers
 
     public static function ImagePlaceholder($W, $H, $Label='', $AddClass='', $DataUriBase64=false)
     {
-        $svgStr = ViewableData::create()
+        $svgStr = ModelData::create()
             ->customise([
                 'W' => (int) $W,
                 'H' => (int) $H,

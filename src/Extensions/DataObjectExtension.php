@@ -2,10 +2,9 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
-class DataObjectExtension
-    extends DataExtension
+class DataObjectExtension extends Extension
 {
 
     /**
@@ -16,6 +15,6 @@ class DataObjectExtension
      */
     public function fieldLabelToLower($name, $style=null)
     {
-        return mb_strtolower($this->owner->fieldLabel($name));
+        return mb_strtolower((string) $this->owner->fieldLabel($name));
     }
 }

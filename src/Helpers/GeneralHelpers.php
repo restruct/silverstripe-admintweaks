@@ -5,15 +5,11 @@ namespace Restruct\Silverstripe\AdminTweaks\Helpers;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\TransferStats;
 use SilverStripe\AssetAdmin\Controller\AssetAdmin;
 use SilverStripe\Assets\File;
-use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\Storage\AssetStore;
 use SilverStripe\Core\Environment;
-use SilverStripe\Dev\Deprecation;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
 
 class GeneralHelpers
@@ -29,7 +25,7 @@ class GeneralHelpers
      */
     public static function add_tab_if_not_exists($fields, $tabName, $tabTitle=null, $insertAfter=null)
     {
-        $tabPath = strpos($tabName, 'Root.')===0 ? $tabName : "Root.{$tabName}";
+        $tabPath = str_starts_with((string) $tabName, 'Root.') ? $tabName : 'Root.' . $tabName;
         if($fields->findTab($tabPath)) {
             return;
         }
@@ -56,7 +52,7 @@ class GeneralHelpers
     {
         $translations = array_combine($options, $options);
         foreach ($options as $option){
-            $translations[$option] = _t("{$prefix}{$option}", $option);
+            $translations[$option] = _t($prefix . $option, $option);
         }
 
         return $translations;
@@ -69,6 +65,7 @@ class GeneralHelpers
         if ( is_string($prop_arr) ) {
             $prop_arr = explode('->', $prop_arr);
         }
+
         // get property to test for
         $prop = array_shift($prop_arr);
         // return null if not property exists
@@ -88,16 +85,19 @@ class GeneralHelpers
     public static function getFileAssetsPath($file)
     {
         $meta = $file->getMetaData();
-        $file_path = null;
-        if ($meta != null) {
-            if (isset($meta['path']) && $path = $meta['path']) {
-                if ($rootpath = Environment::getEnv('SS_PROTECTED_ASSETS_PATH')) {
-                    return $rootpath . DIRECTORY_SEPARATOR . $path;
-                } else {
-                    return ASSETS_PATH . '/.protected' . DIRECTORY_SEPARATOR . $path;
-                }
-            }
+        if ($meta == null) {
+            return null;
         }
+        if (!isset($meta['path'])) {
+            return null;
+        }
+        if (!$path = $meta['path']) {
+            return null;
+        }
+        if ($rootpath = Environment::getEnv('SS_PROTECTED_ASSETS_PATH')) {
+            return $rootpath . DIRECTORY_SEPARATOR . $path;
+        }
+        return ASSETS_PATH . '/.protected' . DIRECTORY_SEPARATOR . $path;
     }
 
     /**
@@ -106,7 +106,6 @@ class GeneralHelpers
      * @param string $filePathOrUrl URL to internet file or path to local file (direct or with 'file:' prefix)
      * @param string $assetDir folder/directory in which to create asset
      * @param string|null $fileName name to assign to File asset
-     * @param bool $publish
      * @return File|Image|null
      * @throws Exception
      */
@@ -119,14 +118,14 @@ class GeneralHelpers
     private static function download_and_save_asset($filePathOrUrl, $assetPath=null, $publish=true)
     {
         // fallback to just filename of original file
-        $fileName = basename($assetPath ?: $filePathOrUrl);
+        $fileName = basename((string) $assetPath ?: (string) $filePathOrUrl);
         $fileExt = File::get_file_extension($fileName);
         $dirPath = ltrim(dirname(trim($assetPath ?? '', '/')), '.'); // copied from Folder::find_or_make
         $assetPath = implode(DIRECTORY_SEPARATOR, array_filter([$dirPath, $fileName]));
 
         // Check if allowed file type
         if(!in_array($fileExt, File::getAllowedExtensions())){
-            throw new Exception("FILE EXTENSION NOT ALLOWED IN ASSETS ({$fileExt})");
+            throw new Exception(sprintf('FILE EXTENSION NOT ALLOWED IN ASSETS (%s)', $fileExt));
         }
 
         $File = File::find($assetPath);
@@ -135,7 +134,7 @@ class GeneralHelpers
         }
 
         // Create pointer to (temp) local file
-        if(strpos($filePathOrUrl, 'file:')===0) {
+        if(str_starts_with((string) $filePathOrUrl, 'file:')) {
             $localFilePath = '/' . str_replace(['file:///', 'file://', 'file:/', 'file:'], '', $filePathOrUrl);
         } elseif (is_file($filePathOrUrl)) {
             $localFilePath = $filePathOrUrl;
@@ -167,7 +166,6 @@ class GeneralHelpers
      *
      * @param $reqUrl
      * @param string $reqMethod
-     * @param array $options
      * @return array [ 'body'=>..., 'statuscode'=>..., 'requesturl'=>... 'effectiveurl'=>..., ]
      * @throws Exception
      */
@@ -185,8 +183,8 @@ class GeneralHelpers
 //            };
             $response = $client->request($reqMethod, $reqUrl, $options);
 
-        } catch ( GuzzleException $exception ) {
-            throw new Exception("GUZZLE EXCEPTION [{$exception->getCode()}]: {$exception->getMessage()}");
+        } catch ( GuzzleException $guzzleException ) {
+            throw new Exception(sprintf('GUZZLE EXCEPTION [%d]: %s', $guzzleException->getCode(), $guzzleException->getMessage()), $guzzleException->getCode(), $guzzleException);
         }
 
         return [

@@ -2,6 +2,7 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\CurrencyField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\DropdownField;
@@ -11,7 +12,7 @@ use SilverStripe\Forms\PasswordField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 
-class FormFieldBootstrapExtension extends \SilverStripe\Core\Extension
+class FormFieldBootstrapExtension extends Extension
 {
     public function onBeforeRender( $field )
     {
@@ -24,14 +25,14 @@ class FormFieldBootstrapExtension extends \SilverStripe\Core\Extension
             TextareaField::class,
             NumericField::class,
         ];
-        if ( in_array( get_class( $field ), $form_control ) ) {
+        if ( in_array( $field::class, $form_control ) ) {
             $field->addExtraClass( 'form-control' );
         }
 
         $form_select = [
             DropdownField::class,
         ];
-        if ( in_array( get_class( $field ), $form_select ) ) {
+        if ( in_array( $field::class, $form_select ) ) {
             $field->addExtraClass( 'form-select' );
         }
 
@@ -40,7 +41,7 @@ class FormFieldBootstrapExtension extends \SilverStripe\Core\Extension
             CheckboxSetField::class,
             OptionsetField::class,
         ];
-        if ( in_array( get_class( $field ), $form_check ) ) {
+        if ( in_array( $field::class, $form_check ) ) {
             $field->addExtraClass( 'form-check' );
         }
     }

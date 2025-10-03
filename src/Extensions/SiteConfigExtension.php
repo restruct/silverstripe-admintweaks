@@ -2,28 +2,20 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
+use SilverStripe\Core\Extension;
 use Restruct\Silverstripe\AdminTweaks\Helpers\GeneralHelpers;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverStripe\Assets\File;
-use SilverStripe\Assets\Image;
-use SilverStripe\CMS\Forms\AnchorSelectorField;
 use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\Core\Convert;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HeaderField;
-use SilverStripe\Forms\ListboxField;
-use SilverStripe\Forms\LiteralField;
-use SilverStripe\Forms\SingleLookupField;
-use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\TreeDropdownField;
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 
-class SiteConfigExtension extends DataExtension
+class SiteConfigExtension extends Extension
 {
     // Inspiration: https://github.com/silverstripe/cwp-agencyextensions/blob/2/src/Extensions/CWPSiteConfigExtension.php
     private static $db = [
@@ -119,15 +111,12 @@ class SiteConfigExtension extends DataExtension
      * @var boolean
      */
     private static $theme_subnav_slots = false;
-//    [
-//        'before', //
-//        'after', //
-//        'below', //
-//    ];
 
-    /**
-     * @param \SilverStripe\Forms\FieldList $fields
-     */
+//    [
+    //        'before', //
+    //        'after', //
+    //        'below', //
+    //    ];
     public function updateCMSFields(FieldList $fields)
     {
         # Rearrange/move site access fields if enabled
@@ -135,20 +124,21 @@ class SiteConfigExtension extends DataExtension
             foreach ($fields->findTab('Root.Access')->Fields() as $accessField) {
                 $fields->addFieldToTab('Root.Main', $accessField);
             }
+
             $fields->removeByName('Access');
-            $fields->findTab('Root.Main')->setTitle(_t(__CLASS__ . '.MainTabTitle', 'Site'));
+            $fields->findTab('Root.Main')->setTitle(_t(self::class . '.MainTabTitle', 'Site'));
         }
 
         # Add contact/social media fields if enabled
         if ($this->owner->config()->get('enable_contact_social_media_fields')) {
             $contactFields = [
-                EmailField::create('Email', _t(__CLASS__ . '.Email', 'Email')),
-                TextField::create('Phone', _t(__CLASS__ . '.Phone', 'Phone')),
-                TextareaField::create('Address', _t(__CLASS__ . '.Address', 'Address'))
+                EmailField::create('Email', _t(self::class . '.Email', 'Email')),
+                TextField::create('Phone', _t(self::class . '.Phone', 'Phone')),
+                TextareaField::create('Address', _t(self::class . '.Address', 'Address'))
                     ->setRows(6),
                 TreeDropdownField::create(
                     'ContactPageID',
-                    _t(__CLASS__ . '.ContactPage', 'Contact page'),
+                    _t(self::class . '.ContactPage', 'Contact page'),
                     SiteTree::class
                 )
                     ->setTitleField('MenuTitle'),
@@ -159,47 +149,48 @@ class SiteConfigExtension extends DataExtension
                 TextField::create('Youtube'),
                 TextField::create('Whatsapp'),
             ];
-            GeneralHelpers::add_tab_if_not_exists($fields, 'Contact', _t(__CLASS__ . '.Contact', 'Contact'));
+            GeneralHelpers::add_tab_if_not_exists($fields, 'Contact', _t(self::class . '.Contact', 'Contact'));
             $fields->addFieldsToTab('Root.Contact', $contactFields);
         }
 
         # Add logo upload fields if enabled
         if ($this->owner->config()->get('enable_logo_upload_fields')) {
             $logoFields = [
-                'Logo' => UploadField::create('Logo', _t(__CLASS__ . '.Logo', 'Logo links')),
-                'ExtraLogo' => UploadField::create('ExtraLogo', _t(__CLASS__ . '.ExtraLogo', 'Extra logo')),
-                'FavIcon' => UploadField::create('FavIcon', _t(__CLASS__ . '.FavIcon', 'Browsericoon (favicon)')),
-                'NavLogo' => UploadField::create('NavLogo', _t(__CLASS__ . '.NavLogo', 'Logo/icoon in navigatiebalk')),
-                'FooterLogo' => UploadField::create('FooterLogo', _t(__CLASS__ . '.FooterLogo', 'Footer logo')),
+                'Logo' => UploadField::create('Logo', _t(self::class . '.Logo', 'Logo links')),
+                'ExtraLogo' => UploadField::create('ExtraLogo', _t(self::class . '.ExtraLogo', 'Extra logo')),
+                'FavIcon' => UploadField::create('FavIcon', _t(self::class . '.FavIcon', 'Browsericoon (favicon)')),
+                'NavLogo' => UploadField::create('NavLogo', _t(self::class . '.NavLogo', 'Logo/icoon in navigatiebalk')),
+                'FooterLogo' => UploadField::create('FooterLogo', _t(self::class . '.FooterLogo', 'Footer logo')),
             ];
-            foreach ($logoFields as $fieldName => $field){
+            foreach ($logoFields as $field){
                 /** @var UploadField $field */
                 $field
                     ->setAllowedExtensions(array_merge(File::get_category_extensions('image/supported'), ['svg']))
                     ->setFolderName('logos');
             }
-            GeneralHelpers::add_tab_if_not_exists($fields, 'Logos', _t(__CLASS__ . '.Logos', 'Logos'));
+
+            GeneralHelpers::add_tab_if_not_exists($fields, 'Logos', _t(self::class . '.Logos', 'Logos'));
             $fields->addFieldsToTab('Root.Logos', $logoFields);
         }
 
         # Allow setting browser color theme (eg mobile browser chrome color)
         if ($presetcolor = $this->owner->config()->get('enable_browser_color_theme_field')) {
-            GeneralHelpers::add_tab_if_not_exists($fields, 'ThemeHTML', _t(__CLASS__ . '.ThemeHTML', 'Thema/HTML'));
+            GeneralHelpers::add_tab_if_not_exists($fields, 'ThemeHTML', _t(self::class . '.ThemeHTML', 'Thema/HTML'));
             $fields->addFieldToTab('Root.ThemeHTML',
-                $browersThemeColorField = TextField::create('ThemeBrowserColor', _t(__CLASS__ . '.ThemeBrowserColor', '(Mobile) browser color theme'))
+                $browersThemeColorField = TextField::create('ThemeBrowserColor', _t(self::class . '.ThemeBrowserColor', '(Mobile) browser color theme'))
                     ->setAttribute('type', 'color')
                     ->setAttribute('style', 'padding: 0 2px; width: calc(1.5384em + 1.077rem + 2px);')
             );
-            if(strpos($presetcolor, '#')===0){
+            if(str_starts_with((string) $presetcolor, '#')){
                 $browersThemeColorField->setDescription( // or setRightTitle (at right but with a large gap due to resizing the field)
-                    sprintf(_t(__CLASS__ . '.ThemeBrowserColorSuggested', 'Suggested HEX: %s'), $presetcolor)
+                    sprintf(_t(self::class . '.ThemeBrowserColorSuggested', 'Suggested HEX: %s'), $presetcolor)
                 );
             }
         }
 
         # Set container type (via TextField instead of Dropdown so we can set/use predefined suggestions but allow custom input as well)
         if ($containerClassOptions = $this->owner->config()->get('theme_container_classes')) {
-            GeneralHelpers::add_tab_if_not_exists($fields, 'ThemeHTML', _t(__CLASS__ . '.ThemeHTML', 'Thema/HTML'));
+            GeneralHelpers::add_tab_if_not_exists($fields, 'ThemeHTML', _t(self::class . '.ThemeHTML', 'Thema/HTML'));
             $fields->addFieldsToTab('Root.ThemeHTML', [
 
                 // HTML5 <datalist> tag to provide "autocomplete" for <input>, users will see a dropdown of pre-defined options as they input data
@@ -209,33 +200,33 @@ class SiteConfigExtension extends DataExtension
 //                    '<datalist id="theme_container_class_options"><option value="' . implode('"><option value="', $containerClassOptions) . '"></datalist>')
 
                 // Switching to regular dropdown instead...
-                $containerclassField = DropdownField::create('ThemeContainerClass', _t(__CLASS__ . '.ThemeContainerClass', 'Container type/class'))
+                $containerclassField = DropdownField::create('ThemeContainerClass', _t(self::class . '.ThemeContainerClass', 'Container type/class'))
                     ->setSource(array_combine($containerClassOptions, $containerClassOptions)),
             ]);
         }
 
         # Select subnav location (if any)
         if ($subNavSlotOptions = $this->owner->config()->get('theme_subnav_slots')) {
-            GeneralHelpers::add_tab_if_not_exists($fields, 'ThemeHTML', _t(__CLASS__ . '.ThemeHTML', 'Thema/HTML'));
-            $translatedSubNavSlotOptions = GeneralHelpers::get_options_translations($subNavSlotOptions, __CLASS__ . '.ThemeSubNavSlot_');
+            GeneralHelpers::add_tab_if_not_exists($fields, 'ThemeHTML', _t(self::class . '.ThemeHTML', 'Thema/HTML'));
+            $translatedSubNavSlotOptions = GeneralHelpers::get_options_translations($subNavSlotOptions, self::class . '.ThemeSubNavSlot_');
             $fields->addFieldsToTab('Root.ThemeHTML', [
-                $subNavToggleField = DropdownField::create('ThemeSubNavSlot', _t(__CLASS__ . '.ThemeSubNavSlot', 'Locatie submenu'))
+                $subNavToggleField = DropdownField::create('ThemeSubNavSlot', _t(self::class . '.ThemeSubNavSlot', 'Locatie submenu'))
 //                    ->setSource(array_combine($subNavSlotOptions, $subNavSlotOptions))
                     ->setSource($translatedSubNavSlotOptions)
-                    ->setEmptyString(_t(__CLASS__ . '.ThemeSubNavSlot_none', 'Geen submenu'))
+                    ->setEmptyString(_t(self::class . '.ThemeSubNavSlot_none', 'Geen submenu'))
             ]);
         }
 
         # Add head/body RAW fields if enabled
         if ($this->owner->config()->get('enable_raw_head_body_fields')) {
-            GeneralHelpers::add_tab_if_not_exists($fields, 'ThemeHTML', _t(__CLASS__ . '.ThemeHTML', 'Thema/HTML'));
+            GeneralHelpers::add_tab_if_not_exists($fields, 'ThemeHTML', _t(self::class . '.ThemeHTML', 'Thema/HTML'));
             $fields->addFieldsToTab('Root.ThemeHTML', [
-                HeaderField::create('ExtraHTML_HeadHeader', _t(__CLASS__ . '.ExtraHTML_HeadHeader', 'Insert extra html tags in <head> section')),
-                TextareaField::create('ExtraHTML_HeadStart', _t(__CLASS__ . '.ExtraHTML_HeadStart', 'After head open-tag')),
-                TextareaField::create('ExtraHTML_HeadEnd', _t(__CLASS__ . '.ExtraHTML_HeadEnd', 'Before head close-tag')),
-                HeaderField::create('ExtraHTML_BodyHeader', _t(__CLASS__ . '.ExtraHTML_BodyHeader', 'Insert extra html tags in <body> section')),
-                TextareaField::create('ExtraHTML_BodyStart', _t(__CLASS__ . '.ExtraHTML_BodyStart', 'After body open-tag')),
-                TextareaField::create('ExtraHTML_BodyEnd', _t(__CLASS__ . '.ExtraHTML_BodyEnd', 'Before body close-tag')),
+                HeaderField::create('ExtraHTML_HeadHeader', _t(self::class . '.ExtraHTML_HeadHeader', 'Insert extra html tags in <head> section')),
+                TextareaField::create('ExtraHTML_HeadStart', _t(self::class . '.ExtraHTML_HeadStart', 'After head open-tag')),
+                TextareaField::create('ExtraHTML_HeadEnd', _t(self::class . '.ExtraHTML_HeadEnd', 'Before head close-tag')),
+                HeaderField::create('ExtraHTML_BodyHeader', _t(self::class . '.ExtraHTML_BodyHeader', 'Insert extra html tags in <body> section')),
+                TextareaField::create('ExtraHTML_BodyStart', _t(self::class . '.ExtraHTML_BodyStart', 'After body open-tag')),
+                TextareaField::create('ExtraHTML_BodyEnd', _t(self::class . '.ExtraHTML_BodyEnd', 'Before body close-tag')),
             ]);
         }
     }
@@ -245,11 +236,13 @@ class SiteConfigExtension extends DataExtension
         if($this->owner->ThemeContainerClass) {
             return $this->owner->ThemeContainerClass;
         }
+
         // else fallback to first option
         $containerClassOptions = $this->owner->config()->get('theme_container_classes');
         if(is_array($containerClassOptions) && count($containerClassOptions)){
             return $containerClassOptions[0];
         }
+        return null;
     }
 
 }

@@ -4,15 +4,15 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
+use InvalidArgumentException;
 use SilverStripe\Core\Extension;
 use SilverStripe\ORM\FieldType\DBDatetime;
 
-class DBTimeExtension
-    extends Extension
+class DBTimeExtension extends Extension
 {
     public function LegacyFormat($formatString)
     {
-        return date($formatString, $this->owner->getTimestamp());
+        return date($formatString, $this->getOwner()->getTimestamp());
     }
 
     /**
@@ -22,7 +22,7 @@ class DBTimeExtension
      */
     public function AsSeconds()
     {
-        return $this->owner->getTimestamp() - strtotime('0:00:00');
+        return $this->getOwner()->getTimestamp() - strtotime('0:00:00');
     }
 
     /**
@@ -62,7 +62,7 @@ class DBTimeExtension
     public function Time12($includeSeconds = false)
     {
         $secondsFormat = $includeSeconds ? ':ss' : '';
-        return $this->owner->Format("h:mm{$secondsFormat} a");
+        return $this->getOwner()->Format(sprintf('h:mm%s a', $secondsFormat));
     }
 
     /**
@@ -73,7 +73,7 @@ class DBTimeExtension
     public function Time24($includeSeconds = false)
     {
         $secondsFormat = $includeSeconds ? ':ss' : '';
-        return $this->owner->Format("H:mm{$secondsFormat}");
+        return $this->getOwner()->Format('H:mm' . $secondsFormat);
     }
 
     /**
@@ -85,24 +85,26 @@ class DBTimeExtension
      */
     public function Ago($includeSeconds = true, $significance = 2)
     {
-        if (!$this->owner->value) {
+        if (!$this->getOwner()->value) {
             return null;
         }
-        $timestamp = $this->owner->getTimestamp();
+
+        $timestamp = $this->getOwner()->getTimestamp();
         $now = DBDatetime::now()->getTimestamp();
         if ($timestamp <= $now) {
             return _t(
-                __CLASS__ . '.TIMEDIFFAGO',
+                self::class . '.TIMEDIFFAGO',
                 "{difference} ago",
                 'Natural language time difference, e.g. 2 hours ago',
-                ['difference' => $this->owner->TimeDiff($includeSeconds, $significance)]
+                ['difference' => $this->getOwner()->TimeDiff($includeSeconds, $significance)]
             );
         }
+
         return _t(
-            __CLASS__ . '.TIMEDIFFIN',
+            self::class . '.TIMEDIFFIN',
             "in {difference}",
             'Natural language time difference, e.g. in 2 hours',
-            ['difference' => $this->owner->TimeDiff($includeSeconds, $significance)]
+            ['difference' => $this->getOwner()->TimeDiff($includeSeconds, $significance)]
         );
     }
 
@@ -113,32 +115,38 @@ class DBTimeExtension
      */
     public function TimeDiff($includeSeconds = true, $significance = 2)
     {
-        if (!$this->owner->value) {
+        if (!$this->getOwner()->value) {
             return false;
         }
 
         $now = DBDatetime::now()->getTimestamp();
-        $time = $this->owner->getTimestamp();
+        $time = $this->getOwner()->getTimestamp();
         $ago = abs($time - $now);
         if ($ago < 60 && !$includeSeconds) {
             return _t(DBDatetime::class . '.LessThanMinuteAgo', 'less than a minute');
         }
+
         if ($ago < $significance * 60 && $includeSeconds) {
-            return $this->owner->TimeDiffIn('seconds');
+            return $this->getOwner()->TimeDiffIn('seconds');
         }
+
         if ($ago < $significance * 3600) {
-            return $this->owner->TimeDiffIn('minutes');
+            return $this->getOwner()->TimeDiffIn('minutes');
         }
+
         if ($ago < $significance * 86400) {
-            return $this->owner->TimeDiffIn('hours');
+            return $this->getOwner()->TimeDiffIn('hours');
         }
+
         if ($ago < $significance * 86400 * 30) {
-            return $this->owner->TimeDiffIn('days');
+            return $this->getOwner()->TimeDiffIn('days');
         }
+
         if ($ago < $significance * 86400 * 365) {
-            return $this->owner->TimeDiffIn('months');
+            return $this->getOwner()->TimeDiffIn('months');
         }
-        return $this->owner->TimeDiffIn('years');
+
+        return $this->getOwner()->TimeDiffIn('years');
     }
 
     /**
@@ -150,12 +158,12 @@ class DBTimeExtension
      */
     public function TimeDiffIn($format)
     {
-        if (!$this->owner->value) {
+        if (!$this->getOwner()->value) {
             return null;
         }
 
         $now = DBDatetime::now()->getTimestamp();
-        $time = $this->owner->getTimestamp();
+        $time = $this->getOwner()->getTimestamp();
         $ago = abs($time - $now);
         switch ($format) {
             case 'seconds':
@@ -207,7 +215,7 @@ class DBTimeExtension
                 );
 
             default:
-                throw new \InvalidArgumentException("Invalid format $format");
+                throw new InvalidArgumentException('Invalid format ' . $format);
         }
     }
 

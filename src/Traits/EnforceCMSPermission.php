@@ -32,9 +32,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Traits {
         }
 
         /**
-         * @param null  $member
          * @param array $context
-         *
          * @return bool|int
          */
         public function canCreate($member = null, $context = [])

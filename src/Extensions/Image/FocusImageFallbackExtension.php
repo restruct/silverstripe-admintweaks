@@ -11,22 +11,22 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions\Image {
     {
         public function FocusFillFallback($width, $height)
         {
-            return $this->owner->Fill($width, $height);
+            return $this->getOwner()->Fill($width, $height);
         }
 
         public function FocusFillMax($width, $height)
         {
-            return $this->owner->FillMax($width, $height);
+            return $this->getOwner()->FillMax($width, $height);
         }
 
         public function FocusCropWidth($width)
         {
-            return $this->owner->CropWidth($width);
+            return $this->getOwner()->CropWidth($width);
         }
 
         public function FocusCropHeight($height)
         {
-            return $this->owner->CropHeight($height);
+            return $this->getOwner()->CropHeight($height);
         }
     }
 }

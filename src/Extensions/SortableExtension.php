@@ -2,22 +2,16 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
-use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\DB;
 
-class SortableExtension
-    extends DataExtension
+class SortableExtension extends Extension
 {
     private static $db = [
         'Sort' => 'Int',
     ];
 
-    /**
-     * @param \SilverStripe\Forms\FieldList $fields
-     */
     public function updateCMSFields(FieldList $fields)
     {
         $fields->removeByName('Sort');

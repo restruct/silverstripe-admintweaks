@@ -2,17 +2,16 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
 
+    use SilverStripe\Model\ModelData;
     use SilverStripe\Assets\Image;
     use SilverStripe\Control\Controller;
     use SilverStripe\Forms\CheckboxField;
     use SilverStripe\Forms\DropdownField;
     use SilverStripe\Forms\FieldList;
     use SilverStripe\Forms\TextField;
-    use SilverStripe\ORM\DataObject;
     use SilverStripe\View\SSViewer;
-    use SilverStripe\View\ViewableData;
 
-    class FeaturedImageShortcode extends ViewableData
+    class FeaturedImageShortcode extends ModelData
     {
         /**
          * @config string the actual shortcode used/inserted into the HTML editor
@@ -70,6 +69,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
 //                return '<div class="image">' . $featImg->Fill(640, 500)->forTemplate() . '</div>';
                 return $featImg->renderWith(SSViewer::fromString('<div class="image"><% if $CroppedFill('.$size.') %>$CroppedFill('.$size.')<% else %>$Fill('.$size.')<% end_if %></div>'));
             }
+            return null;
         }
 
 //        /**

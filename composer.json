@@ -14,8 +14,9 @@
     }
   ],
   "require": {
-    "silverstripe/framework": "^4 | ^5",
-    "guzzlehttp/guzzle": "^7.0"
+    "silverstripe/framework": "^6",
+    "guzzlehttp/guzzle": "^7.0",
+    "symbiote/silverstripe-gridfieldextensions": "^5.0"
   },
   "replace": {
     "micschk/silverstripe-cmstweaks": "1.*",

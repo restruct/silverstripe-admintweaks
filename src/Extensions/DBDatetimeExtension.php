@@ -5,8 +5,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 use SilverStripe\Core\Extension;
 use SilverStripe\ORM\FieldType\DBDatetime;
 
-class DBDatetimeExtension
-    extends Extension
+class DBDatetimeExtension extends Extension
 {
     /**
      * Bring back support for the PHP date formatting strings that Silverstripe 3 used.

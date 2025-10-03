@@ -2,7 +2,7 @@
 
 namespace Restruct\CMSTweaks\Helpers {
 
-    use SilverStripe\View\TemplateIteratorProvider;
+    use SilverStripe\TemplateEngine\TemplateIteratorProvider;
 
     /**
      * Provides some extra iterator properties to SSviewer when looping in templates
@@ -10,7 +10,8 @@ namespace Restruct\CMSTweaks\Helpers {
     class SSViewer_ExtraIterators implements TemplateIteratorProvider
     {
 
-        protected $iteratorPos;  // 0 based
+        protected $iteratorPos;
+          // 0 based
         protected $iteratorTotalItems;
 
         public static function get_template_iterator_variables()
@@ -44,7 +45,9 @@ namespace Restruct\CMSTweaks\Helpers {
          */
         public function GroupSize($divideInGroups = false)
         {
-            if ( !$divideInGroups ) return $this->iteratorTotalItems;
+            if (!$divideInGroups) {
+                return $this->iteratorTotalItems;
+            }
 
             return ceil($this->iteratorTotalItems / $divideInGroups);
         }
@@ -61,8 +64,10 @@ namespace Restruct\CMSTweaks\Helpers {
 
         public function LastOfGroup($divideInGroups)
         {
-            return $this->PosInGroup($divideInGroups) == $this->GroupSize($divideInGroups)
-                || $this->iteratorPos == $this->iteratorTotalItems - 1;
+            if ($this->PosInGroup($divideInGroups) == $this->GroupSize($divideInGroups)) {
+                return true;
+            }
+            return $this->iteratorPos == $this->iteratorTotalItems - 1;
         }
 
         public function FirstLastOfGroup($divideInGroups)
@@ -70,8 +75,15 @@ namespace Restruct\CMSTweaks\Helpers {
             if ( $this->FirstOfGroup($divideInGroups) && $this->LastOfGroup($divideInGroups) ) {
                 return 'first-of-group last-of-group';
             }
-            if ( $this->FirstOfGroup($divideInGroups) ) return 'first-of-group';
-            if ( $this->LastOfGroup($divideInGroups) ) return 'last-of-group';
+
+            if ($this->FirstOfGroup($divideInGroups)) {
+                return 'first-of-group';
+            }
+
+            if ($this->LastOfGroup($divideInGroups)) {
+                return 'last-of-group';
+            }
+            return null;
         }
 
         public function GroupOfGroups($divideInGroups = false)

@@ -16,13 +16,12 @@ class GridFieldSiteTreeAddNewButton
     /**
      * Overriding classnames and titles allowed for a given parent object
      *
-     * @param SiteTree $parent
      * @return boolean
      */
     public function getAllowedChildren(SiteTree $parent = null)
     {
         $children = parent::getAllowedChildren($parent);
-        if (!$parent || !$parent->canAddChildren()) {
+        if (!$parent instanceof SiteTree || !$parent->canAddChildren()) {
             return $children;
         }
 
@@ -30,7 +29,7 @@ class GridFieldSiteTreeAddNewButton
         $extraHiddenClasses = Config::inst()->get($parent->className, 'hide_from_cms_tree');
         foreach ($extraHiddenClasses as $class){
             $instance = Injector::inst()->get($class);
-            if ($instance->canCreate(null, array('Parent' => $parent)) && in_array($class, $nonHiddenPageTypes)) {
+            if ($instance->canCreate(null, ['Parent' => $parent]) && in_array($class, $nonHiddenPageTypes)) {
                 $children[$class] = $instance->i18n_singular_name();
             }
         }

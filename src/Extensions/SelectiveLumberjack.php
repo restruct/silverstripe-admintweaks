@@ -5,7 +5,6 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 use SilverStripe\CMS\Controllers\CMSPagesController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
-use SilverStripe\Dev\Debug;
 use SilverStripe\Forms\GridField\GridFieldPageCount;
 use SilverStripe\Forms\GridField\GridFieldSortableHeader;
 use SilverStripe\Forms\GridField\GridFieldToolbarHeader;
@@ -32,7 +31,7 @@ class SelectiveLumberjack extends Lumberjack
     {
         $controller = Controller::curr();
 
-        return get_class($controller) === CMSPagesController::class
+        return ($controller instanceof Controller ? $controller::class : self::class) === CMSPagesController::class
             // DON'T filter listview, after all, that's what its for (to show large sets of pages)
             // Original list: 'index', 'show', 'treeview', 'listview', 'getsubtree'
             && in_array($controller->getAction(), [ "treeview", "getsubtree" ]);
@@ -47,9 +46,10 @@ class SelectiveLumberjack extends Lumberjack
     {
         $lumberJacked = parent::getExcludedSiteTreeClassNames();
         $hidden = Config::inst()->get($this->owner->className, 'hide_from_cms_tree');
-        if(!count($hidden)) {
+        if(count($hidden) === 0) {
             return $lumberJacked;
         }
+
 //            var_dump($lumberJacked);
         //array (
         //  'HLCL\\CMS\\Pages\\CatalogItem' => 'HLCL\\CMS\\Pages\\CatalogItem',
@@ -59,6 +59,7 @@ class SelectiveLumberjack extends Lumberjack
 //                $class = str_replace("\\\\", "\\", $classPath);
 //                $lumberJacked[$class] = $class;
         }
+
 //            var_dump($lumberJacked);
         //array (
         //  'HLCL\\CMS\\Pages\\CatalogItem' => 'HLCL\\CMS\\Pages\\CatalogItem',

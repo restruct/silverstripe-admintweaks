@@ -2,9 +2,11 @@
 
 namespace Restruct\BrillOOP\ORM;
 
+use SilverStripe\ORM\FieldType\DBInt;
+use Override;
 use SilverStripe\ORM\DB;
 
-class DBNullableInt extends \SilverStripe\ORM\FieldType\DBInt
+class DBNullableInt extends DBInt
 {
     public function __construct($name = null, $precision = 11)
     {
@@ -13,7 +15,8 @@ class DBNullableInt extends \SilverStripe\ORM\FieldType\DBInt
         parent::__construct($name);
     }
 
-    public function requireField()
+    #[Override]
+    public function requireField(): void
     {
         $parts = [
             'datatype' => 'int',

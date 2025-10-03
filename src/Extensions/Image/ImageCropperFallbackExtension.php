@@ -9,14 +9,15 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions\Image {
         public function CroppedFocusedImage($width, $height)
         {
             if(class_exists('JonoM\FocusPoint\Extensions\FocusPointImageExtension')){
-                return $this->owner->FocusFill($width, $height);
+                return $this->getOwner()->FocusFill($width, $height);
             }
-            return $this->owner->Fill($width, $height);
+
+            return $this->getOwner()->Fill($width, $height);
         }
 
         public function CroppedImage($width, $height)
         {
-            return $this->owner->Fill($width, $height);
+            return $this->getOwner()->Fill($width, $height);
         }
     }
 }

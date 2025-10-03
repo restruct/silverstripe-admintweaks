@@ -2,16 +2,18 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Helpers;
 
+use Psr\Container\NotFoundExceptionInterface;
+use GuzzleHttp\Exception\GuzzleException;
 use Exception;
-use GuzzleHttp\Client;
-use GuzzleHttp\TransferStats;
 use Psr\SimpleCache\CacheInterface;
 use SilverStripe\Core\Injector\Injector;
 
 class CacheHelpers
 {
     const HTTP_REQUEST_EXCEPTION = 1;
+
     const INVALID_JSON_EXCEPTION = 2;
+
     const NO_JSONLD_FOUND_EXCEPTION = 3;
 
     /**
@@ -27,7 +29,7 @@ class CacheHelpers
      *
      * @param $cacheNameSpace
      * @return CacheInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public static function load_cache($cacheNameSpace = 'adminCache')
     {
@@ -38,7 +40,7 @@ class CacheHelpers
      * 'Load' and return 'appcache' cache instance
      *
      * @return CacheInterface
-     * @throws \Psr\Container\NotFoundExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public static function load_appcache()
     {
@@ -46,35 +48,33 @@ class CacheHelpers
     }
 
 //    public static function curl_get($requestUrl, $timeout=10)
-//    {
-//        $ch = curl_init();
-////        $headers["Content-Length"] = strlen($postString);
-//        $headers["User-Agent"] = "Curl/1.0";
-//
-//        curl_setopt($ch, CURLOPT_URL, $requestUrl);
-//        curl_setopt($ch, CURLOPT_HEADER, false);
-////        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-//        curl_setopt($ch, CURLOPT_USERAGENT, "Curl/1.0");
-//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-////		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-////		curl_setopt($ch, CURLOPT_USERPWD, 'admin:');
-//        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // connect timeout unlimited
-//        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout); //timeout in seconds (for whole execution)
-//        $response = curl_exec($ch);
-//        curl_close($ch);
-//
-//        return $response;
-//    }
-
+    //    {
+    //        $ch = curl_init();
+    ////        $headers["Content-Length"] = strlen($postString);
+    //        $headers["User-Agent"] = "Curl/1.0";
+    //
+    //        curl_setopt($ch, CURLOPT_URL, $requestUrl);
+    //        curl_setopt($ch, CURLOPT_HEADER, false);
+    ////        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    //        curl_setopt($ch, CURLOPT_USERAGENT, "Curl/1.0");
+    //        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    ////		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    ////		curl_setopt($ch, CURLOPT_USERPWD, 'admin:');
+    //        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10); // connect timeout unlimited
+    //        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout); //timeout in seconds (for whole execution)
+    //        $response = curl_exec($ch);
+    //        curl_close($ch);
+    //
+    //        return $response;
+    //    }
     /**
      * Perform a cached HTTP request via Guzzle and return the response body
      *
      * @param $reqUrl
      * @param string $reqMethod
-     * @param array $options
      * @param int $cacheDuration
      * @return array [ 'body'=>..., 'statuscode'=>..., 'requesturl'=>... 'effectiveurl'=>..., ]
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public static function cached_http_request($reqUrl, $reqMethod = 'GET', array $options = [], $cacheDuration=900)
     {
@@ -83,8 +83,8 @@ class CacheHelpers
             return GeneralHelpers::perform_http_request($reqUrl, $reqMethod, $options);
         }
 
-        $cacheKey = md5("cachedResponse_{$reqUrl}");
-        $cache = self::load_cache();
+        $cacheKey = md5('cachedResponse_' . $reqUrl);
+        self::load_cache();
         $cachedResponse = self::load_cache()->get($cacheKey);
 
         if (!$cachedResponse) {
@@ -103,7 +103,6 @@ class CacheHelpers
      *
      * @param $reqUrl
      * @param string $reqMethod
-     * @param array $options
      * @param int $cacheDuration
      * @return mixed parsed JSON (associative)
      * @throws Exception
@@ -113,11 +112,11 @@ class CacheHelpers
         $jsonData = self::cached_http_request($reqUrl, $reqMethod, $options, $cacheDuration);
 
         // invalidate cache if invalid JSON
-        $jsonDataParsed = json_decode($jsonData['body'], true);
+        $jsonDataParsed = json_decode((string) $jsonData['body'], true);
         if(json_last_error() !== JSON_ERROR_NONE) {
-            self::load_cache()->delete(md5($reqUrl));
+            self::load_cache()->delete(md5((string) $reqUrl));
 
-            throw new Exception("EXCEPTION (INVALID JSON RESPONSE) {$reqUrl}", self::INVALID_JSON_EXCEPTION);
+            throw new Exception('EXCEPTION (INVALID JSON RESPONSE) ' . $reqUrl, self::INVALID_JSON_EXCEPTION);
         }
 
         return $jsonDataParsed;
@@ -128,21 +127,20 @@ class CacheHelpers
      *
      * @param $reqUrl
      * @param string $reqMethod
-     * @param array $options
      * @param int $cacheDuration
-     *
      * @return array containing parsed json (associative)
      */
     public static function cached_jsonLD_request($reqUrl, $reqMethod = 'GET', array $options = [], $cacheDuration=900)
     {
         $htmlData = self::cached_http_request($reqUrl, $reqMethod, $options, $cacheDuration);
         $jsonLDstart = '<script type="application/ld+json">';
-        if(!strpos($htmlData['body'], $jsonLDstart)){
-            $redirectInfo = $reqUrl!=$htmlData['effectiveurl'] ? " → {$htmlData['effectiveurl']}" : '';
-            throw new Exception("EXCEPTION: NO JSON+LD found in RESPONSE ({$reqUrl}{$redirectInfo})", self::NO_JSONLD_FOUND_EXCEPTION);
+        if(!strpos((string) $htmlData['body'], $jsonLDstart)){
+            $redirectInfo = $reqUrl!=$htmlData['effectiveurl'] ? ' → ' . $htmlData['effectiveurl'] : '';
+            throw new Exception(sprintf('EXCEPTION: NO JSON+LD found in RESPONSE (%s%s)', $reqUrl, $redirectInfo), self::NO_JSONLD_FOUND_EXCEPTION);
         }
+
         $jsonLDparts = [];
-        $jsonLDhtmlFragments = explode('<script type="application/ld+json">', $htmlData['body']);
+        $jsonLDhtmlFragments = explode('<script type="application/ld+json">', (string) $htmlData['body']);
         array_shift($jsonLDhtmlFragments); // remove part before json-ld
         foreach ($jsonLDhtmlFragments as $fragment) {
             $fragmentParts = explode('</script>', $fragment);
@@ -155,9 +153,9 @@ class CacheHelpers
         }
 
         // invalidate cache if no valid json+ld found
-        if(!count($jsonLDparts)){
-            self::load_cache()->delete(md5($reqUrl));
-            throw new Exception("EXCEPTION (NO JSON+LD found in RESPONSE) {$reqUrl}");
+        if($jsonLDparts === []){
+            self::load_cache()->delete(md5((string) $reqUrl));
+            throw new Exception('EXCEPTION (NO JSON+LD found in RESPONSE) ' . $reqUrl);
         }
 
         return $jsonLDparts;
