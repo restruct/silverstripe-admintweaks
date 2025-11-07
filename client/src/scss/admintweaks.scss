@@ -203,32 +203,31 @@ label,
 }
 
 //
-// PAGE ICONS
+// PAGE ICONS https://fontawesome.com/search?f=classic&ic=free&o=r
 //
 @font-face {
-  font-family: 'FA 5 Free';
+  font-family: 'FA 7 Free';
   font-style: normal;
   font-weight: 400;
   font-display: block;
-  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.eot");
-  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.eot?#iefix") format("embedded-opentype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.woff2") format("woff2"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.woff") format("woff"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.ttf") format("truetype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-regular-400.svg#fontawesome") format("svg");
+  src: url("../../fonts/fontawesome-free-7.1.0-web/webfonts/fa-regular-400.woff2");
 }
 @font-face {
-  font-family: 'FA 5 Free';
+  font-family: 'FA 7 Free';
   font-style: normal;
   font-weight: 900;
   font-display: block;
-  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.eot");
-  src: url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.eot?#iefix") format("embedded-opentype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.woff2") format("woff2"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.woff") format("woff"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.ttf") format("truetype"), url("../../fonts/fontawesome-free-5.15.3-web/webfonts/fa-solid-900.svg#fontawesome") format("svg");
+  src: url("../../fonts/fontawesome-free-7.1.0-web/webfonts/fa-solid-900.woff2");
 }
 
 @mixin fa_page_icon($icon, $version:'fas'){
-  font-family: 'FA 5 Free' !important;
+  font-family: 'FA 7 Free' !important;
   font-weight: if($version=='fas',900,400) !important;
   content: $icon;
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
+  display: block;
 }
 
 li.jstree-leaf > a .jstree-pageicon, .page-icon {
@@ -238,43 +237,43 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
   margin-right: .4rem !important;
 
   //&[class*="SiteTree"]:before { @include fa_page_icon("\f850"); }
-  &[class*="Page"]:before, &[class*="SiteTree"]:before { @include fa_page_icon("\f15b",'far'); }
+  &[class*="Page"]:before, &[class*="SiteTree"]:before { @include fa_page_icon("\f15b"); }
   &[class*="HomePage"]:before, &.homepage:before { @include fa_page_icon("\f015"); }
   &[class*="RedirectorPage"]:before { @include fa_page_icon("\f5eb"); }
-  &[class*="VirtualPage"]:before { @include fa_page_icon("\f24d",'far'); }
+  &[class*="VirtualPage"]:before { @include fa_page_icon("\f24d"); }
   &[class*="SubsitesVirtualPage"]:before, &[class*="CrossSubsiteVirtualPage"]:before { @include fa_page_icon("\f24d"); }
   &[class*="UserDefinedForm"]:before { @include fa_page_icon("\f46d"); }
   &[class*="ErrorPage"]:before { @include fa_page_icon("\f06a"); }
   &[class*="Profile"]:before { @include fa_page_icon("\f2bb"); }
   &[class*="Cart"]:before { @include fa_page_icon("\f07a"); }
-  &[class*="AlbumPage"]:before { @include fa_page_icon("\f302",'far'); margin-left: -10%; }
+  &[class*="AlbumPage"]:before { @include fa_page_icon("\f302"); }
   &[class*="Catalog"]:before { @include fa_page_icon("\f02d"); }
-  &[class*="CatalogItem"]:before { @include fa_page_icon("\f15c",'far'); }
+  &[class*="CatalogItem"]:before { @include fa_page_icon("\f15c"); }
   &[class*="Specialist"]:before { @include fa_page_icon("\f0f0"); }
-  &[class*="SpecialistCatalog"]:before { @include fa_page_icon("\f80d"); margin-left: -10%; }
+  &[class*="SpecialistCatalog"]:before { @include fa_page_icon("\f80d"); }
   &[class*="SpecialistFilteredCatalog"]:before { @include fa_page_icon("\f80d"); }
   &[class*="PublicationCatalog "]:before { @include fa_page_icon("\f02d"); }
-  &[class*="SitemapPage"]:before { @include fa_page_icon("\f0e8"); margin-left: -10%; }
-  &[class*="SimpleCalendar"]:before { @include fa_page_icon("\f073",'far'); }
+  &[class*="SitemapPage"]:before { @include fa_page_icon("\f0e8"); }
+  &[class*="SimpleCalendar"]:before { @include fa_page_icon("\f073"); }
   &[class*="SimpleCalendar"] { background: none !important; }
   &[class*="ArchivePage"]:before { @include fa_page_icon("\f187"); }
   &[class*="ContactPage"]:before { @include fa_page_icon("\f87b"); }
   &[class*="InfoPage"]:before { @include fa_page_icon("\f05a"); }
   &[class*="BlocksPage"]:before, &[class*="BlockPage"]:before { @include fa_page_icon("\f009"); }
-  &[class*="VideoPage"]:before { @include fa_page_icon("\f1c8",'far'); }
-  &[class*="Department"]:before { @include fa_page_icon("\f1ad",'far'); }
+  &[class*="VideoPage"]:before { @include fa_page_icon("\f1c8"); }
+  &[class*="Department"]:before { @include fa_page_icon("\f1ad"); }
   &[class*="DepartmentHolder"]:before { @include fa_page_icon("\f277"); }
-  &[class*="ReservationPage"]:before { @include fa_page_icon("\f274",'far'); }
-  &[class*="IFramePage"]:before { @include fa_page_icon("\f247",'far'); }
+  &[class*="ReservationPage"]:before { @include fa_page_icon("\f274"); }
+  &[class*="IFramePage"]:before { @include fa_page_icon("\f247"); }
   &[class*="NewsGridHolder"]:before { @include fa_page_icon("\f0ac"); }
-  &[class*="NewsGridPage"]:before { @include fa_page_icon("\f1ea",'far'); margin-left: -10%; }
+  &[class*="NewsGridPage"]:before { @include fa_page_icon("\f1ea"); }
   &[class*="NewsGridHolder"], &[class*="NewsGridPage"] { background: none !important; }
   &[class*="LifestylePage"]:before { @include fa_page_icon("\f496"); }
   &[class*="ProtectedPage"]:before { @include fa_page_icon("\f023"); }
   &[class*="ImportedContent"]:before { @include fa_page_icon("\f59d"); }
   &[class*="SettingsPage"]:before { @include fa_page_icon("\f013"); }
-  &[class*="DialogPage"]:before { @include fa_page_icon("\f086",'far'); }
-  &[class*="HelpPage"]:before { @include fa_page_icon("\f1cd",'far'); }
+  &[class*="DialogPage"]:before { @include fa_page_icon("\f086"); }
+  &[class*="HelpPage"]:before { @include fa_page_icon("\f1cd"); }
 }
 
 
