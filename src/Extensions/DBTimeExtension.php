@@ -49,7 +49,7 @@ class DBTimeExtension extends Extension
     {
         /** @var DBTime $this->owner */
 //        return date($formatString, strtotime("1-1-1970 0:00:00") + $seconds);
-        $formatter = \IntlDateFormatter::create(i18n::get_locale(), \IntlDateFormatter::NONE, \IntlDateFormatter::MEDIUM);
+        $formatter = \IntlDateFormatter::create(\SilverStripe\i18n\i18n::get_locale(), \IntlDateFormatter::NONE, \IntlDateFormatter::MEDIUM);
         $formatter->setPattern($formatString);
         return $formatter->format(strtotime("1-1-1970 0:00:00") + $seconds);
     }
