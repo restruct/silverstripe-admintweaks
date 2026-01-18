@@ -2,6 +2,7 @@
 
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Manifest\ModuleResourceLoader;
+use SilverStripe\i18n\i18n;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\View\TemplateGlobalProvider;
 use SilverStripe\View\ThemeResourceLoader;
@@ -15,7 +16,7 @@ class TemplateHelpers
         return [
             'themeDirResourceURL',
             'ImagePlaceholder',
-            'i18nLocale',
+            'CurrentLocale',
         ];
     }
 
@@ -58,15 +59,15 @@ class TemplateHelpers
     }
 
     /**
-     * Locale fallback for projects sans CMS (SilverStripe\CMS\Controllers\ContentController::ContentLocale()).
      * Returns an RFC1766 compliant locale string, e.g. 'fr-CA'.
+     * Locale fallback for projects sans CMS (SilverStripe\CMS\Controllers\ContentController::ContentLocale()).
      *
      * Suitable for insertion into lang= and xml:lang=
      * attributes in HTML or XHTML output.
      *
      * @return string
      */
-    public function i18nLocale()
+    public function CurrentLocale()
     {
         $locale = i18n::get_locale();
         return i18n::convert_rfc1766($locale);
