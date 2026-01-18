@@ -67,7 +67,7 @@ class TemplateHelpers
      *
      * @return string
      */
-    public function CurrentLocale()
+    public static function CurrentLocale()
     {
         $locale = i18n::get_locale();
         return i18n::convert_rfc1766($locale);
