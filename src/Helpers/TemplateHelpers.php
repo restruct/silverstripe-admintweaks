@@ -14,6 +14,7 @@ class TemplateHelpers implements TemplateGlobalProvider
         return [
             'themeDirResourceURL',
             'ImagePlaceholder',
+            'i18nLocale',
         ];
     }
 
@@ -53,5 +54,20 @@ class TemplateHelpers implements TemplateGlobalProvider
         // just always base64 escape to circumvent issues with svg-in-html-attribute (eg '"'s)
 //        return $Base64 ? "data:image/svg+xml;base64,".base64_encode($svgStr) : "data:image/svg+xml;utf8,{$svgStr}";
         return $DataUriBase64 ? "data:image/svg+xml;base64,".base64_encode($svgStr) : DBHTMLVarchar::create()->setValue($svgStr);
+    }
+
+    /**
+     * Locale fallback for projects sans CMS (SilverStripe\CMS\Controllers\ContentController::ContentLocale()).
+     * Returns an RFC1766 compliant locale string, e.g. 'fr-CA'.
+     *
+     * Suitable for insertion into lang= and xml:lang=
+     * attributes in HTML or XHTML output.
+     *
+     * @return string
+     */
+    public function i18nLocale()
+    {
+        $locale = i18n::get_locale();
+        return i18n::convert_rfc1766($locale);
     }
 }
