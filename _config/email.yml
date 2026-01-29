@@ -70,7 +70,15 @@ SilverStripe\Core\Injector\Injector:
       AuthMode: [ setAuthMode, ['login'] ]
 
 
-# Add email error handler (if no Sentry etc)
+# Email error handler - sends error emails via NativeMailerHandler
+# Only activates when ALL env vars below are set. To disable on dev/test,
+# simply don't define these vars in those environments.
+#
+# Required in .env (on live only):
+#   APP_LOG_MAIL_RECIPIENT="admin@example.com"
+#   APP_LOG_MAIL_SUBJECT="Error on MyApp"
+#   APP_LOG_MAIL_SENDER="noreply@example.com"
+#   APP_LOG_MAIL_LEVEL="error"  # info / warning / error
 ---
 Name: admintweaks-error-email-logger
 Only:

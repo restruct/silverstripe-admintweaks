@@ -111,12 +111,15 @@ APP_SMTP_ENCRYPTION=""
 APP_SMTP_USERNAME=""
 APP_SMTP_PASSWORD=""
 
-# Send error logs via email
-APP_LOG_MAIL_RECIPIENT=""
-APP_LOG_MAIL_SUBJECT=""
-APP_LOG_MAIL_SENDER=""
-APP_LOG_MAIL_LEVEL=""
+# Send error logs via email (set on LIVE only, omit on dev/test to disable)
+APP_LOG_MAIL_RECIPIENT="admin@example.com"
+APP_LOG_MAIL_SUBJECT="Error on MyApp LIVE"
+APP_LOG_MAIL_SENDER="noreply@example.com"
+APP_LOG_MAIL_LEVEL="error"  # info / warning / error
 ```
+
+**Note:** The error email handler only activates when ALL four `APP_LOG_MAIL_*` vars are set.
+To disable error emails on dev/test environments, simply don't define these variables.
 
 ## Show Block design/thumbnails instead of icons in admin UI (Elemental)
 
