@@ -376,3 +376,14 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
 fieldset.grid.grid-field.ss-gridfield.field {
   margin-bottom: 2em !important;
 }
+
+
+//
+// Permission code badges in Security admin (added via JS)
+//
+.permissioncheckboxset li label .badge {
+  margin-left: 0.5em;
+  font-size: 10px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  vertical-align: middle;
+}

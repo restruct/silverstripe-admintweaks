@@ -34,6 +34,21 @@
       }
     });
 
+    // Show permission codes as badges in Security admin
+    $('.permissioncheckboxset li label').entwine({
+      onadd: function (e) {
+        // Get the permission code from sibling input's value attribute
+        var input = this.siblings('input[type="checkbox"]');
+        if (input.length && !this.find('.badge').length) {
+          var code = input.attr('value');
+          if (code) {
+            this.append($('<span class="badge badge-pill badge-light font-weight-normal text-black-50"></span>').text(code));
+          }
+        }
+        this._super();
+      }
+    });
+
     // // missing button icons in gridfield... workaround
     // //	$('button.gridfield-button-delete').entwine({
     // //		onadd: function(e){
