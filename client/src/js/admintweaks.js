@@ -87,6 +87,50 @@
       }
     });
 
+    /**
+     * CopyTextField - copy to clipboard with visual feedback
+     * On click: copies input value, button turns green with checkmark for 2 seconds
+     * Optional alert via data-copy-alert attribute on .copy-text-field container
+     */
+    $('.copy-text-field .copy-text-field__btn').entwine({
+      onclick: function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var btn = this;
+        var container = btn.closest('.copy-text-field');
+        var input = container.find('input');
+        var value = input.val();
+
+        if (!value) return;
+
+        // Copy to clipboard using modern API
+        navigator.clipboard.writeText(value).then(function() {
+          // Show success state - outline green + green icon
+          btn.addClass('btn-outline-success').removeClass('btn-outline-secondary');
+          btn.find('.copy-text-field__icon-copy').hide();
+          btn.find('.copy-text-field__icon-check').show();
+
+          // Revert after 2 seconds
+          setTimeout(function() {
+            btn.removeClass('btn-outline-success').addClass('btn-outline-secondary');
+            btn.find('.copy-text-field__icon-check').hide();
+            btn.find('.copy-text-field__icon-copy').show();
+          }, 2000);
+
+          // Optional alert
+          var alertMsg = container.data('copy-alert');
+          if (alertMsg) {
+            alert(alertMsg);
+          }
+        }).catch(function(err) {
+          console.error('Failed to copy:', err);
+          // Fallback for older browsers
+          input.select();
+          document.execCommand('copy');
+        });
+      }
+    });
 
     // @TODO: fix this based on HLCL publisher update publications action
     // Add optional loading feedback overlay to buttons

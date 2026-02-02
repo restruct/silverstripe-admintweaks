@@ -1,0 +1,39 @@
+/**
+ * MultivalueSortField - sort-only mode for MultiValueDropdownField
+ * Hides add/remove controls, only allows drag-and-drop reordering
+ */
+
+.sort-only {
+  // Hide remove buttons (X) and their spacer divs
+  abbr.search-choice-close,
+  abbr.search-choice-close + div {
+    display: none;
+  }
+
+  // Hide the last sortable handle (empty "add new" slot)
+  .ui-sortable-handle:last-child {
+    display: none;
+  }
+
+  // Full width for chosen container
+  &.multivaluefieldlist .chosen-container {
+    max-width: none !important;
+  }
+
+  // Disable pointer events on dropdown (no selecting/adding)
+  .chosen-container,
+  .chosen-container a.chosen-single {
+    pointer-events: none;
+    background: #fafbfc;
+  }
+
+  // Visual drag handle indicator
+  &.multivaluefieldlist > li::after {
+    border-left: 1px dotted #ccc;
+    display: inline-block;
+    padding: 7px 10px;
+    margin-left: -28px;
+    position: relative;
+    cursor: ns-resize;
+  }
+}

@@ -149,6 +149,12 @@ label,
   margin-top: -.6rem !important;
   margin-bottom: -.6rem !important;
 }
+
+// CopyTextField inside GridField rows
+.ss-gridfield-item .copy-text-field {
+  margin-top: -.6rem;
+  margin-bottom: -.6rem;
+}
 .grid-field .ss-gridfield-item img {
   margin-top: -1.2rem;
   margin-bottom: -1.2rem;
