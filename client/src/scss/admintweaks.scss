@@ -209,8 +209,101 @@ label,
 }
 
 //
-// PAGE ICONS https://fontawesome.com/search?f=classic&ic=free&o=r
+// PAGE ICONS - Configurable icon provider (Bootstrap Icons default, FontAwesome optional)
 //
+// To use FontAwesome instead of Bootstrap Icons, set $icon-provider: 'fontawesome' before importing this file
+// or add body.use-fontawesome class via PHP config
+//
+
+// Icon provider config (can be overridden)
+$icon-provider: 'bootstrap' !default;
+
+// Bootstrap Icons map - semantic name => unicode
+$bs-icons: (
+  'page': '\f392',           // bi-file-earmark
+  'home': '\f425',           // bi-house
+  'redirect': '\f546',       // bi-signpost-2
+  'virtual': '\f3c2',        // bi-files
+  'form': '\f5f9',           // bi-ui-checks
+  'error': '\f333',          // bi-exclamation-circle
+  'profile': '\f8c9',        // bi-person-vcard
+  'cart': '\f242',           // bi-cart
+  'images': '\f42b',         // bi-images
+  'book': '\f194',           // bi-book
+  'file-text': '\f38b',      // bi-file-earmark-text
+  'person': '\f4de',         // bi-person-square
+  'people-catalog': '\f676', // bi-person-rolodex
+  'sitemap': '\f2ee',        // bi-diagram-3
+  'calendar': '\f214',       // bi-calendar3
+  'archive': '\f10d',        // bi-archive
+  'phone': '\f5c1',          // bi-telephone
+  'info': '\f431',           // bi-info-circle
+  'grid': '\f3fa',           // bi-grid-3x3
+  'video': '\f37b',          // bi-file-earmark-play
+  'building': '\f1dd',       // bi-building
+  'signpost': '\f549',       // bi-signpost-split
+  'calendar-check': '\f1e2', // bi-calendar-check
+  'window': '\f620',         // bi-window
+  'globe': '\f3ee',          // bi-globe
+  'newspaper': '\f4a3',      // bi-newspaper
+  'lock': '\f47b',           // bi-lock
+  'import': '\f356',         // bi-file-earmark-arrow-down
+  'gear': '\f3e5',           // bi-gear
+  'chat': '\f24a',           // bi-chat-dots
+  'help': '\f467',           // bi-life-preserver
+);
+
+// FontAwesome map - semantic name => unicode (kept for optional FA mode)
+$fa-icons: (
+  'page': '\f15b',           // file
+  'home': '\f015',           // house
+  'redirect': '\f5eb',       // directions
+  'virtual': '\f24d',        // clone
+  'form': '\f46d',           // clipboard-list
+  'error': '\f06a',          // circle-exclamation
+  'profile': '\f2bb',        // address-card
+  'cart': '\f07a',           // cart-shopping
+  'images': '\f302',         // images
+  'book': '\f02d',           // book
+  'file-text': '\f15c',      // file-lines
+  'person': '\f0f0',         // user-doctor
+  'people-catalog': '\f80d', // hospital-user
+  'sitemap': '\f0e8',        // sitemap
+  'calendar': '\f073',       // calendar-days
+  'archive': '\f187',        // box-archive
+  'phone': '\f87b',          // square-phone-flip
+  'info': '\f05a',           // circle-info
+  'grid': '\f009',           // table-cells-large
+  'video': '\f1c8',          // file-video
+  'building': '\f1ad',       // building
+  'signpost': '\f277',       // signs-post
+  'calendar-check': '\f274', // calendar-check
+  'window': '\f247',         // object-group
+  'globe': '\f0ac',          // globe
+  'newspaper': '\f1ea',      // newspaper
+  'lock': '\f023',           // lock
+  'import': '\f59d',         // cart-flatbed-suitcase
+  'gear': '\f013',           // gear
+  'chat': '\f086',           // comments
+  'help': '\f1cd',           // life-ring
+);
+
+// Derived config based on provider
+$icons: if($icon-provider == 'bootstrap', $bs-icons, $fa-icons);
+$icon-font: if($icon-provider == 'bootstrap', 'bootstrap-icons', 'FA 7 Free');
+$icon-weight: if($icon-provider == 'bootstrap', normal, 900);
+
+// Bootstrap Icons font-face (default)
+@font-face {
+  font-family: 'bootstrap-icons';
+  font-style: normal;
+  font-weight: normal;
+  font-display: block;
+  src: url("../../fonts/bootstrap-icons/bootstrap-icons.woff2") format("woff2"),
+       url("../../fonts/bootstrap-icons/bootstrap-icons.woff") format("woff");
+}
+
+// FontAwesome font-face (for optional FA mode)
 @font-face {
   font-family: 'FA 7 Free';
   font-style: normal;
@@ -226,10 +319,11 @@ label,
   src: url("../../fonts/fontawesome-free-7.1.0-web/webfonts/fa-solid-900.woff2");
 }
 
-@mixin fa_page_icon($icon, $version:'fas'){
-  font-family: 'FA 7 Free' !important;
-  font-weight: if($version=='fas',900,400) !important;
-  content: $icon;
+// Provider-agnostic page icon mixin
+@mixin page-icon($name) {
+  font-family: $icon-font !important;
+  font-weight: $icon-weight !important;
+  content: map-get($icons, $name);
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -242,44 +336,43 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
   width: 1.4rem !important;
   margin-right: .4rem !important;
 
-  //&[class*="SiteTree"]:before { @include fa_page_icon("\f850"); }
-  &[class*="Page"]:before, &[class*="SiteTree"]:before { @include fa_page_icon("\f15b"); }
-  &[class*="HomePage"]:before, &.homepage:before { @include fa_page_icon("\f015"); }
-  &[class*="RedirectorPage"]:before { @include fa_page_icon("\f5eb"); }
-  &[class*="VirtualPage"]:before { @include fa_page_icon("\f24d"); }
-  &[class*="SubsitesVirtualPage"]:before, &[class*="CrossSubsiteVirtualPage"]:before { @include fa_page_icon("\f24d"); }
-  &[class*="UserDefinedForm"]:before { @include fa_page_icon("\f46d"); }
-  &[class*="ErrorPage"]:before { @include fa_page_icon("\f06a"); }
-  &[class*="Profile"]:before { @include fa_page_icon("\f2bb"); }
-  &[class*="Cart"]:before { @include fa_page_icon("\f07a"); }
-  &[class*="AlbumPage"]:before { @include fa_page_icon("\f302"); }
-  &[class*="Catalog"]:before { @include fa_page_icon("\f02d"); }
-  &[class*="CatalogItem"]:before { @include fa_page_icon("\f15c"); }
-  &[class*="Specialist"]:before { @include fa_page_icon("\f0f0"); }
-  &[class*="SpecialistCatalog"]:before { @include fa_page_icon("\f80d"); }
-  &[class*="SpecialistFilteredCatalog"]:before { @include fa_page_icon("\f80d"); }
-  &[class*="PublicationCatalog "]:before { @include fa_page_icon("\f02d"); }
-  &[class*="SitemapPage"]:before { @include fa_page_icon("\f0e8"); }
-  &[class*="SimpleCalendar"]:before { @include fa_page_icon("\f073"); }
+  &[class*="Page"]:before, &[class*="SiteTree"]:before { @include page-icon('page'); }
+  &[class*="HomePage"]:before, &.homepage:before { @include page-icon('home'); }
+  &[class*="RedirectorPage"]:before { @include page-icon('redirect'); }
+  &[class*="VirtualPage"]:before { @include page-icon('virtual'); }
+  &[class*="SubsitesVirtualPage"]:before, &[class*="CrossSubsiteVirtualPage"]:before { @include page-icon('virtual'); }
+  &[class*="UserDefinedForm"]:before { @include page-icon('form'); }
+  &[class*="ErrorPage"]:before { @include page-icon('error'); }
+  &[class*="Profile"]:before { @include page-icon('profile'); }
+  &[class*="Cart"]:before { @include page-icon('cart'); }
+  &[class*="AlbumPage"]:before { @include page-icon('images'); }
+  &[class*="Catalog"]:before { @include page-icon('book'); }
+  &[class*="CatalogItem"]:before { @include page-icon('file-text'); }
+  // Generalized person icons (replaces Specialist/LifestylePage)
+  &[class*="Person"]:before, &[class*="Specialist"]:before { @include page-icon('person'); }
+  &[class*="PersonCatalog"]:before, &[class*="SpecialistCatalog"]:before,
+  &[class*="SpecialistFilteredCatalog"]:before { @include page-icon('people-catalog'); }
+  &[class*="PublicationCatalog"]:before { @include page-icon('book'); }
+  &[class*="SitemapPage"]:before { @include page-icon('sitemap'); }
+  &[class*="SimpleCalendar"]:before { @include page-icon('calendar'); }
   &[class*="SimpleCalendar"] { background: none !important; }
-  &[class*="ArchivePage"]:before { @include fa_page_icon("\f187"); }
-  &[class*="ContactPage"]:before { @include fa_page_icon("\f87b"); }
-  &[class*="InfoPage"]:before { @include fa_page_icon("\f05a"); }
-  &[class*="BlocksPage"]:before, &[class*="BlockPage"]:before { @include fa_page_icon("\f009"); }
-  &[class*="VideoPage"]:before { @include fa_page_icon("\f1c8"); }
-  &[class*="Department"]:before { @include fa_page_icon("\f1ad"); }
-  &[class*="DepartmentHolder"]:before { @include fa_page_icon("\f277"); }
-  &[class*="ReservationPage"]:before { @include fa_page_icon("\f274"); }
-  &[class*="IFramePage"]:before { @include fa_page_icon("\f247"); }
-  &[class*="NewsGridHolder"]:before { @include fa_page_icon("\f0ac"); }
-  &[class*="NewsGridPage"]:before { @include fa_page_icon("\f1ea"); }
+  &[class*="ArchivePage"]:before { @include page-icon('archive'); }
+  &[class*="ContactPage"]:before { @include page-icon('phone'); }
+  &[class*="InfoPage"]:before { @include page-icon('info'); }
+  &[class*="BlocksPage"]:before, &[class*="BlockPage"]:before { @include page-icon('grid'); }
+  &[class*="VideoPage"]:before { @include page-icon('video'); }
+  &[class*="Department"]:before { @include page-icon('building'); }
+  &[class*="DepartmentHolder"]:before { @include page-icon('signpost'); }
+  &[class*="ReservationPage"]:before { @include page-icon('calendar-check'); }
+  &[class*="IFramePage"]:before { @include page-icon('window'); }
+  &[class*="NewsGridHolder"]:before { @include page-icon('globe'); }
+  &[class*="NewsGridPage"]:before { @include page-icon('newspaper'); }
   &[class*="NewsGridHolder"], &[class*="NewsGridPage"] { background: none !important; }
-  &[class*="LifestylePage"]:before { @include fa_page_icon("\f496"); }
-  &[class*="ProtectedPage"]:before { @include fa_page_icon("\f023"); }
-  &[class*="ImportedContent"]:before { @include fa_page_icon("\f59d"); }
-  &[class*="SettingsPage"]:before { @include fa_page_icon("\f013"); }
-  &[class*="DialogPage"]:before { @include fa_page_icon("\f086"); }
-  &[class*="HelpPage"]:before { @include fa_page_icon("\f1cd"); }
+  &[class*="ProtectedPage"]:before { @include page-icon('lock'); }
+  &[class*="ImportedContent"]:before { @include page-icon('import'); }
+  &[class*="SettingsPage"]:before { @include page-icon('gear'); }
+  &[class*="DialogPage"]:before { @include page-icon('chat'); }
+  &[class*="HelpPage"]:before { @include page-icon('help'); }
 }
 
 
@@ -393,3 +486,216 @@ fieldset.grid.grid-field.ss-gridfield.field {
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   vertical-align: middle;
 }
+
+
+//
+// BOOTSTRAP ICON UTILITY CLASSES
+// Usage: Add .bs-icon-{name} class to buttons, links, etc.
+// Mirrors SilverStripe's .font-icon-* pattern but uses Bootstrap Icons
+//
+// Example: <button class="btn btn-primary bs-icon-plus-circle">Add Item</button>
+//
+
+// Base styles for .bs-icon-* classes (mirrors .font-icon-* positioning)
+[class*=" bs-icon-"]:before,
+[class^="bs-icon-"]:before {
+  font-family: 'bootstrap-icons' !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Button-specific icon positioning (matches framework's .font-icon-* on buttons)
+.btn[class*=" bs-icon-"]:before,
+.btn[class^="bs-icon-"]:before,
+.dropdown-item[class*=" bs-icon-"]:before,
+.dropdown-item[class^="bs-icon-"]:before {
+  position: relative;
+  margin-right: 6px;
+  line-height: 19.999px;
+  vertical-align: middle;
+  font-size: 1.231rem;
+}
+
+// Action link specific (GridField actions, etc.)
+a.action[class*=" bs-icon-"]:before,
+a.action[class^="bs-icon-"]:before {
+  margin-right: 0.4em;
+}
+
+// Icon-only buttons (no text, just icon)
+.bs-icon-only:before {
+  margin-right: 0 !important;
+}
+
+//
+// Bootstrap Icon mappings - commonly used admin icons
+// Reference: https://icons.getbootstrap.com/
+//
+
+// Actions
+.bs-icon-plus:before { content: '\f4fe'; }              // bi-plus
+.bs-icon-plus-lg:before { content: '\f64d'; }           // bi-plus-lg
+.bs-icon-plus-circle:before { content: '\f4ff'; }       // bi-plus-circle
+.bs-icon-plus-circle-fill:before { content: '\f500'; }  // bi-plus-circle-fill
+.bs-icon-plus-square:before { content: '\f503'; }       // bi-plus-square
+.bs-icon-dash:before { content: '\f2ea'; }              // bi-dash (minus)
+.bs-icon-dash-circle:before { content: '\f2eb'; }       // bi-dash-circle
+.bs-icon-x:before { content: '\f62a'; }                 // bi-x
+.bs-icon-x-lg:before { content: '\f659'; }              // bi-x-lg
+.bs-icon-x-circle:before { content: '\f623'; }          // bi-x-circle
+.bs-icon-x-circle-fill:before { content: '\f622'; }     // bi-x-circle-fill
+.bs-icon-check:before { content: '\f26e'; }             // bi-check
+.bs-icon-check-lg:before { content: '\f633'; }          // bi-check-lg
+.bs-icon-check-circle:before { content: '\f26b'; }      // bi-check-circle
+.bs-icon-check-circle-fill:before { content: '\f26a'; } // bi-check-circle-fill
+
+// Edit/CRUD
+.bs-icon-pencil:before { content: '\f4cb'; }            // bi-pencil
+.bs-icon-pencil-fill:before { content: '\f4c9'; }       // bi-pencil-fill
+.bs-icon-pencil-square:before { content: '\f4ca'; }     // bi-pencil-square
+.bs-icon-trash:before { content: '\f5de'; }             // bi-trash
+.bs-icon-trash-fill:before { content: '\f5dd'; }        // bi-trash-fill
+.bs-icon-trash3:before { content: '\f5dc'; }            // bi-trash3
+.bs-icon-trash3-fill:before { content: '\f5db'; }       // bi-trash3-fill
+.bs-icon-copy:before { content: '\f28e'; }              // bi-copy (clipboard)
+.bs-icon-clipboard:before { content: '\f27e'; }         // bi-clipboard
+.bs-icon-clipboard-check:before { content: '\f27a'; }   // bi-clipboard-check
+
+// Navigation/arrows
+.bs-icon-arrow-left:before { content: '\f12f'; }        // bi-arrow-left
+.bs-icon-arrow-right:before { content: '\f138'; }       // bi-arrow-right
+.bs-icon-arrow-up:before { content: '\f148'; }          // bi-arrow-up
+.bs-icon-arrow-down:before { content: '\f128'; }        // bi-arrow-down
+.bs-icon-chevron-left:before { content: '\f284'; }      // bi-chevron-left
+.bs-icon-chevron-right:before { content: '\f285'; }     // bi-chevron-right
+.bs-icon-chevron-up:before { content: '\f286'; }        // bi-chevron-up
+.bs-icon-chevron-down:before { content: '\f282'; }      // bi-chevron-down
+.bs-icon-caret-left:before { content: '\f22d'; }        // bi-caret-left
+.bs-icon-caret-right:before { content: '\f232'; }       // bi-caret-right
+.bs-icon-caret-up:before { content: '\f235'; }          // bi-caret-up
+.bs-icon-caret-down:before { content: '\f229'; }        // bi-caret-down
+
+// Files & documents
+.bs-icon-file:before { content: '\f37c'; }              // bi-file
+.bs-icon-file-earmark:before { content: '\f392'; }      // bi-file-earmark
+.bs-icon-file-text:before { content: '\f3b1'; }         // bi-file-text
+.bs-icon-file-earmark-text:before { content: '\f38b'; } // bi-file-earmark-text
+.bs-icon-file-pdf:before { content: '\f63d'; }          // bi-file-pdf
+.bs-icon-file-code:before { content: '\f380'; }         // bi-file-code
+.bs-icon-folder:before { content: '\f3d5'; }            // bi-folder
+.bs-icon-folder-fill:before { content: '\f3d4'; }       // bi-folder-fill
+.bs-icon-folder-plus:before { content: '\f3d9'; }       // bi-folder-plus
+
+// Media
+.bs-icon-image:before { content: '\f42a'; }             // bi-image
+.bs-icon-images:before { content: '\f42b'; }            // bi-images
+.bs-icon-camera:before { content: '\f220'; }            // bi-camera
+.bs-icon-film:before { content: '\f3cc'; }              // bi-film
+.bs-icon-play:before { content: '\f4f2'; }              // bi-play
+.bs-icon-play-fill:before { content: '\f4f4'; }         // bi-play-fill
+.bs-icon-play-circle:before { content: '\f4f1'; }       // bi-play-circle
+
+// UI elements
+.bs-icon-search:before { content: '\f52a'; }            // bi-search
+.bs-icon-filter:before { content: '\f3cd'; }            // bi-filter
+.bs-icon-sort-down:before { content: '\f574'; }         // bi-sort-down
+.bs-icon-sort-up:before { content: '\f57a'; }           // bi-sort-up
+.bs-icon-list:before { content: '\f479'; }              // bi-list
+.bs-icon-list-ul:before { content: '\f47c'; }           // bi-list-ul
+.bs-icon-grid:before { content: '\f3f6'; }              // bi-grid
+.bs-icon-grid-3x3:before { content: '\f3fa'; }          // bi-grid-3x3
+.bs-icon-three-dots:before { content: '\f5d4'; }        // bi-three-dots
+.bs-icon-three-dots-vertical:before { content: '\f5d2'; } // bi-three-dots-vertical
+
+// Status/alerts
+.bs-icon-info:before { content: '\f430'; }              // bi-info
+.bs-icon-info-circle:before { content: '\f431'; }       // bi-info-circle
+.bs-icon-info-circle-fill:before { content: '\f432'; }  // bi-info-circle-fill
+.bs-icon-question:before { content: '\f505'; }          // bi-question
+.bs-icon-question-circle:before { content: '\f504'; }   // bi-question-circle
+.bs-icon-exclamation:before { content: '\f334'; }       // bi-exclamation
+.bs-icon-exclamation-circle:before { content: '\f333'; } // bi-exclamation-circle
+.bs-icon-exclamation-triangle:before { content: '\f331'; } // bi-exclamation-triangle
+.bs-icon-check-all:before { content: '\f269'; }         // bi-check-all
+.bs-icon-bell:before { content: '\f15b'; }              // bi-bell
+.bs-icon-bell-fill:before { content: '\f159'; }         // bi-bell-fill
+
+// People
+.bs-icon-person:before { content: '\f4da'; }            // bi-person
+.bs-icon-person-fill:before { content: '\f4d9'; }       // bi-person-fill
+.bs-icon-person-plus:before { content: '\f4e0'; }       // bi-person-plus
+.bs-icon-person-dash:before { content: '\f4d2'; }       // bi-person-dash
+.bs-icon-people:before { content: '\f4ce'; }            // bi-people
+.bs-icon-people-fill:before { content: '\f4cd'; }       // bi-people-fill
+
+// Settings/tools
+.bs-icon-gear:before { content: '\f3e5'; }              // bi-gear
+.bs-icon-gear-fill:before { content: '\f3e2'; }         // bi-gear-fill
+.bs-icon-sliders:before { content: '\f557'; }           // bi-sliders
+.bs-icon-wrench:before { content: '\f610'; }            // bi-wrench
+.bs-icon-tools:before { content: '\f5d6'; }             // bi-tools
+
+// Communication
+.bs-icon-envelope:before { content: '\f32f'; }          // bi-envelope
+.bs-icon-envelope-fill:before { content: '\f32c'; }     // bi-envelope-fill
+.bs-icon-chat:before { content: '\f247'; }              // bi-chat
+.bs-icon-chat-dots:before { content: '\f24a'; }         // bi-chat-dots
+.bs-icon-send:before { content: '\f6b5'; }              // bi-send
+.bs-icon-telephone:before { content: '\f5c1'; }         // bi-telephone
+
+// Links/external
+.bs-icon-link:before { content: '\f470'; }              // bi-link
+.bs-icon-link-45deg:before { content: '\f471'; }        // bi-link-45deg
+.bs-icon-box-arrow-up-right:before { content: '\f1c5'; } // bi-box-arrow-up-right (external link)
+.bs-icon-share:before { content: '\f52d'; }             // bi-share
+.bs-icon-share-fill:before { content: '\f52c'; }        // bi-share-fill
+
+// Data
+.bs-icon-download:before { content: '\f30a'; }          // bi-download
+.bs-icon-upload:before { content: '\f603'; }            // bi-upload
+.bs-icon-cloud-download:before { content: '\f29a'; }    // bi-cloud-download
+.bs-icon-cloud-upload:before { content: '\f2a0'; }      // bi-cloud-upload
+.bs-icon-database:before { content: '\f2ed'; }          // bi-database
+.bs-icon-arrow-repeat:before { content: '\f130'; }      // bi-arrow-repeat (sync/refresh)
+.bs-icon-arrow-clockwise:before { content: '\f11f'; }   // bi-arrow-clockwise (refresh)
+
+// Security
+.bs-icon-lock:before { content: '\f47b'; }              // bi-lock
+.bs-icon-lock-fill:before { content: '\f47a'; }         // bi-lock-fill
+.bs-icon-unlock:before { content: '\f600'; }            // bi-unlock
+.bs-icon-unlock-fill:before { content: '\f5ff'; }       // bi-unlock-fill
+.bs-icon-shield:before { content: '\f53f'; }            // bi-shield
+.bs-icon-shield-check:before { content: '\f53b'; }      // bi-shield-check
+.bs-icon-key:before { content: '\f449'; }               // bi-key
+
+// Time/calendar
+.bs-icon-calendar:before { content: '\f214'; }          // bi-calendar3
+.bs-icon-calendar-plus:before { content: '\f213'; }     // bi-calendar-plus
+.bs-icon-calendar-check:before { content: '\f1e2'; }    // bi-calendar-check
+.bs-icon-clock:before { content: '\f293'; }             // bi-clock
+.bs-icon-clock-fill:before { content: '\f28f'; }        // bi-clock-fill
+.bs-icon-stopwatch:before { content: '\f5ac'; }         // bi-stopwatch
+
+// Misc
+.bs-icon-star:before { content: '\f588'; }              // bi-star
+.bs-icon-star-fill:before { content: '\f586'; }         // bi-star-fill
+.bs-icon-heart:before { content: '\f417'; }             // bi-heart
+.bs-icon-heart-fill:before { content: '\f415'; }        // bi-heart-fill
+.bs-icon-bookmark:before { content: '\f18d'; }          // bi-bookmark
+.bs-icon-bookmark-fill:before { content: '\f18b'; }     // bi-bookmark-fill
+.bs-icon-tag:before { content: '\f5b4'; }               // bi-tag
+.bs-icon-tags:before { content: '\f5b7'; }              // bi-tags
+.bs-icon-eye:before { content: '\f341'; }               // bi-eye
+.bs-icon-eye-slash:before { content: '\f33e'; }         // bi-eye-slash
+.bs-icon-print:before { content: '\f4ff'; }             // bi-printer
+.bs-icon-printer:before { content: '\f509'; }           // bi-printer
+.bs-icon-house:before { content: '\f425'; }             // bi-house
+.bs-icon-globe:before { content: '\f3ee'; }             // bi-globe
+.bs-icon-box:before { content: '\f1c6'; }               // bi-box
+.bs-icon-archive:before { content: '\f10d'; }           // bi-archive

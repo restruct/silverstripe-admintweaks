@@ -1,149 +1,215 @@
-# Restruct Silverstripe Admin Tweaks module
+# Restruct SilverStripe Admin Tweaks
 
-This module serves as a portable set of small Silverstripe functionality & styling tweaks by Restruct.
+A portable toolkit of admin UI enhancements, form field utilities, template helpers, and development conveniences for SilverStripe 4/5 projects.
 
-Currently it has been partially updated to SS4+, most stuff is deactivated & will be reactivated when needed in projects.
+**Namespace:** `Restruct\Silverstripe\AdminTweaks`
+**Compatibility:** SilverStripe 4.13+ and 5.x
 
+## Installation
 
-## Functionality:
+```bash
+composer require restruct/silverstripe-admintweaks
+```
 
-- ImagePlaceholder functionality (SVG)
-- Contact & social media fields in SiteConfig (optional/configurable)
-- Raw html head/body tag fields in SiteConfig (optional/configurable)
-- Browser-chrome colorpicker field in SiteConfig (optional/configurable)
-- Provides a global $themeDirResourceURL ($ThemeDir replacement, eg: `{$themeDirResourceURL('my-theme')}/videos/vid-{$RandomNumber}.mp4`)
-- SSViewer_ExtraIterators (eg "col-2-of-4"): GroupSize, PosInGroup, FirstOfGroup, LastOfGroup, FirstLastOfGroup, GroupOfGroups
-- CacheHelpers::cached_http_request(), cached_json_request() & cached_jsonLD_request()
-- GeneralHelpers::safelyGetProperty() & download_and_save_asset()
-- Various stuff added to Page by PageHelpersExtension
-- ScheduledMethodCall class to call any method on a schedule using QueuedJobs module (if installed)
-- FormFieldBootstrapExtension to simply add .form-control class to formfields (optional)
-- FormFieldTweaksExtension to add classes & attributes to form holders only (combine with ->setFieldHolderTemplate('FormFieldTweaks_holder'))
-- EnforceCMSPermission trait to have DataObjects require CMS access credentials for CRUD actions
-- GridFieldConfigs::editable_orderable()
-- SelectiveLumberjack class (fixes Lumberjack to NOT filter listview and also take hide_from_cms_tree (core functionality) into account)
-- Sets Session.cookie_secure true
-- Makes UserDefinedForm NOT save to server by default (GDPR)
-- Sets slightly higher image quality values & activates WEBP format (if webmen/silverstripe-webp-images is installed)
-- Activates MimeUploadValidator (if silverstripe/mimevalidator is installed)
-- Sets default ("cacheblock") cache to 24 hours & creates a "appcache" of 1 hour
-- Has some email config helpers (see "Email config" below)
-- Sets some image manipulation fallbacks in case methods are missing (legacy, focuspoint, cropper)
-- Sets a slightly more secure password policy
-- Activates googlesitemaps (if module installed)
-- Registers FeaturedImage & CurrentYear shortcodes (if shortcode module is installed)
-- Adds stylish pageicons for common pagetypes (font awesome icons)
-- (Bigfork:) Hides pagetypes that cannot be created & admin sections that clients rarely use
-- Hides CampaignAdmin & ReportAdmin in nav (rarely used by clients)
-- Groups RedirectedURLAdmin, ArchiveAdmin, QueuedJobsAdmin, SubsiteAdmin and SiteConfig nav-buttons under "Advanced" dropdown (if symbiote/silverstripe-grouped-cms-menu is installed)
-- Various Block (Elemental) tweaks (+ block icon/thumbnail preview route at `admin/blocktypeicons`)
-- Fix to make empty/unchecked checkboxes in editablegridfields submit data (eg unset)
-- Workaround checkboxes being unset by $form->loadData() when they dont have a 1:1 fieldname/relation on object (set attribute data-setactivecheckboxvalues to force a value onto checkboxsetfields)
-- DBDatetime::LegacyFormat() adds back Silverstripe 3/PHP datetime formatting support (SS4 switched to CLDR)
-- ...
+## Quick Start
 
+Most features are opt-in via configuration. The module provides sensible defaults for:
+- Secure session cookies
+- GDPR-compliant UserDefinedForm (no server storage)
+- Higher image quality defaults
+- 24-hour default cache, 1-hour app cache
 
-## Untested / dropped-in functionality
+## Features Overview
 
-Stuff quickly copied into this module for portability but may need some tweaking/generalization before being actually usable:
+| Category | Features | Documentation |
+|----------|----------|---------------|
+| **Admin UI** | Page icons, Bootstrap Icon classes, menu grouping, permission badges | [Icons](docs/icons.md) |
+| **Form Fields** | CopyTextField, MultivalueSortField, Bootstrap styling | [Form Fields](docs/form-fields.md) |
+| **GridField** | Editable+orderable configs, versioned ordering | [GridField](docs/gridfield.md) |
+| **Templates** | 30+ helper methods, iterators, image placeholders | [Template Helpers](docs/template-helpers.md) |
+| **SiteConfig** | Contact info, social media, theme settings, raw HTML | [SiteConfig](docs/siteconfig.md) |
+| **Caching** | HTTP request caching, JSON/JSON-LD parsing | [Caching & Helpers](docs/caching.md) |
+| **Email & Logging** | SMTP config, error email reports | [Email & Logging](docs/email-logging.md) |
 
-- IpAddressField formfield with IP validation (may currently be only usable in front-end, not sure)
-- DBNullableInt & MySQLSchemaManagerNullable
-- ...
+## Feature Highlights
 
+### Admin UI Enhancements
 
-## Notes:
+- **Page Icons** - Stylish icons for common page types using Bootstrap Icons (FA optional)
+- **`.bs-icon-*` Classes** - Bootstrap Icon utility classes mirroring `.font-icon-*` pattern
+- **Menu Grouping** - Groups admin sections under "Advanced" (requires `symbiote/silverstripe-grouped-cms-menu`)
+- **Permission Badges** - Shows permission codes in Security admin
+- **Checkbox Fixes** - Proper handling of unchecked checkboxes in editable GridFields
 
-- Legacy .margin-left & .small formfield styling -> (v4) just $field->removeExtraClass('stacked')->setRows(15)
+```php
+// Add Bootstrap icon to a button
+FormAction::create('add', 'Add Item')->addExtraClass('bs-icon-plus-circle');
+```
 
+### Form Fields
 
-## SiteConfig ... config
+- **CopyTextField** - Read-only field with copy-to-clipboard button
+- **MultivalueSortField** - Sortable multi-value field
+- **Bootstrap Styling** - Auto-adds Bootstrap classes to form fields (opt-in)
 
-Set wether to 'decorate' siteconfig or not:
+```php
+CopyTextField::create('ApiKey', 'API Key', $apiKey)
+    ->setButtonLabel('Copy')
+    ->setShowAlert(true);
+```
 
-```yml
-# NOTE: this extension adds various extra fields & functionality to siteadmin, activate on a per-project basis
+### GridField Configurations
+
+```php
+// Inline editing with drag-drop ordering
+$config = GridFieldConfigs::editable_orderable();
+
+// Filterable, orderable with record editor
+$config = GridFieldConfigs::filterable_orderable_recordeditor();
+```
+
+### Template Helpers
+
+```html
+<!-- Environment checks -->
+<% if $IsDev %>Debug mode<% end_if %>
+
+<!-- Image placeholder SVG -->
+<% include ImagePlaceholder W=180, H=50, Label='logo' %>
+
+<!-- Theme resource URL -->
+<video src="{$themeDirResourceURL('my-theme')}/video.mp4"></video>
+
+<!-- Extra iterators -->
+<% loop $Items %>
+  <div class="col-{$GroupSize}-of-4">$Title</div>
+<% end_loop %>
+```
+
+### Cached HTTP Requests
+
+```php
+use Restruct\Silverstripe\AdminTweaks\Helpers\CacheHelpers;
+
+// Cached JSON API request (1 hour TTL)
+$data = CacheHelpers::cached_json_request('https://api.example.com/data', 'GET', [], 3600);
+
+// Extract JSON-LD from a webpage
+$jsonLd = CacheHelpers::cached_jsonLD_request('https://example.com/product');
+```
+
+### Async Job Scheduling
+
+```php
+use Restruct\Silverstripe\AdminTweaks\Jobs\ScheduledMethodCall;
+
+// Schedule a method call
+ScheduledMethodCall::schedule(
+    MyClass::class,
+    'myMethod',
+    ['arg1', 'arg2'],
+    '+1 hour'
+);
+```
+
+## Configuration
+
+### Email & SMTP (via .env)
+
+```ini
+APP_SYSTEM_EMAIL_SENDER="My App"
+APP_SYSTEM_EMAIL_ADDRESS="noreply@example.com"
+
+APP_SMTP_HOST="smtp.mailgun.org"
+APP_SMTP_PORT="587"
+APP_SMTP_ENCRYPTION="tls"
+APP_SMTP_USERNAME="postmaster@mg.example.com"
+APP_SMTP_PASSWORD="secret"
+
+# Error email logging (omit on dev/test to disable)
+APP_LOG_MAIL_RECIPIENT="admin@example.com"
+APP_LOG_MAIL_SUBJECT="Error on MyApp"
+APP_LOG_MAIL_SENDER="noreply@example.com"
+APP_LOG_MAIL_LEVEL="error"
+```
+
+### SiteConfig Extension (opt-in)
+
+```yaml
 SilverStripe\SiteConfig\SiteConfig:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension
-  # move 'access' fields to main tab & remove 'access' tab
-  rearrange_access_fields: false # (default true)
-  enable_browser_color_theme_field: false # (default true)
-  enable_subnav_activation_field: false # (default true)
-  enable_contact_social_media_fields: false # (default true)
-  # use in templates: {$SiteConfig.ExtraHTML_HeadStart.RAW} to include extra html
-  enable_raw_head_body_fields: false # (default true)
-  # deactivate container classes (or set array to override)
-  theme_container_classes: false # default bootstrap container classes
+  enable_contact_social_media_fields: true
+  enable_raw_head_body_fields: true
+  enable_browser_color_theme_field: true
 ```
 
-## Image placeholder
+### Bootstrap Form Classes (opt-in)
 
-<img width="191" src="https://user-images.githubusercontent.com/1005986/177027008-2c711cad-9c0c-47ea-a56a-1dc6f4861ba7.png">
-
-Include SVG directly in template:
-```
-<% include ImagePlaceholder W=180, H=50, Label='logo', AddClass='rounded' %>
-```
-Include SVG directly:
-```
-$ImagePlaceholder(180, 50, 'logo', '', 'rounded')
-```
-Include SVG as img src (base64 data-uri):
-```
-<img class="rounded" src="$ImagePlaceholder(180, 50, 'logo', true)" alt="logo" width="180" height="50">
+```yaml
+SilverStripe\Forms\FormField:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\FormFieldBootstrapExtension
 ```
 
-## Email config
+## Optional Module Integration
 
-Define email config in .env (environment) to have it auto-applied:
+The module enhances functionality when these modules are installed:
 
-```yml
-# EMAIL.yml
-APP_SYSTEM_EMAIL_SENDER="" # eg System X/Y
-APP_SYSTEM_EMAIL_ADDRESS="" # eg noreply@host.tld
+| Module | Enhancement |
+|--------|-------------|
+| `symbiote/silverstripe-grouped-cms-menu` | Groups admin sections under "Advanced" |
+| `symbiote/silverstripe-queuedjobs` | Enables ScheduledMethodCall |
+| `wilr/silverstripe-googlesitemaps` | Auto-activates sitemap generation |
+| `silverstripe/mimevalidator` | Auto-activates MIME upload validation |
+| `wedevelopnl/silverstripe-webp-images` | Activates WEBP format support |
+| `sheadawson/silverstripe-shortcodable` | Registers CurrentYear/FeaturedImage shortcodes |
 
-# SMTP mailserver, NOTE: SwiftMail 'ssl' => SMTP over SSL/TLS / 'tls' => STARTTLS
-# LIVE/Default: Mailgun servers (listen on ports 25, 465 (SSL/TLS), 587 (STARTTLS), and 2525)
-APP_SMTP_HOST=""
-APP_SMTP_PORT=""
-APP_SMTP_ENCRYPTION=""
-APP_SMTP_USERNAME=""
-APP_SMTP_PASSWORD=""
+## Traits
 
-# Send error logs via email (set on LIVE only, omit on dev/test to disable)
-APP_LOG_MAIL_RECIPIENT="admin@example.com"
-APP_LOG_MAIL_SUBJECT="Error on MyApp LIVE"
-APP_LOG_MAIL_SENDER="noreply@example.com"
-APP_LOG_MAIL_LEVEL="error"  # info / warning / error
-```
+### EnforceCMSPermission
 
-**Note:** The error email handler only activates when ALL four `APP_LOG_MAIL_*` vars are set.
-To disable error emails on dev/test environments, simply don't define these variables.
+Require CMS access for DataObject CRUD operations:
 
-## Show Block design/thumbnails instead of icons in admin UI (Elemental)
+```php
+use Restruct\Silverstripe\AdminTweaks\Traits\EnforceCMSPermission;
 
-1. copy & adapt below section to specific project code css to show designed block previews instead of icons
-2. set private static $icon to 'block-design block-section {block-name-offset}'
-3. add stacked blocks img to app/client (.block-name-offset sets offset if multiple stacked in one image)
-
-```scss
-i.block-section, button.block-section:before {
-  background-image: url(~app/client/imgs/block-group-designs_stacked.png);
-  background-position: 0 0;
+class MyDataObject extends DataObject
+{
+    use EnforceCMSPermission;
 }
-i.block-section, button.block-section {
-  &.block-name-offset {&, &:before {
-    background-position: 0 -128px;
-  }}
-  &.block-othername-offset {&, &:before {
-    background-position: 0 -28px;
-  }}
-}
+```
 
-## TODO/REACTIVEATE/UPDATE for SS4:
+## Default Behaviors
 
-- JS: Add optional loading feedback overlay to buttons
-- JS: Inline gridfieldeditablecolumns datepicker fixes
-- JS: Advanced search toggle for modeladmins
-- Check & improve
+These are applied automatically:
+
+- `Session.cookie_secure: true` - Secure session cookies
+- UserDefinedForm submissions disabled by default (GDPR)
+- Higher image quality (90% JPEG, 8 PNG compression)
+- URL segment character replacements (umlauts, special chars)
+- Hides CampaignAdmin and ReportAdmin from navigation
+
+## Building Assets
+
+```bash
+cd _dev/admintweaks
+npm install
+npm run dev        # Development build
+npm run production # Production build
+npm run watch      # Watch mode
+```
+
+## Detailed Documentation
+
+- [Icons & Bootstrap Icon Classes](docs/icons.md)
+- [Form Fields](docs/form-fields.md)
+- [GridField Configurations](docs/gridfield.md)
+- [Template Helpers](docs/template-helpers.md)
+- [SiteConfig Extension](docs/siteconfig.md)
+- [Caching & General Helpers](docs/caching.md)
+- [Email & Logging Configuration](docs/email-logging.md)
+
+## License
+
+BSD-3-Clause

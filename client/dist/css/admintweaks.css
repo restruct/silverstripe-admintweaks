@@ -135,6 +135,13 @@ label,
   }
 }
 @font-face {
+  font-family: "bootstrap-icons";
+  font-style: normal;
+  font-weight: normal;
+  font-display: block;
+  src: url(../fonts/bootstrap-icons.woff2?b7bcc075b395c14ce8c2d75dcd5fabe5) format("woff2"), url(../fonts/bootstrap-icons.woff?39795c0b4513de014cf8685fc5c923fe) format("woff");
+}
+@font-face {
   font-family: "FA 7 Free";
   font-style: normal;
   font-weight: 400;
@@ -155,162 +162,153 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
   margin-right: 0.4rem !important;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Page]:before, li.jstree-leaf > a .jstree-pageicon[class*=SiteTree]:before, .page-icon[class*=Page]:before, .page-icon[class*=SiteTree]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f15b";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f392";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=HomePage]:before, li.jstree-leaf > a .jstree-pageicon.homepage:before, .page-icon[class*=HomePage]:before, .page-icon.homepage:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f015";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f425";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=RedirectorPage]:before, .page-icon[class*=RedirectorPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f5eb";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f546";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=VirtualPage]:before, .page-icon[class*=VirtualPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f24d";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f3c2";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=SubsitesVirtualPage]:before, li.jstree-leaf > a .jstree-pageicon[class*=CrossSubsiteVirtualPage]:before, .page-icon[class*=SubsitesVirtualPage]:before, .page-icon[class*=CrossSubsiteVirtualPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f24d";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f3c2";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=UserDefinedForm]:before, .page-icon[class*=UserDefinedForm]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f46d";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f5f9";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ErrorPage]:before, .page-icon[class*=ErrorPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f06a";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f333";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Profile]:before, .page-icon[class*=Profile]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f2bb";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f8c9";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Cart]:before, .page-icon[class*=Cart]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f07a";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f242";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=AlbumPage]:before, .page-icon[class*=AlbumPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f302";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f42b";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Catalog]:before, .page-icon[class*=Catalog]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f02d";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f194";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=CatalogItem]:before, .page-icon[class*=CatalogItem]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f15c";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f38b";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
-li.jstree-leaf > a .jstree-pageicon[class*=Specialist]:before, .page-icon[class*=Specialist]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f0f0";
+li.jstree-leaf > a .jstree-pageicon[class*=Person]:before, li.jstree-leaf > a .jstree-pageicon[class*=Specialist]:before, .page-icon[class*=Person]:before, .page-icon[class*=Specialist]:before {
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f4de";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
-li.jstree-leaf > a .jstree-pageicon[class*=SpecialistCatalog]:before, .page-icon[class*=SpecialistCatalog]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f80d";
+li.jstree-leaf > a .jstree-pageicon[class*=PersonCatalog]:before, li.jstree-leaf > a .jstree-pageicon[class*=SpecialistCatalog]:before, li.jstree-leaf > a .jstree-pageicon[class*=SpecialistFilteredCatalog]:before, .page-icon[class*=PersonCatalog]:before, .page-icon[class*=SpecialistCatalog]:before, .page-icon[class*=SpecialistFilteredCatalog]:before {
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f676";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
-li.jstree-leaf > a .jstree-pageicon[class*=SpecialistFilteredCatalog]:before, .page-icon[class*=SpecialistFilteredCatalog]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f80d";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
-}
-li.jstree-leaf > a .jstree-pageicon[class*="PublicationCatalog "]:before, .page-icon[class*="PublicationCatalog "]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f02d";
+li.jstree-leaf > a .jstree-pageicon[class*=PublicationCatalog]:before, .page-icon[class*=PublicationCatalog]:before {
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f194";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=SitemapPage]:before, .page-icon[class*=SitemapPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f0e8";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f2ee";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=SimpleCalendar]:before, .page-icon[class*=SimpleCalendar]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f073";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f214";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -320,99 +318,99 @@ li.jstree-leaf > a .jstree-pageicon[class*=SimpleCalendar], .page-icon[class*=Si
   background: none !important;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ArchivePage]:before, .page-icon[class*=ArchivePage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f187";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f10d";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ContactPage]:before, .page-icon[class*=ContactPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f87b";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f5c1";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=InfoPage]:before, .page-icon[class*=InfoPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f05a";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f431";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=BlocksPage]:before, li.jstree-leaf > a .jstree-pageicon[class*=BlockPage]:before, .page-icon[class*=BlocksPage]:before, .page-icon[class*=BlockPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f009";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f3fa";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=VideoPage]:before, .page-icon[class*=VideoPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f1c8";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f37b";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Department]:before, .page-icon[class*=Department]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f1ad";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f1dd";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=DepartmentHolder]:before, .page-icon[class*=DepartmentHolder]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f277";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f549";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ReservationPage]:before, .page-icon[class*=ReservationPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f274";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f1e2";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=IFramePage]:before, .page-icon[class*=IFramePage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f247";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f620";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=NewsGridHolder]:before, .page-icon[class*=NewsGridHolder]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f0ac";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f3ee";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=NewsGridPage]:before, .page-icon[class*=NewsGridPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f1ea";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f4a3";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -421,55 +419,46 @@ li.jstree-leaf > a .jstree-pageicon[class*=NewsGridPage]:before, .page-icon[clas
 li.jstree-leaf > a .jstree-pageicon[class*=NewsGridHolder], li.jstree-leaf > a .jstree-pageicon[class*=NewsGridPage], .page-icon[class*=NewsGridHolder], .page-icon[class*=NewsGridPage] {
   background: none !important;
 }
-li.jstree-leaf > a .jstree-pageicon[class*=LifestylePage]:before, .page-icon[class*=LifestylePage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f496";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
-}
 li.jstree-leaf > a .jstree-pageicon[class*=ProtectedPage]:before, .page-icon[class*=ProtectedPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f023";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f47b";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ImportedContent]:before, .page-icon[class*=ImportedContent]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f59d";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f356";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=SettingsPage]:before, .page-icon[class*=SettingsPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f013";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f3e5";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=DialogPage]:before, .page-icon[class*=DialogPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f086";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f24a";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=HelpPage]:before, .page-icon[class*=HelpPage]:before {
-  font-family: "FA 7 Free" !important;
-  font-weight: 900 !important;
-  content: "\f1cd";
+  font-family: "bootstrap-icons" !important;
+  font-weight: normal !important;
+  content: "\f467";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
@@ -562,6 +551,567 @@ fieldset.grid.grid-field.ss-gridfield.field {
   font-size: 10px;
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   vertical-align: middle;
+}
+
+[class*=" bs-icon-"]:before,
+[class^=bs-icon-]:before {
+  font-family: "bootstrap-icons" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.btn[class*=" bs-icon-"]:before,
+.btn[class^=bs-icon-]:before,
+.dropdown-item[class*=" bs-icon-"]:before,
+.dropdown-item[class^=bs-icon-]:before {
+  position: relative;
+  margin-right: 6px;
+  line-height: 19.999px;
+  vertical-align: middle;
+  font-size: 1.231rem;
+}
+
+a.action[class*=" bs-icon-"]:before,
+a.action[class^=bs-icon-]:before {
+  margin-right: 0.4em;
+}
+
+.bs-icon-only:before {
+  margin-right: 0 !important;
+}
+
+.bs-icon-plus:before {
+  content: "\f4fe";
+}
+
+.bs-icon-plus-lg:before {
+  content: "\f64d";
+}
+
+.bs-icon-plus-circle:before {
+  content: "\f4ff";
+}
+
+.bs-icon-plus-circle-fill:before {
+  content: "\f500";
+}
+
+.bs-icon-plus-square:before {
+  content: "\f503";
+}
+
+.bs-icon-dash:before {
+  content: "\f2ea";
+}
+
+.bs-icon-dash-circle:before {
+  content: "\f2eb";
+}
+
+.bs-icon-x:before {
+  content: "\f62a";
+}
+
+.bs-icon-x-lg:before {
+  content: "\f659";
+}
+
+.bs-icon-x-circle:before {
+  content: "\f623";
+}
+
+.bs-icon-x-circle-fill:before {
+  content: "\f622";
+}
+
+.bs-icon-check:before {
+  content: "\f26e";
+}
+
+.bs-icon-check-lg:before {
+  content: "\f633";
+}
+
+.bs-icon-check-circle:before {
+  content: "\f26b";
+}
+
+.bs-icon-check-circle-fill:before {
+  content: "\f26a";
+}
+
+.bs-icon-pencil:before {
+  content: "\f4cb";
+}
+
+.bs-icon-pencil-fill:before {
+  content: "\f4c9";
+}
+
+.bs-icon-pencil-square:before {
+  content: "\f4ca";
+}
+
+.bs-icon-trash:before {
+  content: "\f5de";
+}
+
+.bs-icon-trash-fill:before {
+  content: "\f5dd";
+}
+
+.bs-icon-trash3:before {
+  content: "\f5dc";
+}
+
+.bs-icon-trash3-fill:before {
+  content: "\f5db";
+}
+
+.bs-icon-copy:before {
+  content: "\f28e";
+}
+
+.bs-icon-clipboard:before {
+  content: "\f27e";
+}
+
+.bs-icon-clipboard-check:before {
+  content: "\f27a";
+}
+
+.bs-icon-arrow-left:before {
+  content: "\f12f";
+}
+
+.bs-icon-arrow-right:before {
+  content: "\f138";
+}
+
+.bs-icon-arrow-up:before {
+  content: "\f148";
+}
+
+.bs-icon-arrow-down:before {
+  content: "\f128";
+}
+
+.bs-icon-chevron-left:before {
+  content: "\f284";
+}
+
+.bs-icon-chevron-right:before {
+  content: "\f285";
+}
+
+.bs-icon-chevron-up:before {
+  content: "\f286";
+}
+
+.bs-icon-chevron-down:before {
+  content: "\f282";
+}
+
+.bs-icon-caret-left:before {
+  content: "\f22d";
+}
+
+.bs-icon-caret-right:before {
+  content: "\f232";
+}
+
+.bs-icon-caret-up:before {
+  content: "\f235";
+}
+
+.bs-icon-caret-down:before {
+  content: "\f229";
+}
+
+.bs-icon-file:before {
+  content: "\f37c";
+}
+
+.bs-icon-file-earmark:before {
+  content: "\f392";
+}
+
+.bs-icon-file-text:before {
+  content: "\f3b1";
+}
+
+.bs-icon-file-earmark-text:before {
+  content: "\f38b";
+}
+
+.bs-icon-file-pdf:before {
+  content: "\f63d";
+}
+
+.bs-icon-file-code:before {
+  content: "\f380";
+}
+
+.bs-icon-folder:before {
+  content: "\f3d5";
+}
+
+.bs-icon-folder-fill:before {
+  content: "\f3d4";
+}
+
+.bs-icon-folder-plus:before {
+  content: "\f3d9";
+}
+
+.bs-icon-image:before {
+  content: "\f42a";
+}
+
+.bs-icon-images:before {
+  content: "\f42b";
+}
+
+.bs-icon-camera:before {
+  content: "\f220";
+}
+
+.bs-icon-film:before {
+  content: "\f3cc";
+}
+
+.bs-icon-play:before {
+  content: "\f4f2";
+}
+
+.bs-icon-play-fill:before {
+  content: "\f4f4";
+}
+
+.bs-icon-play-circle:before {
+  content: "\f4f1";
+}
+
+.bs-icon-search:before {
+  content: "\f52a";
+}
+
+.bs-icon-filter:before {
+  content: "\f3cd";
+}
+
+.bs-icon-sort-down:before {
+  content: "\f574";
+}
+
+.bs-icon-sort-up:before {
+  content: "\f57a";
+}
+
+.bs-icon-list:before {
+  content: "\f479";
+}
+
+.bs-icon-list-ul:before {
+  content: "\f47c";
+}
+
+.bs-icon-grid:before {
+  content: "\f3f6";
+}
+
+.bs-icon-grid-3x3:before {
+  content: "\f3fa";
+}
+
+.bs-icon-three-dots:before {
+  content: "\f5d4";
+}
+
+.bs-icon-three-dots-vertical:before {
+  content: "\f5d2";
+}
+
+.bs-icon-info:before {
+  content: "\f430";
+}
+
+.bs-icon-info-circle:before {
+  content: "\f431";
+}
+
+.bs-icon-info-circle-fill:before {
+  content: "\f432";
+}
+
+.bs-icon-question:before {
+  content: "\f505";
+}
+
+.bs-icon-question-circle:before {
+  content: "\f504";
+}
+
+.bs-icon-exclamation:before {
+  content: "\f334";
+}
+
+.bs-icon-exclamation-circle:before {
+  content: "\f333";
+}
+
+.bs-icon-exclamation-triangle:before {
+  content: "\f331";
+}
+
+.bs-icon-check-all:before {
+  content: "\f269";
+}
+
+.bs-icon-bell:before {
+  content: "\f15b";
+}
+
+.bs-icon-bell-fill:before {
+  content: "\f159";
+}
+
+.bs-icon-person:before {
+  content: "\f4da";
+}
+
+.bs-icon-person-fill:before {
+  content: "\f4d9";
+}
+
+.bs-icon-person-plus:before {
+  content: "\f4e0";
+}
+
+.bs-icon-person-dash:before {
+  content: "\f4d2";
+}
+
+.bs-icon-people:before {
+  content: "\f4ce";
+}
+
+.bs-icon-people-fill:before {
+  content: "\f4cd";
+}
+
+.bs-icon-gear:before {
+  content: "\f3e5";
+}
+
+.bs-icon-gear-fill:before {
+  content: "\f3e2";
+}
+
+.bs-icon-sliders:before {
+  content: "\f557";
+}
+
+.bs-icon-wrench:before {
+  content: "\f610";
+}
+
+.bs-icon-tools:before {
+  content: "\f5d6";
+}
+
+.bs-icon-envelope:before {
+  content: "\f32f";
+}
+
+.bs-icon-envelope-fill:before {
+  content: "\f32c";
+}
+
+.bs-icon-chat:before {
+  content: "\f247";
+}
+
+.bs-icon-chat-dots:before {
+  content: "\f24a";
+}
+
+.bs-icon-send:before {
+  content: "\f6b5";
+}
+
+.bs-icon-telephone:before {
+  content: "\f5c1";
+}
+
+.bs-icon-link:before {
+  content: "\f470";
+}
+
+.bs-icon-link-45deg:before {
+  content: "\f471";
+}
+
+.bs-icon-box-arrow-up-right:before {
+  content: "\f1c5";
+}
+
+.bs-icon-share:before {
+  content: "\f52d";
+}
+
+.bs-icon-share-fill:before {
+  content: "\f52c";
+}
+
+.bs-icon-download:before {
+  content: "\f30a";
+}
+
+.bs-icon-upload:before {
+  content: "\f603";
+}
+
+.bs-icon-cloud-download:before {
+  content: "\f29a";
+}
+
+.bs-icon-cloud-upload:before {
+  content: "\f2a0";
+}
+
+.bs-icon-database:before {
+  content: "\f2ed";
+}
+
+.bs-icon-arrow-repeat:before {
+  content: "\f130";
+}
+
+.bs-icon-arrow-clockwise:before {
+  content: "\f11f";
+}
+
+.bs-icon-lock:before {
+  content: "\f47b";
+}
+
+.bs-icon-lock-fill:before {
+  content: "\f47a";
+}
+
+.bs-icon-unlock:before {
+  content: "\f600";
+}
+
+.bs-icon-unlock-fill:before {
+  content: "\f5ff";
+}
+
+.bs-icon-shield:before {
+  content: "\f53f";
+}
+
+.bs-icon-shield-check:before {
+  content: "\f53b";
+}
+
+.bs-icon-key:before {
+  content: "\f449";
+}
+
+.bs-icon-calendar:before {
+  content: "\f214";
+}
+
+.bs-icon-calendar-plus:before {
+  content: "\f213";
+}
+
+.bs-icon-calendar-check:before {
+  content: "\f1e2";
+}
+
+.bs-icon-clock:before {
+  content: "\f293";
+}
+
+.bs-icon-clock-fill:before {
+  content: "\f28f";
+}
+
+.bs-icon-stopwatch:before {
+  content: "\f5ac";
+}
+
+.bs-icon-star:before {
+  content: "\f588";
+}
+
+.bs-icon-star-fill:before {
+  content: "\f586";
+}
+
+.bs-icon-heart:before {
+  content: "\f417";
+}
+
+.bs-icon-heart-fill:before {
+  content: "\f415";
+}
+
+.bs-icon-bookmark:before {
+  content: "\f18d";
+}
+
+.bs-icon-bookmark-fill:before {
+  content: "\f18b";
+}
+
+.bs-icon-tag:before {
+  content: "\f5b4";
+}
+
+.bs-icon-tags:before {
+  content: "\f5b7";
+}
+
+.bs-icon-eye:before {
+  content: "\f341";
+}
+
+.bs-icon-eye-slash:before {
+  content: "\f33e";
+}
+
+.bs-icon-print:before {
+  content: "\f4ff";
+}
+
+.bs-icon-printer:before {
+  content: "\f509";
+}
+
+.bs-icon-house:before {
+  content: "\f425";
+}
+
+.bs-icon-globe:before {
+  content: "\f3ee";
+}
+
+.bs-icon-box:before {
+  content: "\f1c6";
+}
+
+.bs-icon-archive:before {
+  content: "\f10d";
 }
 
 /*# sourceMappingURL=admintweaks.css.map*/
