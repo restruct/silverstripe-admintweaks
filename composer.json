@@ -15,8 +15,7 @@
   ],
   "require": {
     "silverstripe/framework": "^4 | ^5",
-    "guzzlehttp/guzzle": "^7.0",
-    "restruct/silverstripe-simpler": "~0.2"
+    "guzzlehttp/guzzle": "^7.0"
   },
   "replace": {
     "micschk/silverstripe-cmstweaks": "1.*",
