@@ -143,6 +143,14 @@ ScheduledMethodCall::schedule(
 );
 ```
 
+#### Cleanup Broken Jobs Task
+
+Quickly delete all broken queued jobs:
+
+```bash
+vendor/bin/sake dev/tasks/cleanup-broken-jobs
+```
+
 ## Configuration
 
 ### Email & SMTP (via .env)
