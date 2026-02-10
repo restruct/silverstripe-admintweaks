@@ -1,6 +1,6 @@
 <?php
 
-namespace Restruct\CMSTweaks\Helpers {
+namespace Restruct\Silverstripe\AdminTweaks\Helpers {
 
     use SilverStripe\View\TemplateIteratorProvider;
 

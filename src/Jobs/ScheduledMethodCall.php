@@ -10,7 +10,6 @@ use SilverStripe\ORM\FieldType\DBDatetime;
 use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
 use Symbiote\QueuedJobs\Services\QueuedJob;
 use Symbiote\QueuedJobs\Services\QueuedJobService;
-use VacancyPortal\VacancyPortalController;
 
 //use SilverStripe\GraphQL\TypeCreator;
 //if (!class_exists(TypeCreator::class)) {

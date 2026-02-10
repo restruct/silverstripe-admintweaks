@@ -38,10 +38,12 @@ SilverStripe\Core\Injector\Injector:
     queued_job_admin_email: '`APP_LOG_MAIL_SENDER`'
 
 
-# SMTP mailer config (define `APP_SMTP_USERNAME` etc in .env)
+# SMTP mailer config for SS4 (SwiftMailer)
+# For SS5+, use MAILER_DSN in .env instead (e.g., smtp://user:pass@smtp.example.com:587)
 ---
 Name: admintweaks-smtp-email-transport
 Only:
+  classexists: Swift_SmtpTransport
   envvarset:
     - APP_SMTP_HOST
     - APP_SMTP_PORT
@@ -51,20 +53,12 @@ Only:
 ---
 SilverStripe\Core\Injector\Injector:
   Swift_Transport:
-    # WORKING: php mail, default SS4 but to be deprecated in SwiftMailer 6
-#    class: Swift_MailTransport
-    # NOT WORKING on live: Sendmail binary
-#    class: Swift_SendmailTransport
-    # SMTP transport:
     class: Swift_SmtpTransport
     properties:
       Host: '`APP_SMTP_HOST`'
-      # Mailgun servers listen on ports 25, 465 (SSL/TLS), 587 (STARTTLS), and 2525
       Port: '`APP_SMTP_PORT`'
-      # NOTE: SwiftMail 'ssl' => SMTP over SSL/TLS / 'tls' => STARTTLS
       Encryption: '`APP_SMTP_ENCRYPTION`'
     calls:
-      # Prefix Username/Password/AuthMode to prevent https://github.com/silverstripe/silverstripe-framework/issues/9075
       Username: [ setUsername, ['`APP_SMTP_USERNAME`'] ]
       Password: [ setPassword, ['`APP_SMTP_PASSWORD`'] ]
       AuthMode: [ setAuthMode, ['login'] ]

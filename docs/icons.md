@@ -304,6 +304,7 @@ $field->addExtraClass('bs-icon-pencil');
 |-------|------|
 | `bs-icon-star` | Star |
 | `bs-icon-star-fill` | Star (filled) |
+| `bs-icon-stars` | Stars/sparkles (AI) |
 | `bs-icon-heart` | Heart |
 | `bs-icon-heart-fill` | Heart (filled) |
 | `bs-icon-bookmark` | Bookmark |

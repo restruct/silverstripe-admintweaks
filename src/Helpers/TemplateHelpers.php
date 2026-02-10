@@ -1,5 +1,7 @@
 <?php
 
+namespace Restruct\Silverstripe\AdminTweaks\Helpers;
+
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Manifest\ModuleResourceLoader;
 use SilverStripe\i18n\i18n;

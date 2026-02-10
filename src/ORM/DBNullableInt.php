@@ -1,6 +1,6 @@
 <?php
 
-namespace Restruct\BrillOOP\ORM;
+namespace Restruct\Silverstripe\AdminTweaks\ORM;
 
 use SilverStripe\ORM\DB;
 

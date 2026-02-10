@@ -2,11 +2,14 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\Forms\CurrencyField;
 use SilverStripe\Forms\DateField;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\EmailField;
 use SilverStripe\Forms\NumericField;
+use SilverStripe\Forms\OptionsetField;
 use SilverStripe\Forms\PasswordField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;

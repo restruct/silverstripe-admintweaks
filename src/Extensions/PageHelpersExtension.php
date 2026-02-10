@@ -93,29 +93,6 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             return Director::isLive();
         }
 
-        ////// FOR FLUENT/MULTI-LINGUAL
-
-        /**
-         * @TODO: somehow check if Fluent is available
-         * Retrieves information about this object in the CURRENT locale
-         *
-         * @param string $locale The locale information to request, or null to use the default locale
-         * @return ArrayData Mapped list of locale properties
-         */
-        public function CurrentLocaleInformation()
-        {
-            $locale = Fluent::current_locale();
-            // Store basic locale information
-            $data = array(
-                'Locale' => $locale,
-                'LocaleRFC1766' => i18n::convert_rfc1766($locale),
-                'Alias' => Fluent::alias($locale),
-                'Title' => i18n::get_locale_name($locale),
-                'LanguageNative' => i18n::get_language_name(i18n::get_lang_from_locale($locale), true)
-            );
-            return new ArrayData($data);
-        }
-
         ////// REQUIREMENTS (callable from templates)
 
         public function RequireCustomCSS($css)

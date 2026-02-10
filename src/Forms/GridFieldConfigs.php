@@ -2,7 +2,6 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Forms;
 
-use App\Forms\GridFieldVersionedOrderableRows;
 use SilverStripe\Forms\GridField\GridField_ActionMenu;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldButtonRow;
@@ -37,8 +36,10 @@ class GridFieldConfigs
     }
 
     /**
+     * Filterable, orderable GridField with record editor
      * Copied from bigfork/silverstripe-recipe
-     * @param $showAdd
+     *
+     * @param bool|null $showAdd
      * @return GridFieldConfig
      */
     public static function filterable_orderable_recordeditor($showAdd = null)
@@ -54,7 +55,7 @@ class GridFieldConfigs
             ->addComponent(new GridFieldDeleteAction())
             ->addComponent(new GridField_ActionMenu())
             ->addComponent(new GridFieldDetailForm(null, null, $showAdd))
-            ->addComponent(new GridFieldVersionedOrderableRows());
+            ->addComponent(new GridFieldOrderableRows());
 
         $sort->setThrowExceptionOnBadDataType(false);
         $filter->setThrowExceptionOnBadDataType(false);

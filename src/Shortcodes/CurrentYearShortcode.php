@@ -2,7 +2,6 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
 
-    use HttpResponse;
     use SilverStripe\Control\Controller;
     use SilverStripe\Dev\Debug;
     use SilverStripe\View\ViewableData;

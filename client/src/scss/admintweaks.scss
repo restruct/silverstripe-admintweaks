@@ -518,7 +518,7 @@ fieldset.grid.grid-field.ss-gridfield.field {
   position: relative;
   margin-right: 6px;
   line-height: 19.999px;
-  vertical-align: middle;
+  vertical-align: top;
   font-size: 1.231rem;
 }
 
@@ -685,6 +685,7 @@ a.action[class^="bs-icon-"]:before {
 // Misc
 .bs-icon-star:before { content: '\f588'; }              // bi-star
 .bs-icon-star-fill:before { content: '\f586'; }         // bi-star-fill
+.bs-icon-stars:before { content: '\f589'; }             // bi-stars (AI sparkle)
 .bs-icon-heart:before { content: '\f417'; }             // bi-heart
 .bs-icon-heart-fill:before { content: '\f415'; }        // bi-heart-fill
 .bs-icon-bookmark:before { content: '\f18d'; }          // bi-bookmark

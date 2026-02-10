@@ -202,7 +202,7 @@ The module enhances functionality when these modules are installed:
 | `wilr/silverstripe-googlesitemaps` | Auto-activates sitemap generation |
 | `silverstripe/mimevalidator` | Auto-activates MIME upload validation |
 | `wedevelopnl/silverstripe-webp-images` | Activates WEBP format support |
-| `sheadawson/silverstripe-shortcodable` | Registers CurrentYear/FeaturedImage shortcodes |
+| `restruct/silverstripe-shortcodable` | Registers CurrentYear/FeaturedImage shortcodes |
 
 ## Traits
 

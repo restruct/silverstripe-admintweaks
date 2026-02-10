@@ -40,10 +40,6 @@ SilverStripe\ORM\DataObject:
 #  extensions:
 #    - Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension
 
-#SilverStripe\Forms\FormField:
-#  extensions:
-#    - FormFieldExtension
-#
 SilverStripe\ORM\FieldType\DBString:
     extensions:
         - Restruct\Silverstripe\AdminTweaks\Extensions\DBStringExtension

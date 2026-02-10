@@ -1,7 +1,6 @@
 <?php
 
-
-namespace Restruct\BrillOOP\ORM;
+namespace Restruct\Silverstripe\AdminTweaks\ORM;
 
 
 class MySQLSchemaManagerNullable extends \SilverStripe\ORM\Connect\MySQLSchemaManager
