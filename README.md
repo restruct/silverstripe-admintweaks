@@ -30,6 +30,7 @@ Most features are opt-in via configuration. The module provides sensible default
 | **SiteConfig** | Contact info, social media, theme settings, raw HTML | [SiteConfig](docs/siteconfig.md) |
 | **Caching** | HTTP request caching, JSON/JSON-LD parsing | [Caching & Helpers](docs/caching.md) |
 | **Email & Logging** | SMTP config, error email reports | [Email & Logging](docs/email-logging.md) |
+| **QueuedJobs** | Throttled broken job notifications, scheduled method calls | [QueuedJobs](#queuedjobs-enhancements) |
 
 ## Feature Highlights
 
@@ -98,7 +99,37 @@ $data = CacheHelpers::cached_json_request('https://api.example.com/data', 'GET',
 $jsonLd = CacheHelpers::cached_jsonLD_request('https://example.com/product');
 ```
 
-### Async Job Scheduling
+### QueuedJobs Enhancements
+
+#### Throttled Broken Job Notifications
+
+By default, `QueuedJobService` logs "Broken jobs found" on every cron run (every minute) until broken jobs are manually fixed, possibly causing notification/logging spam. `ThrottledQueuedJobService` only notifies once per hour (configurable).
+
+```yaml
+# Enable throttled notifications
+SilverStripe\Core\Injector\Injector:
+  Symbiote\QueuedJobs\Services\QueuedJobService:
+    class: Restruct\Silverstripe\AdminTweaks\Services\ThrottledQueuedJobService
+
+# Optional: adjust interval (default 3600 = 1 hour)
+Restruct\Silverstripe\AdminTweaks\Services\ThrottledQueuedJobService:
+  broken_job_notify_interval: 7200  # 2 hours
+
+# Required: cache backend for throttling
+Psr\SimpleCache\CacheInterface.queuedjobs:
+  factory: SilverStripe\Core\Cache\CacheFactory
+  constructor:
+    namespace: 'queuedjobs'
+```
+
+**How it works:**
+- Notifications are cached per unique set of broken job IDs
+- When a new job breaks, you get notified immediately (cache key changes)
+- Same broken jobs sitting there → only notified once per interval
+
+See: [symbiote/silverstripe-queuedjobs#299](https://github.com/symbiote/silverstripe-queuedjobs/issues/299)
+
+#### Scheduled Method Calls
 
 ```php
 use Restruct\Silverstripe\AdminTweaks\Jobs\ScheduledMethodCall;
@@ -159,7 +190,7 @@ The module enhances functionality when these modules are installed:
 | Module | Enhancement |
 |--------|-------------|
 | `symbiote/silverstripe-grouped-cms-menu` | Groups admin sections under "Advanced" |
-| `symbiote/silverstripe-queuedjobs` | Enables ScheduledMethodCall |
+| `symbiote/silverstripe-queuedjobs` | Enables ScheduledMethodCall, ThrottledQueuedJobService |
 | `wilr/silverstripe-googlesitemaps` | Auto-activates sitemap generation |
 | `silverstripe/mimevalidator` | Auto-activates MIME upload validation |
 | `wedevelopnl/silverstripe-webp-images` | Activates WEBP format support |
