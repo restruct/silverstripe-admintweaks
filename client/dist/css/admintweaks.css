@@ -161,308 +161,120 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
   width: 1.4rem !important;
   margin-right: 0.4rem !important;
 }
-li.jstree-leaf > a .jstree-pageicon[class*=Page]:before, li.jstree-leaf > a .jstree-pageicon[class*=SiteTree]:before, .page-icon[class*=Page]:before, .page-icon[class*=SiteTree]:before {
+
+li.jstree-leaf > a .jstree-pageicon:before, .page-icon:before {
   font-family: "bootstrap-icons" !important;
   font-weight: normal !important;
-  content: "\f392";
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
+}
+
+li.jstree-leaf > a .jstree-pageicon[class*=Page]:before, li.jstree-leaf > a .jstree-pageicon[class*=SiteTree]:before, .page-icon[class*=Page]:before, .page-icon[class*=SiteTree]:before {
+  content: "\f392";
 }
 li.jstree-leaf > a .jstree-pageicon[class*=HomePage]:before, li.jstree-leaf > a .jstree-pageicon.homepage:before, .page-icon[class*=HomePage]:before, .page-icon.homepage:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f425";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=RedirectorPage]:before, .page-icon[class*=RedirectorPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f546";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=VirtualPage]:before, .page-icon[class*=VirtualPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f3c2";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=SubsitesVirtualPage]:before, li.jstree-leaf > a .jstree-pageicon[class*=CrossSubsiteVirtualPage]:before, .page-icon[class*=SubsitesVirtualPage]:before, .page-icon[class*=CrossSubsiteVirtualPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f3c2";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=UserDefinedForm]:before, .page-icon[class*=UserDefinedForm]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f5f9";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ErrorPage]:before, .page-icon[class*=ErrorPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f333";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Profile]:before, .page-icon[class*=Profile]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f8c9";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Cart]:before, .page-icon[class*=Cart]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f242";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=AlbumPage]:before, .page-icon[class*=AlbumPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f42b";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Catalog]:before, .page-icon[class*=Catalog]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f194";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=CatalogItem]:before, .page-icon[class*=CatalogItem]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f38b";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Person]:before, li.jstree-leaf > a .jstree-pageicon[class*=Specialist]:before, .page-icon[class*=Person]:before, .page-icon[class*=Specialist]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f4de";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=PersonCatalog]:before, li.jstree-leaf > a .jstree-pageicon[class*=SpecialistCatalog]:before, li.jstree-leaf > a .jstree-pageicon[class*=SpecialistFilteredCatalog]:before, .page-icon[class*=PersonCatalog]:before, .page-icon[class*=SpecialistCatalog]:before, .page-icon[class*=SpecialistFilteredCatalog]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f676";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=PublicationCatalog]:before, .page-icon[class*=PublicationCatalog]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f194";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=SitemapPage]:before, .page-icon[class*=SitemapPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f2ee";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=SimpleCalendar]:before, .page-icon[class*=SimpleCalendar]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f214";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=SimpleCalendar], .page-icon[class*=SimpleCalendar] {
   background: none !important;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ArchivePage]:before, .page-icon[class*=ArchivePage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f10d";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ContactPage]:before, .page-icon[class*=ContactPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f5c1";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=InfoPage]:before, .page-icon[class*=InfoPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f431";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=BlocksPage]:before, li.jstree-leaf > a .jstree-pageicon[class*=BlockPage]:before, .page-icon[class*=BlocksPage]:before, .page-icon[class*=BlockPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f3fa";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=VideoPage]:before, .page-icon[class*=VideoPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f37b";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=Department]:before, .page-icon[class*=Department]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f1dd";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=DepartmentHolder]:before, .page-icon[class*=DepartmentHolder]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f549";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ReservationPage]:before, .page-icon[class*=ReservationPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f1e2";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=IFramePage]:before, .page-icon[class*=IFramePage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f620";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=NewsGridHolder]:before, .page-icon[class*=NewsGridHolder]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f3ee";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=NewsGridPage]:before, .page-icon[class*=NewsGridPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f4a3";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=NewsGridHolder], li.jstree-leaf > a .jstree-pageicon[class*=NewsGridPage], .page-icon[class*=NewsGridHolder], .page-icon[class*=NewsGridPage] {
   background: none !important;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ProtectedPage]:before, .page-icon[class*=ProtectedPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f47b";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=ImportedContent]:before, .page-icon[class*=ImportedContent]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f356";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=SettingsPage]:before, .page-icon[class*=SettingsPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f3e5";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=DialogPage]:before, .page-icon[class*=DialogPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f24a";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 li.jstree-leaf > a .jstree-pageicon[class*=HelpPage]:before, .page-icon[class*=HelpPage]:before {
-  font-family: "bootstrap-icons" !important;
-  font-weight: normal !important;
   content: "\f467";
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
 }
 
 #Form_AddForm_PageType .disabled {

@@ -319,60 +319,68 @@ $icon-weight: if($icon-provider == 'bootstrap', normal, 900);
   src: url("../../fonts/fontawesome-free-7.1.0-web/webfonts/fa-solid-900.woff2");
 }
 
-// Provider-agnostic page icon mixin
-@mixin page-icon($name) {
+// Page icon container styles
+li.jstree-leaf > a .jstree-pageicon, .page-icon {
+  line-height: 1.25rem;
+  height: 1.2rem !important;
+  width: 1.4rem !important;
+  margin-right: .4rem !important;
+}
+
+// Common :before styles for all page icons (set once, not repeated per icon)
+li.jstree-leaf > a .jstree-pageicon:before, .page-icon:before {
   font-family: $icon-font !important;
   font-weight: $icon-weight !important;
-  content: map-get($icons, $name);
   width: 1.2rem;
   font-size: 1.2rem;
   text-align: center;
   display: block;
 }
 
-li.jstree-leaf > a .jstree-pageicon, .page-icon {
-  line-height: 1.25rem;
-  height: 1.2rem !important;
-  width: 1.4rem !important;
-  margin-right: .4rem !important;
+// Page icon content mixin (only sets the content property)
+@mixin page-icon-content($name) {
+  content: map-get($icons, $name);
+}
 
-  &[class*="Page"]:before, &[class*="SiteTree"]:before { @include page-icon('page'); }
-  &[class*="HomePage"]:before, &.homepage:before { @include page-icon('home'); }
-  &[class*="RedirectorPage"]:before { @include page-icon('redirect'); }
-  &[class*="VirtualPage"]:before { @include page-icon('virtual'); }
-  &[class*="SubsitesVirtualPage"]:before, &[class*="CrossSubsiteVirtualPage"]:before { @include page-icon('virtual'); }
-  &[class*="UserDefinedForm"]:before { @include page-icon('form'); }
-  &[class*="ErrorPage"]:before { @include page-icon('error'); }
-  &[class*="Profile"]:before { @include page-icon('profile'); }
-  &[class*="Cart"]:before { @include page-icon('cart'); }
-  &[class*="AlbumPage"]:before { @include page-icon('images'); }
-  &[class*="Catalog"]:before { @include page-icon('book'); }
-  &[class*="CatalogItem"]:before { @include page-icon('file-text'); }
+// Page type icons - only content differs per type
+li.jstree-leaf > a .jstree-pageicon, .page-icon {
+  &[class*="Page"]:before, &[class*="SiteTree"]:before { @include page-icon-content('page'); }
+  &[class*="HomePage"]:before, &.homepage:before { @include page-icon-content('home'); }
+  &[class*="RedirectorPage"]:before { @include page-icon-content('redirect'); }
+  &[class*="VirtualPage"]:before { @include page-icon-content('virtual'); }
+  &[class*="SubsitesVirtualPage"]:before, &[class*="CrossSubsiteVirtualPage"]:before { @include page-icon-content('virtual'); }
+  &[class*="UserDefinedForm"]:before { @include page-icon-content('form'); }
+  &[class*="ErrorPage"]:before { @include page-icon-content('error'); }
+  &[class*="Profile"]:before { @include page-icon-content('profile'); }
+  &[class*="Cart"]:before { @include page-icon-content('cart'); }
+  &[class*="AlbumPage"]:before { @include page-icon-content('images'); }
+  &[class*="Catalog"]:before { @include page-icon-content('book'); }
+  &[class*="CatalogItem"]:before { @include page-icon-content('file-text'); }
   // Generalized person icons (replaces Specialist/LifestylePage)
-  &[class*="Person"]:before, &[class*="Specialist"]:before { @include page-icon('person'); }
+  &[class*="Person"]:before, &[class*="Specialist"]:before { @include page-icon-content('person'); }
   &[class*="PersonCatalog"]:before, &[class*="SpecialistCatalog"]:before,
-  &[class*="SpecialistFilteredCatalog"]:before { @include page-icon('people-catalog'); }
-  &[class*="PublicationCatalog"]:before { @include page-icon('book'); }
-  &[class*="SitemapPage"]:before { @include page-icon('sitemap'); }
-  &[class*="SimpleCalendar"]:before { @include page-icon('calendar'); }
+  &[class*="SpecialistFilteredCatalog"]:before { @include page-icon-content('people-catalog'); }
+  &[class*="PublicationCatalog"]:before { @include page-icon-content('book'); }
+  &[class*="SitemapPage"]:before { @include page-icon-content('sitemap'); }
+  &[class*="SimpleCalendar"]:before { @include page-icon-content('calendar'); }
   &[class*="SimpleCalendar"] { background: none !important; }
-  &[class*="ArchivePage"]:before { @include page-icon('archive'); }
-  &[class*="ContactPage"]:before { @include page-icon('phone'); }
-  &[class*="InfoPage"]:before { @include page-icon('info'); }
-  &[class*="BlocksPage"]:before, &[class*="BlockPage"]:before { @include page-icon('grid'); }
-  &[class*="VideoPage"]:before { @include page-icon('video'); }
-  &[class*="Department"]:before { @include page-icon('building'); }
-  &[class*="DepartmentHolder"]:before { @include page-icon('signpost'); }
-  &[class*="ReservationPage"]:before { @include page-icon('calendar-check'); }
-  &[class*="IFramePage"]:before { @include page-icon('window'); }
-  &[class*="NewsGridHolder"]:before { @include page-icon('globe'); }
-  &[class*="NewsGridPage"]:before { @include page-icon('newspaper'); }
+  &[class*="ArchivePage"]:before { @include page-icon-content('archive'); }
+  &[class*="ContactPage"]:before { @include page-icon-content('phone'); }
+  &[class*="InfoPage"]:before { @include page-icon-content('info'); }
+  &[class*="BlocksPage"]:before, &[class*="BlockPage"]:before { @include page-icon-content('grid'); }
+  &[class*="VideoPage"]:before { @include page-icon-content('video'); }
+  &[class*="Department"]:before { @include page-icon-content('building'); }
+  &[class*="DepartmentHolder"]:before { @include page-icon-content('signpost'); }
+  &[class*="ReservationPage"]:before { @include page-icon-content('calendar-check'); }
+  &[class*="IFramePage"]:before { @include page-icon-content('window'); }
+  &[class*="NewsGridHolder"]:before { @include page-icon-content('globe'); }
+  &[class*="NewsGridPage"]:before { @include page-icon-content('newspaper'); }
   &[class*="NewsGridHolder"], &[class*="NewsGridPage"] { background: none !important; }
-  &[class*="ProtectedPage"]:before { @include page-icon('lock'); }
-  &[class*="ImportedContent"]:before { @include page-icon('import'); }
-  &[class*="SettingsPage"]:before { @include page-icon('gear'); }
-  &[class*="DialogPage"]:before { @include page-icon('chat'); }
-  &[class*="HelpPage"]:before { @include page-icon('help'); }
+  &[class*="ProtectedPage"]:before { @include page-icon-content('lock'); }
+  &[class*="ImportedContent"]:before { @include page-icon-content('import'); }
+  &[class*="SettingsPage"]:before { @include page-icon-content('gear'); }
+  &[class*="DialogPage"]:before { @include page-icon-content('chat'); }
+  &[class*="HelpPage"]:before { @include page-icon-content('help'); }
 }
 
 
