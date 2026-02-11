@@ -1,9 +1,9 @@
 ---
-name: admintweaks-routes
-after:
-  - '#rootroutes'
-  - '#coreroutes'
+name: admintweaks-dev-controllers
 ---
-SilverStripe\Control\Director:
-  rules:
-    'dev/admintweaks-icons': 'Restruct\Silverstripe\AdminTweaks\Dev\IconsPreviewController'
+SilverStripe\Dev\DevelopmentAdmin:
+  registered_controllers:
+    admintweaks-icons:
+      controller: Restruct\Silverstripe\AdminTweaks\Dev\IconsPreviewController
+      links:
+        admintweaks-icons: 'Browse curated Bootstrap Icons for admin UI'

@@ -4,31 +4,18 @@ namespace Restruct\Silverstripe\AdminTweaks\Dev;
 
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
-use SilverStripe\Security\Permission;
-use SilverStripe\Security\Security;
 
 /**
  * Preview all curated Bootstrap Icons available in the admin.
  *
- * Access at: /dev/admintweaks-icons
+ * Registered with DevelopmentAdmin at: /dev/admintweaks-icons
+ * Authentication handled by DevUrlsConfirmationMiddleware.
  */
 class IconsPreviewController extends Controller
 {
-    private static $url_segment = 'dev/admintweaks-icons';
-
     private static $allowed_actions = [
         'index',
     ];
-
-    protected function init(): void
-    {
-        parent::init();
-
-        // Require admin login
-        if (!Permission::check('ADMIN')) {
-            Security::permissionFailure($this);
-        }
-    }
 
     public function index(HTTPRequest $request): string
     {
