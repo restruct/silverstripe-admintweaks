@@ -58,6 +58,17 @@ a.action[class^="bs-icon-"]:before {
   margin-right: 0 !important;
 }
 
+// Allow text utility classes (text-success, text-danger, etc.) to color icons
+// in grid-field actions by inheriting the parent's color
+.grid-field__icon-action.text-success:before,
+.grid-field__icon-action.text-danger:before,
+.grid-field__icon-action.text-warning:before,
+.grid-field__icon-action.text-info:before,
+.grid-field__icon-action.text-muted:before,
+.grid-field__icon-action.text-secondary:before {
+  color: inherit;
+}
+
 // Mixin to generate a .bs-icon-{name} class from the official map
 // Use this in your app's SCSS to add custom icons:
 //   @import "bootstrap-icons-map";
