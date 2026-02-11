@@ -503,7 +503,11 @@ All icons below are available as `.bs-icon-{name}` classes.
 
 ## Visual Icon Browser
 
-Open **[icons.html](icons.html)** in your browser for a visual, searchable grid of all included icons. Click any icon to copy its class name.
+**In SilverStripe:** Visit `/dev/icons` (requires admin login) for a searchable icon grid.
+
+**Locally:** Open [icons.html](icons.html) in your browser.
+
+Click any icon to copy its class name.
 
 ## Resources
 
