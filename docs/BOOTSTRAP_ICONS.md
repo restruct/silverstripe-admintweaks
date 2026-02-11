@@ -501,6 +501,10 @@ All icons below are available as `.bs-icon-{name}` classes.
 | cursor | cursor-fill | cursor-text | hand-index |
 | hand-index-fill | hand-index-thumb | hand-index-thumb-fill | |
 
+## Visual Icon Browser
+
+Open **[icons.html](icons.html)** in your browser for a visual, searchable grid of all included icons. Click any icon to copy its class name.
+
 ## Resources
 
 - [Bootstrap Icons](https://icons.getbootstrap.com/) - Full icon browser with search
