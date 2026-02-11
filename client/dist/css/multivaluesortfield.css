@@ -1,1 +1,29 @@
-.sort-only .ui-sortable-handle:last-child,.sort-only abbr.search-choice-close,.sort-only abbr.search-choice-close+div{display:none}.sort-only.multivaluefieldlist .chosen-container{max-width:none!important}.sort-only .chosen-container,.sort-only .chosen-container a.chosen-single{background:#fafbfc;pointer-events:none}.sort-only.multivaluefieldlist>li:after{border-left:1px dotted #ccc;cursor:ns-resize;display:inline-block;margin-left:-28px;padding:7px 10px;position:relative}
+/**
+ * MultivalueSortField - sort-only mode for MultiValueDropdownField
+ * Hides add/remove controls, only allows drag-and-drop reordering
+ */
+.sort-only abbr.search-choice-close,
+.sort-only abbr.search-choice-close + div {
+  display: none;
+}
+.sort-only .ui-sortable-handle:last-child {
+  display: none;
+}
+.sort-only.multivaluefieldlist .chosen-container {
+  max-width: none !important;
+}
+.sort-only .chosen-container,
+.sort-only .chosen-container a.chosen-single {
+  pointer-events: none;
+  background: #fafbfc;
+}
+.sort-only.multivaluefieldlist > li::after {
+  border-left: 1px dotted #ccc;
+  display: inline-block;
+  padding: 7px 10px;
+  margin-left: -28px;
+  position: relative;
+  cursor: ns-resize;
+}
+
+/*# sourceMappingURL=multivaluesortfield.css.map*/

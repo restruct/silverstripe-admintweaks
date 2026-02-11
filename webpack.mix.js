@@ -30,6 +30,9 @@ mix.setPublicPath('client/dist');
 mix.sass('client/src/scss/admintweaks.scss', 'css');
 mix.sass('client/src/scss/multivaluesortfield.scss', 'css');
 
+// Bootstrap Icons fonts are loaded via ~bootstrap-icons in SCSS
+// Webpack automatically copies them to dist/fonts during build
+
 // mix.scripts = basic concattenation
 // mix.babel = concattenation + babel (ES2015 -> vanilla)
 // mix.js = components, react, vue, etc

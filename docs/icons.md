@@ -275,6 +275,7 @@ $field->addExtraClass('bs-icon-pencil');
 | `bs-icon-cloud-download` | Cloud download |
 | `bs-icon-cloud-upload` | Cloud upload |
 | `bs-icon-database` | Database |
+| `bs-icon-database-check` | Database with check (convert/save) |
 | `bs-icon-arrow-repeat` | Sync/refresh |
 | `bs-icon-arrow-clockwise` | Refresh clockwise |
 
