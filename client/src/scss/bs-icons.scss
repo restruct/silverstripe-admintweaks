@@ -59,14 +59,19 @@ a.action[class^="bs-icon-"]:before {
 }
 
 // Allow text utility classes (text-success, text-danger, etc.) to color icons
-// in grid-field actions by inheriting the parent's color
-.grid-field__icon-action.text-success:before,
-.grid-field__icon-action.text-danger:before,
-.grid-field__icon-action.text-warning:before,
-.grid-field__icon-action.text-info:before,
-.grid-field__icon-action.text-muted:before,
-.grid-field__icon-action.text-secondary:before {
-  color: inherit;
+// in grid-field actions by inheriting the parent's color (including hover/focus)
+.grid-field__icon-action.text-success,
+.grid-field__icon-action.text-danger,
+.grid-field__icon-action.text-warning,
+.grid-field__icon-action.text-info,
+.grid-field__icon-action.text-muted,
+.grid-field__icon-action.text-secondary {
+  &:before,
+  &:hover:before,
+  &:focus:before,
+  &:active:before {
+    color: inherit;
+  }
 }
 
 // Mixin to generate a .bs-icon-{name} class from the official map
