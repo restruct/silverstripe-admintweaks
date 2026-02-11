@@ -260,6 +260,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./client/src/scss/bs-icons.scss":
+/*!***************************************!*\
+  !*** ./client/src/scss/bs-icons.scss ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./client/src/scss/multivaluesortfield.scss":
 /*!**************************************************!*\
   !*** ./client/src/scss/multivaluesortfield.scss ***!
@@ -361,6 +374,7 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 		var installedChunks = {
 /******/ 			"/js/admintweaks": 0,
 /******/ 			"css/multivaluesortfield": 0,
+/******/ 			"css/bs-icons": 0,
 /******/ 			"css/admintweaks": 0
 /******/ 		};
 /******/ 		
@@ -411,9 +425,10 @@ __webpack_require__.r(__webpack_exports__);
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/multivaluesortfield","css/admintweaks"], () => (__webpack_require__("./client/src/js/admintweaks.js")))
-/******/ 	__webpack_require__.O(undefined, ["css/multivaluesortfield","css/admintweaks"], () => (__webpack_require__("./client/src/scss/admintweaks.scss")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/multivaluesortfield","css/admintweaks"], () => (__webpack_require__("./client/src/scss/multivaluesortfield.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/multivaluesortfield","css/bs-icons","css/admintweaks"], () => (__webpack_require__("./client/src/js/admintweaks.js")))
+/******/ 	__webpack_require__.O(undefined, ["css/multivaluesortfield","css/bs-icons","css/admintweaks"], () => (__webpack_require__("./client/src/scss/admintweaks.scss")))
+/******/ 	__webpack_require__.O(undefined, ["css/multivaluesortfield","css/bs-icons","css/admintweaks"], () => (__webpack_require__("./client/src/scss/bs-icons.scss")))
+/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/multivaluesortfield","css/bs-icons","css/admintweaks"], () => (__webpack_require__("./client/src/scss/multivaluesortfield.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	
 /******/ })()

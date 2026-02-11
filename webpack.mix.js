@@ -26,12 +26,9 @@ mix.sourceMaps(null, 'source-map');
 mix.setPublicPath('client/dist');
 
 // Examples: https://laravel-mix.com/docs/6.0/examples
-//mix.sass('client/src/scss/admintweaks.scss', 'client/dist/css/admintweaks.css');
-mix.sass('client/src/scss/admintweaks.scss', 'css');
+mix.sass('client/src/scss/admintweaks.scss', 'css');      // Main styles (SVG page icons, no font dependency)
+mix.sass('client/src/scss/bs-icons.scss', 'css');         // Optional: .bs-icon-* classes (loads font from CDN)
 mix.sass('client/src/scss/multivaluesortfield.scss', 'css');
-
-// Bootstrap Icons fonts are loaded via ~bootstrap-icons in SCSS
-// Webpack automatically copies them to dist/fonts during build
 
 // mix.scripts = basic concattenation
 // mix.babel = concattenation + babel (ES2015 -> vanilla)
