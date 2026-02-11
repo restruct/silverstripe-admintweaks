@@ -158,8 +158,8 @@ class IconsPreviewController extends Controller
                 const item = document.createElement('div');
                 item.className = 'icon-item';
                 item.dataset.name = icon;
-                item.innerHTML = '<i class="bi bi-' + icon + '"></i><code>bs-icon-' + icon + '</code>';
-                item.onclick = function() { copyToClipboard('bs-icon-' + icon); };
+                item.innerHTML = '<i class="bi bi-' + icon + '"></i><code>bi bi-' + icon + '</code>';
+                item.onclick = function() { copyToClipboard('bi bi-' + icon); };
                 grid.appendChild(item);
             }
 

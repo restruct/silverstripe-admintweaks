@@ -37,14 +37,14 @@ Most features are opt-in via configuration. The module provides sensible default
 ### Admin UI Enhancements
 
 - **Page Icons** - Stylish icons for common page types using Bootstrap Icons (FA optional)
-- **`.bs-icon-*` Classes** - Bootstrap Icon utility classes mirroring `.font-icon-*` pattern
+- **Bootstrap Icon Classes** - Standard `bi bi-*` classes mirroring `.font-icon-*` pattern (CDN-compatible)
 - **Menu Grouping** - Groups admin sections under "Advanced" (requires `symbiote/silverstripe-grouped-cms-menu`)
 - **Permission Badges** - Shows permission codes in Security admin
 - **Checkbox Fixes** - Proper handling of unchecked checkboxes in editable GridFields
 
 ```php
 // Add Bootstrap icon to a button
-FormAction::create('add', 'Add Item')->addExtraClass('bs-icon-plus-circle');
+FormAction::create('add', 'Add Item')->addExtraClass('bi bi-plus-circle');
 ```
 
 ### Form Fields

@@ -3,7 +3,7 @@
 The module provides two icon systems for admin UI enhancement:
 
 1. **Page Icons** - SVG icons for page types in the CMS tree (self-contained, no external dependencies)
-2. **Bootstrap Icon Classes** - `.bs-icon-*` classes for buttons and UI elements (font loaded from CDN)
+2. **Bootstrap Icon Classes** - Standard `.bi bi-*` classes for buttons and UI elements (font loaded from CDN)
 
 ## Visual Icon Browser
 
@@ -81,52 +81,52 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
 
 ## Bootstrap Icon Classes
 
-The `.bs-icon-*` classes mirror SilverStripe's `.font-icon-*` pattern but use Bootstrap Icons. The icon font is loaded from CDN (jsDelivr) for browser caching.
+Uses standard Bootstrap Icons class convention (`bi bi-{name}`), compatible with the official CDN CSS. The icon font is loaded from CDN (jsDelivr) for browser caching.
 
 ### Quick Start
 
 ```php
 // In PHP (GridField actions, FormActions, etc.)
 $button = FormAction::create('doSave', 'Save')
-    ->addExtraClass('bs-icon-check-circle');
+    ->addExtraClass('bi bi-check-circle');
 
 // Icon-only button (no text label)
 $button = FormAction::create('doDelete')
-    ->addExtraClass('bs-icon-trash bs-icon-only');
+    ->addExtraClass('bi bi-trash bi-icon-only');
 ```
 
 ```html
 <!-- In templates -->
-<button class="btn bs-icon-plus-circle">Add Item</button>
-<a href="#" class="action bs-icon-pencil">Edit</a>
-<span class="bs-icon-star-fill"></span>
+<button class="btn bi bi-plus-circle">Add Item</button>
+<a href="#" class="action bi bi-pencil">Edit</a>
+<span class="bi bi-star-fill"></span>
 ```
 
 ### Configuration
 
 #### Disable Bootstrap Icons
 
-If you don't use `.bs-icon-*` classes, disable loading to save bandwidth:
+If you don't use Bootstrap Icon classes, disable loading to save bandwidth:
 
 ```yaml
 # app/_config/admintweaks.yml
 SilverStripe\Admin\LeftAndMain:
-  include_bs_icons: false
+  include_bootstrap_icons: false
 ```
 
 #### Use Full CDN Set Instead
 
-If you need access to ALL Bootstrap Icons (~2000+), disable the curated set and load the full CDN version:
+Since we use standard `bi bi-*` class names, you can swap our curated set for the full CDN version:
 
 ```yaml
 # app/_config/admintweaks.yml
 SilverStripe\Admin\LeftAndMain:
-  include_bs_icons: false
+  include_bootstrap_icons: false
   extra_requirements_css:
     - 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css'
 ```
 
-Note: Full set is ~90KB vs ~50KB for curated set.
+Note: Full set is ~90KB vs ~50KB for curated set. Both use the same class names.
 
 ### Adding Custom Icons
 
@@ -138,27 +138,27 @@ If you need an icon not in the curated set, add it in your app's SCSS:
 // Option 1: Import the map and use the mixin (recommended)
 @import "~bootstrap-icons/font/bootstrap-icons-map";
 
-@mixin bs-icon($name) {
-  .bs-icon-#{$name}:before {
+@mixin bi-icon($name) {
+  .bi-#{$name}:before {
     content: map-get($bootstrap-icons-map, $name);
   }
 }
 
-@include bs-icon('rocket');
-@include bs-icon('airplane');
+@include bi-icon('rocket');
+@include bi-icon('airplane');
 
 // Option 2: Manual unicode (find codes at icons.getbootstrap.com)
-.bs-icon-rocket:before {
+.bi-rocket:before {
   content: "\f511";
 }
 ```
 
 ### Icon-Only Buttons
 
-For buttons with no text (just an icon), add `bs-icon-only` to remove the right margin:
+For buttons with no text (just an icon), add `bi-icon-only` to remove the right margin:
 
 ```html
-<button class="btn btn-sm bs-icon-gear bs-icon-only" title="Settings"></button>
+<button class="btn btn-sm bi bi-gear bi-icon-only" title="Settings"></button>
 ```
 
 ---
