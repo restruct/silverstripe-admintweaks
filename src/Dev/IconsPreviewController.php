@@ -10,11 +10,11 @@ use SilverStripe\Security\Security;
 /**
  * Preview all curated Bootstrap Icons available in the admin.
  *
- * Access at: /dev/icons
+ * Access at: /dev/admintweaks-icons
  */
 class IconsPreviewController extends Controller
 {
-    private static $url_segment = 'dev/icons';
+    private static $url_segment = 'dev/admintweaks-icons';
 
     private static $allowed_actions = [
         'index',

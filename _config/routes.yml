@@ -6,4 +6,4 @@ after:
 ---
 SilverStripe\Control\Director:
   rules:
-    'dev/icons': 'Restruct\Silverstripe\AdminTweaks\Dev\IconsPreviewController'
+    'dev/admintweaks-icons': 'Restruct\Silverstripe\AdminTweaks\Dev\IconsPreviewController'
