@@ -7,11 +7,7 @@ The module provides two icon systems for admin UI enhancement:
 
 ## Visual Icon Browser
 
-**In SilverStripe:** Visit `/dev/admintweaks-icons` (requires admin login) for a searchable icon grid.
-
-**Locally:** Open [icons.html](icons.html) in your browser.
-
-Click any icon to copy its class name.
+Visit `/dev/admintweaks-icons` (requires admin login) for a searchable icon grid. Click any icon to copy its class name.
 
 ---
 
