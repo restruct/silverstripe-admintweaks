@@ -2,10 +2,10 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
 class DataObjectExtension
-    extends DataExtension
+    extends Extension
 {
 
     /**

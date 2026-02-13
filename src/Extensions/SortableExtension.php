@@ -4,12 +4,12 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 
 class SortableExtension
-    extends DataExtension
+    extends Extension
 {
     private static $db = [
         'Sort' => 'Int',
