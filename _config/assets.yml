@@ -1,6 +1,10 @@
 ---
 Name: admintweaks-assets
 ---
+SilverStripe\Assets\File:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\FileLocalPathExtension
+
 SilverStripe\Core\Injector\Injector:
 #  Intervention\Image\ImageManager:
 #    constructor:

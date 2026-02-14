@@ -84,20 +84,28 @@ class GeneralHelpers
         return self::safelyGetProperty($object->{$prop}, $prop_arr);
     }
 
-    // Get file assets file, also when not published yet
-    public static function getFileAssetsPath($file)
+    /**
+     * Get the absolute local filesystem path for a File asset.
+     *
+     * Delegates to FileLocalPathExtension::getLocalPath() which checks both
+     * public and protected stores with hash-prefixed and natural paths.
+     *
+     * For reading file content only (not passing to external tools), prefer $file->getString().
+     *
+     * @param File|null $file
+     * @return string|null Absolute filesystem path, or null if not found
+     */
+    public static function getFileAssetsPath($file): ?string
     {
-        $meta = $file->getMetaData();
-        $file_path = null;
-        if ($meta != null) {
-            if (isset($meta['path']) && $path = $meta['path']) {
-                if ($rootpath = Environment::getEnv('SS_PROTECTED_ASSETS_PATH')) {
-                    return $rootpath . DIRECTORY_SEPARATOR . $path;
-                } else {
-                    return ASSETS_PATH . '/.protected' . DIRECTORY_SEPARATOR . $path;
-                }
-            }
+        if (!$file || !$file->exists()) {
+            return null;
         }
+
+        if (method_exists($file, 'getLocalPath')) {
+            return $file->getLocalPath();
+        }
+
+        return null;
     }
 
     /**
