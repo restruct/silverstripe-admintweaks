@@ -2,15 +2,18 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
+use Psr\Log\LoggerInterface;
 use SilverStripe\Assets\File;
 use SilverStripe\Core\Environment;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataExtension;
 
 /**
  * Adds getLocalPath() to File objects for resolving the actual filesystem path.
  *
  * Handles both public and protected stores, with and without hash-prefixed directories.
- * Works correctly with custom SS_PROTECTED_ASSETS_PATH (e.g. "../restricted_assets").
+ * Detects and corrects relative SS_PROTECTED_ASSETS_PATH values (framework bug:
+ * https://github.com/silverstripe/silverstripe-assets/issues/706).
  *
  * Primary use case: passing file paths to external CLI tools (cpdf, pdftotext, wkhtmltopdf, etc.)
  * For reading file content only, prefer $file->getString() instead.
@@ -19,6 +22,8 @@ use SilverStripe\ORM\DataExtension;
  */
 class FileLocalPathExtension extends DataExtension
 {
+    private static bool $has_warned_relative_path = false;
+
     /**
      * Get the absolute local filesystem path for this file.
      *
@@ -83,17 +88,39 @@ class FileLocalPathExtension extends DataExtension
      *
      * Handles SS_PROTECTED_ASSETS_PATH being relative (e.g. "../restricted_assets")
      * or absolute. Falls back to ASSETS_PATH/.protected if not configured.
+     *
+     * When a relative path is detected, it is resolved against BASE_PATH and a warning
+     * is logged with the correct absolute path. The framework's ProtectedAssetAdapter
+     * has a bug where relative paths resolve against PHP's cwd instead of BASE_PATH
+     * (see https://github.com/silverstripe/silverstripe-assets/issues/706).
      */
     private static function resolveProtectedAssetsPath(): string
     {
         $protectedRoot = Environment::getEnv('SS_PROTECTED_ASSETS_PATH');
 
         if ($protectedRoot) {
-            // Resolve relative paths against BASE_PATH
+            // Resolve relative paths against BASE_PATH and warn
             if (!str_starts_with($protectedRoot, '/')) {
                 $resolved = realpath(BASE_PATH . '/' . $protectedRoot);
-                return $resolved ?: (BASE_PATH . '/' . $protectedRoot);
+                $absolutePath = $resolved ?: (BASE_PATH . '/' . $protectedRoot);
+
+                if (!self::$has_warned_relative_path) {
+                    self::$has_warned_relative_path = true;
+                    try {
+                        Injector::inst()->get(LoggerInterface::class)->warning(
+                            "SS_PROTECTED_ASSETS_PATH is set to a relative path '{$protectedRoot}'. "
+                            . 'Relative paths resolve inconsistently between web and CLI contexts '
+                            . 'due to a framework bug (https://github.com/silverstripe/silverstripe-assets/issues/706). '
+                            . "Use the absolute path instead: SS_PROTECTED_ASSETS_PATH=\"{$absolutePath}\""
+                        );
+                    } catch (\Throwable $e) {
+                        // Injector not ready (early bootstrap) — skip warning
+                    }
+                }
+
+                return $absolutePath;
             }
+
             return $protectedRoot;
         }
 
