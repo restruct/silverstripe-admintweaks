@@ -2,18 +2,22 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
-use Psr\Log\LoggerInterface;
+use League\Flysystem\Filesystem;
 use SilverStripe\Assets\File;
-use SilverStripe\Core\Environment;
+use SilverStripe\Assets\FilenameParsing\FileResolutionStrategy;
+use SilverStripe\Assets\FilenameParsing\ParsedFileID;
+use SilverStripe\Assets\Flysystem\FlysystemAssetStore;
+use SilverStripe\Assets\Flysystem\LocalFilesystemAdapter;
+use SilverStripe\Assets\Storage\AssetStore;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataExtension;
 
 /**
  * Adds getLocalPath() to File objects for resolving the actual filesystem path.
  *
- * Handles both public and protected stores, with and without hash-prefixed directories.
- * Detects and corrects relative SS_PROTECTED_ASSETS_PATH values (framework bug:
- * https://github.com/silverstripe/silverstripe-assets/issues/706).
+ * Uses the framework's own FlysystemAssetStore resolution chain (FileResolutionStrategy
+ * + LocalFilesystemAdapter::prefixPath()) to find files on disk. This handles all storage
+ * layouts: hash paths, natural paths, and any future FileIDHelper implementations.
  *
  * Primary use case: passing file paths to external CLI tools (cpdf, pdftotext, wkhtmltopdf, etc.)
  * For reading file content only, prefer $file->getString() instead.
@@ -22,16 +26,14 @@ use SilverStripe\ORM\DataExtension;
  */
 class FileLocalPathExtension extends DataExtension
 {
-    private static bool $has_warned_relative_path = false;
-
     /**
      * Get the absolute local filesystem path for this file.
      *
-     * Checks candidate paths in order:
-     * 1. Protected store with hash prefix
-     * 2. Protected store without hash prefix (natural path)
-     * 3. Public store with hash prefix
-     * 4. Public store without hash prefix (legacy/natural path)
+     * Delegates to the framework's resolution strategy which tries all configured
+     * FileIDHelpers (Hash, Natural) and performs DB lookups when hashes are missing.
+     *
+     * Checks protected filesystem first (most common for getLocalPath use cases),
+     * then falls back to public filesystem.
      *
      * @return string|null Absolute filesystem path, or null if file not found on disk
      */
@@ -48,83 +50,51 @@ class FileLocalPathExtension extends DataExtension
             return null;
         }
 
-        $hashDir = $hash ? substr($hash, 0, 10) : '';
-        $dir = dirname($filename);
-        $basename = basename($filename);
-
-        // Resolve protected assets root
-        $protectedRoot = self::resolveProtectedAssetsPath();
-
-        // Build candidate paths in order of likelihood
-        $candidates = [];
-
-        // 1. Protected store with hash prefix
-        if ($hashDir) {
-            $candidates[] = $protectedRoot . '/' . $dir . '/' . $hashDir . '/' . $basename;
+        $store = Injector::inst()->get(AssetStore::class);
+        if (!$store instanceof FlysystemAssetStore) {
+            return null;
         }
 
-        // 2. Protected store without hash prefix (natural path)
-        $candidates[] = $protectedRoot . '/' . $filename;
+        $parsedFileID = new ParsedFileID($filename, $hash ?: '');
 
-        // 3. Public store with hash prefix
-        if ($hashDir) {
-            $candidates[] = ASSETS_PATH . '/' . $dir . '/' . $hashDir . '/' . $basename;
+        // Try protected filesystem first (most common for getLocalPath use cases)
+        $result = $this->resolveOnFilesystem(
+            $parsedFileID,
+            $store->getProtectedFilesystem(),
+            $store->getProtectedResolutionStrategy()
+        );
+        if ($result) {
+            return $result;
         }
 
-        // 4. Public store without hash prefix (legacy/natural path)
-        $candidates[] = ASSETS_PATH . '/' . $filename;
-
-        foreach ($candidates as $path) {
-            if (file_exists($path)) {
-                return $path;
-            }
-        }
-
-        return null;
+        // Fall back to public filesystem
+        return $this->resolveOnFilesystem(
+            $parsedFileID,
+            $store->getPublicFilesystem(),
+            $store->getPublicResolutionStrategy()
+        );
     }
 
     /**
-     * Resolve the absolute path to the protected assets root directory.
-     *
-     * Handles SS_PROTECTED_ASSETS_PATH being relative (e.g. "../restricted_assets")
-     * or absolute. Falls back to ASSETS_PATH/.protected if not configured.
-     *
-     * When a relative path is detected, it is resolved against BASE_PATH and a warning
-     * is logged with the correct absolute path. The framework's ProtectedAssetAdapter
-     * has a bug where relative paths resolve against PHP's cwd instead of BASE_PATH
-     * (see https://github.com/silverstripe/silverstripe-assets/issues/706).
+     * Resolve a ParsedFileID to an absolute filesystem path on the given filesystem.
      */
-    private static function resolveProtectedAssetsPath(): string
-    {
-        $protectedRoot = Environment::getEnv('SS_PROTECTED_ASSETS_PATH');
-
-        if ($protectedRoot) {
-            // Resolve relative paths against BASE_PATH and warn
-            if (!str_starts_with($protectedRoot, '/')) {
-                $resolved = realpath(BASE_PATH . '/' . $protectedRoot);
-                $absolutePath = $resolved ?: (BASE_PATH . '/' . $protectedRoot);
-
-                if (!self::$has_warned_relative_path) {
-                    self::$has_warned_relative_path = true;
-                    try {
-                        Injector::inst()->get(LoggerInterface::class)->warning(
-                            "SS_PROTECTED_ASSETS_PATH is set to a relative path '{$protectedRoot}'. "
-                            . 'Relative paths resolve inconsistently between web and CLI contexts '
-                            . 'due to a framework bug (https://github.com/silverstripe/silverstripe-assets/issues/706). '
-                            . "Use the absolute path instead: SS_PROTECTED_ASSETS_PATH=\"{$absolutePath}\""
-                        );
-                    } catch (\Throwable $e) {
-                        // Injector not ready (early bootstrap) — skip warning
-                    }
-                }
-
-                return $absolutePath;
-            }
-
-            return $protectedRoot;
+    private function resolveOnFilesystem(
+        ParsedFileID $parsedFileID,
+        Filesystem $filesystem,
+        FileResolutionStrategy $strategy
+    ): ?string {
+        $resolved = $strategy->searchForTuple($parsedFileID, $filesystem);
+        if (!$resolved) {
+            return null;
         }
 
-        // Default: .protected inside assets
-        return ASSETS_PATH . '/.protected';
+        $adapter = $filesystem->getAdapter();
+        if (!$adapter instanceof LocalFilesystemAdapter) {
+            return null;
+        }
+
+        $path = $adapter->prefixPath($resolved->getFileID());
+
+        return file_exists($path) ? $path : null;
     }
 }
