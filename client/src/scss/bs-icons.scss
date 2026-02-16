@@ -113,6 +113,7 @@ a.action[class^="bi-"]:before {
 @include bi-icon('dash');
 @include bi-icon('dash-lg');
 @include bi-icon('dash-circle');
+@include bi-icon('dash-circle-dotted');
 @include bi-icon('dash-circle-fill');
 @include bi-icon('dash-square');
 @include bi-icon('x');
@@ -349,6 +350,7 @@ a.action[class^="bi-"]:before {
 @include bi-icon('image-fill');
 @include bi-icon('image-alt');
 @include bi-icon('images');
+@include bi-icon('card-checklist');
 @include bi-icon('card-image');
 @include bi-icon('camera');
 @include bi-icon('camera-fill');
@@ -629,6 +631,7 @@ a.action[class^="bi-"]:before {
 @include bi-icon('chat-quote');
 @include bi-icon('chat-quote-fill');
 @include bi-icon('send');
+@include bi-icon('send-check');
 @include bi-icon('send-fill');
 @include bi-icon('reply');
 @include bi-icon('reply-fill');
@@ -656,6 +659,7 @@ a.action[class^="bi-"]:before {
 // -----------------------------------------------------------------------------
 @include bi-icon('link');
 @include bi-icon('link-45deg');
+@include bi-icon('paperclip');
 @include bi-icon('unlink');
 @include bi-icon('box-arrow-up-right');
 @include bi-icon('box-arrow-up-left');
@@ -1143,9 +1147,14 @@ a.action[class^="bi-"]:before {
 // -----------------------------------------------------------------------------
 // WINDOW/UI CHROME
 // -----------------------------------------------------------------------------
+@include bi-icon('circle');
+@include bi-icon('circle-fill');
+@include bi-icon('square');
+@include bi-icon('square-fill');
 @include bi-icon('window');
 @include bi-icon('window-dash');
 @include bi-icon('window-desktop');
+@include bi-icon('window-dock');
 @include bi-icon('window-fullscreen');
 @include bi-icon('window-plus');
 @include bi-icon('window-sidebar');
