@@ -57,6 +57,8 @@ class SymfonyMailerHandlerFactory implements Factory
             ->setTo($recipient)
             ->setSubject($subject);
 
-        return new SymfonyMailerHandler($mailer, $email, $level);
+        // bubble: false — prevent $record->formatted (email HTML) from leaking to
+        // downstream handlers like HTTPOutputHandler, which would output it to the browser
+        return new SymfonyMailerHandler($mailer, $email, $level, bubble: false);
     }
 }

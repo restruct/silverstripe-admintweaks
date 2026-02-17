@@ -211,3 +211,38 @@ APP_LOG_MAIL_LEVEL="error"
 1. Increase log level to `critical`
 2. Use DeduplicationHandler to prevent duplicates
 3. Consider using external error tracking (Sentry, Bugsnag)
+
+### Disabling the error email handler from a project
+
+If you need to disable the error email handler without removing the env vars, override the
+handler definitions in your project config:
+
+```yaml
+---
+Name: project-disable-error-email-handler
+After:
+  - '#admintweaks-error-email-logger'
+Only:
+  envvarset:
+    - APP_LOG_MAIL_RECIPIENT
+---
+SilverStripe\Core\Injector\Injector:
+  DeduplicatingMailHandler:
+    class: Monolog\Handler\NullHandler
+  MailHandler:
+    class: Monolog\Handler\NullHandler
+```
+
+---
+
+## Changelog
+
+### 3.7.1
+
+- **Fixed:** SymfonyMailerHandler now uses `bubble: false` to prevent the EnhancedErrorFormatter
+  HTML from leaking into web responses via SilverStripe's HTTPOutputHandler. Previously, the
+  formatted email HTML was set on `$record->formatted` and propagated to downstream handlers,
+  corrupting AJAX/JSON responses with HTML error email content.
+- **Removed:** ThrottledQueuedJobService — the parent QueuedJobService now handles broken job
+  notification dedup natively via the `NotifiedBroken` DB flag (queuedjobs 4.x+). The reimplemented
+  `checkJobHealth()` had also become stale, missing upstream fixes.
