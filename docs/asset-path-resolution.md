@@ -100,3 +100,55 @@ The framework's `AssetStore` interface provides `getString()` and `getStream()` 
 - **Web server handoff** (X-Sendfile, X-Accel-Redirect) where the web server reads the file directly
 
 For all other cases, prefer `getString()` or `getStream()` — they work with any AssetStore backend (local, S3, etc.).
+
+## Testing getLocalPath()
+
+There are no PHPUnit tests for `getLocalPath()` — it requires a fully bootstrapped SilverStripe environment with actual filesystem adapters. Use the manual checklist below after making changes.
+
+### Manual Testing Checklist
+
+#### 1. Build verification
+
+```bash
+vendor/bin/sake dev/build flush=1
+```
+
+Should complete without errors.
+
+#### 2. Verify resolution for known files
+
+```bash
+# Find files with known hashes
+vendor/bin/sake dev/tasks/orm-query class=File "filter[FileHash:not]=" limit=5 fields=ID,FileFilename,FileHash
+
+# Check which storage layout is used on disk
+ls {protected_folder}/{dirname}/{hash10}/{basename}   # hash path
+ls {protected_folder}/{dirname}/{basename}             # natural path
+ls public/assets/{dirname}/{hash10}/{basename}         # public hash path
+ls public/assets/{dirname}/{basename}                  # public natural path
+```
+
+`getLocalPath()` should return the correct absolute path regardless of which layout exists on disk.
+
+#### 3. Test in PHP (sake or controller)
+
+```php
+$file = File::get()->filter('FileHash:not', '')->first();
+$path = $file->getLocalPath();
+
+// Should return absolute path like:
+// /path/to/project/restricted_assets/Uploads/abc1234567/document.pdf
+// Should return null for files not on local filesystem
+```
+
+#### 4. Verify both stores are checked
+
+`getLocalPath()` tries protected first, then public. To verify both paths work:
+
+- Find a protected file (in `restricted_assets/` or `.protected/`) — should resolve
+- Find a published file (in `public/assets/`) — should also resolve
+- A file that exists in neither store — should return `null`
+
+### What is NOT covered by automated tests
+
+`getLocalPath()` delegates to `FileResolutionStrategy::searchForTuple()` + `LocalFilesystemAdapter::prefixPath()`. These framework methods are tested by SilverStripe's own test suite. The extension's role is simply to wire them together and check both filesystems, which is verified manually.
