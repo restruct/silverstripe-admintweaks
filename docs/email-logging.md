@@ -92,70 +92,42 @@ APP_SYSTEM_EMAIL_ADDRESS="dev@example.com"
 
 ## EnhancedErrorFormatter
 
-Custom Monolog formatter for more informative error emails.
+Extends `DetailedErrorFormatter` — inherits record parsing and context extraction,
+overrides `output()` to produce email-friendly HTML.
+
+Solves: `DetailedErrorFormatter::output()` calls `Debug::create_debug_view()` which
+falls back to `CliDebugView` (plain text) when there's no HTTP request context during
+error handling — producing unreadable "wall of text" emails.
 
 ### Features
 
+- Inline-styled HTML (no external CSS links that get stripped in email)
 - Source code context around the error
 - Full stack trace
-- Request information (URL, method, headers)
-- Server environment details
-- Session data (sanitized)
-- POST data (sanitized)
+- `$_SERVER` details table (like SS3 had)
+- Configurable: `format_mode` = `html` (default) or `plaintext` (monospace)
 
-### Email Format
-
-Error emails include:
-
-```
-Error: Division by zero
-
-File: /var/www/app/src/Calculator.php
-Line: 42
-
-Source Context:
-  40:     public function divide($a, $b)
-  41:     {
-> 42:         return $a / $b;
-  43:     }
-
-Stack Trace:
-#0 /var/www/app/src/Controller.php(15): Calculator->divide(10, 0)
-#1 /var/www/vendor/silverstripe/framework/...
-
-Request:
-URL: https://example.com/calculate
-Method: POST
-IP: 192.168.1.1
-
-Environment:
-PHP: 8.3.0
-SS: 5.2.0
-Server: Apache/2.4
+```yaml
+# Switch to monospace plaintext mode if preferred
+Restruct\Silverstripe\AdminTweaks\Logging\EnhancedErrorFormatter:
+  format_mode: plaintext
 ```
 
 ---
 
-## Logging Handler Factories
+## DedupSymfonyMailerHandler
 
-### DeduplicationHandlerFactory
+Extends `SymfonyMailerHandler` with PSR-16 cache-based deduplication.
+Prevents email bombing when the same error repeats (e.g. DB down).
 
-Prevents duplicate log entries within a time window:
-
-```yaml
-SilverStripe\Core\Injector\Injector:
-  DeduplicationHandler:
-    factory: Restruct\Silverstripe\AdminTweaks\Logging\DeduplicationHandlerFactory
-```
-
-### SymfonyMailerHandlerFactory
-
-Monolog handler using Symfony Mailer for sending log emails:
+- No buffering — sends immediately (unlike Monolog's DeduplicationHandler/BufferHandler)
+- PSR-16 cache handles TTL expiry (uses existing `adminCache` pool)
+- Configurable dedup window (default: 300 seconds / 5 minutes)
 
 ```yaml
-SilverStripe\Core\Injector\Injector:
-  MailerHandler:
-    factory: Restruct\Silverstripe\AdminTweaks\Logging\SymfonyMailerHandlerFactory
+# Adjust dedup time window
+Restruct\Silverstripe\AdminTweaks\Logging\DedupSymfonyMailerHandler:
+  dedup_time: 600  # 10 minutes
 ```
 
 ---
@@ -215,7 +187,7 @@ APP_LOG_MAIL_LEVEL="error"
 ### Disabling the error email handler from a project
 
 If you need to disable the error email handler without removing the env vars, override the
-handler definitions in your project config:
+handler definition in your project config:
 
 ```yaml
 ---
@@ -227,8 +199,6 @@ Only:
     - APP_LOG_MAIL_RECIPIENT
 ---
 SilverStripe\Core\Injector\Injector:
-  DeduplicatingMailHandler:
-    class: Monolog\Handler\NullHandler
   MailHandler:
     class: Monolog\Handler\NullHandler
 ```

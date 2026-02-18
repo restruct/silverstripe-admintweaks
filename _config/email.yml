@@ -64,7 +64,7 @@ SilverStripe\Core\Injector\Injector:
       AuthMode: [ setAuthMode, ['login'] ]
 
 
-# Email error handler - sends error emails via NativeMailerHandler with deduplication
+# Email error handler — sends error emails via Symfony Mailer with cache-based deduplication.
 # Only activates when ALL env vars below are set. To disable on dev/test,
 # simply don't define these vars in those environments.
 #
@@ -74,13 +74,10 @@ SilverStripe\Core\Injector\Injector:
 #   APP_LOG_MAIL_SENDER="noreply@example.com"
 #   APP_LOG_MAIL_LEVEL="error"  # info / warning / error
 #
-# Optional:
-#   APP_LOG_MAIL_DEDUP_TIME=300  # Seconds to suppress duplicate errors (default: 300 = 5 min)
-#
 # Features:
-# - Enhanced error format with $_SERVER details (like SS3 had)
-# - Smaller, more readable email header
-# - Deduplication to prevent email bombing (e.g., when DB crashes)
+# - Enhanced error format with inline-styled HTML + $_SERVER details (like SS3 had)
+# - Cache-based deduplication to prevent email bombing (e.g., when DB crashes)
+# - Configurable: dedup_time (DedupSymfonyMailerHandler), format_mode (EnhancedErrorFormatter)
 ---
 Name: admintweaks-error-email-logger
 Only:
@@ -91,20 +88,26 @@ Only:
     - APP_LOG_MAIL_LEVEL
 ---
 SilverStripe\Core\Injector\Injector:
-  # Use DeduplicationHandler to wrap the mail handler - prevents email bombing
-  # when the same error occurs repeatedly (e.g., DB down, external API unreachable)
   Psr\Log\LoggerInterface:
     calls:
-      DeduplicatingMailHandler: [ pushHandler, [ '%$DeduplicatingMailHandler' ] ]
+      MailHandler: [ pushHandler, [ '%$MailHandler' ] ]
 
-  DeduplicatingMailHandler:
-    factory: Restruct\Silverstripe\AdminTweaks\Logging\DeduplicationHandlerFactory
-    constructor:
-      handler: '%$MailHandler'
+  # Email template for error notifications (env vars resolved by Injector)
+  ErrorNotificationEmail:
+    class: SilverStripe\Control\Email\Email
+    calls:
+      From: [ setFrom, [ '`APP_LOG_MAIL_SENDER`' ] ]
+      To: [ setTo, [ '`APP_LOG_MAIL_RECIPIENT`' ] ]
+      Subject: [ setSubject, [ '`APP_LOG_MAIL_SUBJECT`' ] ]
 
-  # SymfonyMailerHandler - uses Symfony Mailer (MAILER_DSN) instead of PHP mail()
-  # This ensures error emails go through the same transport as regular emails
+  # DedupSymfonyMailerHandler — sends via Symfony Mailer with cache-based dedup
+  # bubble: false — prevent formatted HTML from leaking to HTTPOutputHandler
   MailHandler:
-    factory: Restruct\Silverstripe\AdminTweaks\Logging\SymfonyMailerHandlerFactory
+    class: Restruct\Silverstripe\AdminTweaks\Logging\DedupSymfonyMailerHandler
+    constructor:
+      - '%$Symfony\Component\Mailer\MailerInterface'
+      - '%$ErrorNotificationEmail'
+      - '`APP_LOG_MAIL_LEVEL`'
+      - false
     properties:
       Formatter: '%$Restruct\Silverstripe\AdminTweaks\Logging\EnhancedErrorFormatter'
