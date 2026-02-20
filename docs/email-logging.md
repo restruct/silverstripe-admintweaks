@@ -216,6 +216,9 @@ SilverStripe\Core\Injector\Injector:
   With `bubble: true`, downstream handlers like SentryHandler now correctly receive error records.
 - **Changed:** IconsPreviewController moved from `/dev/admintweaks-icons` to `/admin/admintweaks-icons`.
   Now extends LeftAndMain with `ignore_menuitem: true` (hidden from CMS menu, requires CMS access).
+- **Changed:** CampaignAdmin and ReportAdmin hiding moved from CSS (`display: none !important`)
+  to config (`ignore_menuitem: true`). Projects can override with `ignore_menuitem: false` in
+  their own YAML config to re-enable these menu items.
 
 ### 3.7.1
 

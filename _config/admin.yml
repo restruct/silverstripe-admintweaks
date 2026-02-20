@@ -12,6 +12,13 @@ SilverStripe\Admin\LeftAndMain:
   extra_requirements_javascript:
     - 'restruct/silverstripe-admintweaks:client/dist/js/admintweaks.js'
 
+# Hide admin sections that clients rarely use (override with ignore_menuitem: false in project config)
+SilverStripe\CampaignAdmin\CampaignAdmin:
+  ignore_menuitem: true
+
+SilverStripe\Reports\ReportAdmin:
+  ignore_menuitem: true
+
 
 # Group some items in the admin menu under 'Advanced' (see: https://github.com/symbiote/silverstripe-grouped-cms-menu)
 ---

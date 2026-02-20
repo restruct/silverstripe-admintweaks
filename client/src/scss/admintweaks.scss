@@ -296,11 +296,7 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
   display: none !important;
 }
 
-// Hide admin sections that clients rarely use
-#Menu-SilverStripe-CampaignAdmin-CampaignAdmin,
-#Menu-SilverStripe-Reports-ReportAdmin {
-  display: none !important;
-}
+// CampaignAdmin + ReportAdmin hidden via ignore_menuitem config (admintweaks.yml)
 
 // Fixes for grouped CMS menu
 .cms-menu__list {
