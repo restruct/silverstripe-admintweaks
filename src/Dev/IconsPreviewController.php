@@ -2,24 +2,32 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Dev;
 
-use SilverStripe\Control\Controller;
-use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Admin\LeftAndMain;
+use SilverStripe\Control\HTTPResponse;
 
 /**
  * Preview all curated Bootstrap Icons available in the admin.
  *
- * Registered with DevelopmentAdmin at: /dev/admintweaks-icons
- * Authentication handled by DevUrlsConfirmationMiddleware.
+ * Access at: /admin/admintweaks-icons
+ * Hidden from CMS menu — dev tool only.
  */
-class IconsPreviewController extends Controller
+class IconsPreviewController extends LeftAndMain
 {
+    private static $url_segment = 'admintweaks-icons';
+
+    private static $menu_title = 'Bootstrap Icons';
+
     private static $allowed_actions = [
-        'index',
+        'index' => 'CMS_ACCESS_CMSMain',
     ];
 
-    public function index(HTTPRequest $request): string
+    # Hide from CMS menu — dev tool only
+    private static $ignore_menuitem = true;
+
+    public function index($request): HTTPResponse
     {
-        return $this->renderIconsPage();
+        return HTTPResponse::create($this->renderIconsPage())
+            ->addHeader('Content-Type', 'text/html; charset=utf-8');
     }
 
     protected function renderIconsPage(): string

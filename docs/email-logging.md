@@ -207,6 +207,16 @@ SilverStripe\Core\Injector\Injector:
 
 ## Changelog
 
+### 3.8.1
+
+- **Fixed:** MailHandler now uses `bubble: true`. The original `bubble: false` (3.7.1) was needed
+  when the MailHandler was on the same logger as HTTPOutputHandler, causing formatted email HTML
+  to leak into web responses. Since 3.8.0, the MailHandler is on `Psr\Log\LoggerInterface` (standard
+  logger) while HTTPOutputHandler is on `Psr\Log\LoggerInterface.errorhandler` (separate logger).
+  With `bubble: true`, downstream handlers like SentryHandler now correctly receive error records.
+- **Changed:** IconsPreviewController moved from `/dev/admintweaks-icons` to `/admin/admintweaks-icons`.
+  Now extends LeftAndMain with `ignore_menuitem: true` (hidden from CMS menu, requires CMS access).
+
 ### 3.7.1
 
 - **Fixed:** SymfonyMailerHandler now uses `bubble: false` to prevent the EnhancedErrorFormatter

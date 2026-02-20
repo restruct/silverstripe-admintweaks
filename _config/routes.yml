@@ -1,9 +1,2 @@
----
-name: admintweaks-dev-controllers
----
-SilverStripe\Dev\DevelopmentAdmin:
-  registered_controllers:
-    admintweaks-icons:
-      controller: Restruct\Silverstripe\AdminTweaks\Dev\IconsPreviewController
-      links:
-        admintweaks-icons: 'Browse curated Bootstrap Icons for admin UI'
+# IconsPreviewController now lives at /admin/admintweaks-icons (LeftAndMain, hidden from menu)
+# Old DevelopmentAdmin registration removed — no longer on /dev/

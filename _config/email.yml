@@ -101,13 +101,16 @@ SilverStripe\Core\Injector\Injector:
       Subject: [ setSubject, [ '`APP_LOG_MAIL_SUBJECT`' ] ]
 
   # DedupSymfonyMailerHandler — sends via Symfony Mailer with cache-based dedup
-  # bubble: false — prevent formatted HTML from leaking to HTTPOutputHandler
+  # bubble: true — safe because MailHandler is on the standard logger (Psr\Log\LoggerInterface),
+  # NOT on the errorhandler logger (which has HTTPOutputHandler). The original bubble:false was
+  # to prevent formatted HTML from leaking to HTTPOutputHandler when both were on the same logger.
+  # Now they're separate, and bubble:true allows downstream handlers (e.g. SentryHandler) to fire.
   MailHandler:
     class: Restruct\Silverstripe\AdminTweaks\Logging\DedupSymfonyMailerHandler
     constructor:
       - '%$Symfony\Component\Mailer\MailerInterface'
       - '%$ErrorNotificationEmail'
       - '`APP_LOG_MAIL_LEVEL`'
-      - false
+      - true
     properties:
       Formatter: '%$Restruct\Silverstripe\AdminTweaks\Logging\EnhancedErrorFormatter'
