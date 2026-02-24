@@ -4,9 +4,9 @@ name: admintweaks-leftandmain
 SilverStripe\Admin\LeftAndMain:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\LeftAndMainExtension
-  # Include Bootstrap Icons CSS for .bi-* button classes (font loaded from CDN)
-  # Set to false to disable if not using Bootstrap Icon classes
-  include_bootstrap_icons: true
+  # Load full Bootstrap Icons CSS from CDN for .bi-* button classes
+  # Set to true if using Bootstrap Icon classes in the admin
+  include_bootstrap_icons: false
   extra_requirements_css:
     - 'restruct/silverstripe-admintweaks:client/dist/css/admintweaks.css'
   extra_requirements_javascript:

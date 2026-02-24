@@ -27,7 +27,7 @@ mix.setPublicPath('client/dist');
 
 // Examples: https://laravel-mix.com/docs/6.0/examples
 mix.sass('client/src/scss/admintweaks.scss', 'css');      // Main styles (SVG page icons, no font dependency)
-mix.sass('client/src/scss/bs-icons.scss', 'css');         // Optional: .bi-* icon classes (loads font from CDN)
+// Bootstrap Icons now loaded directly from CDN via LeftAndMainExtension (include_bootstrap_icons config)
 mix.sass('client/src/scss/multivaluesortfield.scss', 'css');
 
 // mix.scripts = basic concattenation

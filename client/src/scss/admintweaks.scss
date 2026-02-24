@@ -395,5 +395,44 @@ fieldset.grid.grid-field.ss-gridfield.field {
 }
 
 
-// Bootstrap Icons (.bi-* classes) moved to separate file: bs-icons.scss
-// Include it via config: Restruct\SilverStripe\AdminTweaks: include_bootstrap_icons: true
+// Bootstrap Icons (.bi-* classes) loaded from CDN via include_bootstrap_icons config
+// Button/layout helpers for .bi-* icons in CMS context (CDN CSS doesn't include these)
+
+// Button-specific icon positioning (matches framework's .font-icon-* on buttons)
+.btn[class*=" bi-"]:before,
+.btn[class^="bi-"]:before,
+.dropdown-item[class*=" bi-"]:before,
+.dropdown-item[class^="bi-"]:before {
+  position: relative;
+  margin-right: 6px;
+  line-height: 19.999px;
+  vertical-align: top;
+  font-size: 1.231rem;
+}
+
+// Action link specific (GridField actions, etc.)
+a.action[class*=" bi-"]:before,
+a.action[class^="bi-"]:before {
+  margin-right: 0.4em;
+}
+
+// Icon-only buttons (no text, just icon)
+.bi-icon-only:before {
+  margin-right: 0 !important;
+}
+
+// Allow text utility classes (text-success, text-danger, etc.) to color icons
+// in grid-field actions by inheriting the parent's color (including hover/focus)
+.grid-field__icon-action.text-success,
+.grid-field__icon-action.text-danger,
+.grid-field__icon-action.text-warning,
+.grid-field__icon-action.text-info,
+.grid-field__icon-action.text-muted,
+.grid-field__icon-action.text-secondary {
+  &:before,
+  &:hover:before,
+  &:focus:before,
+  &:active:before {
+    color: inherit;
+  }
+}
