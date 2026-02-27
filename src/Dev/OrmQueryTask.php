@@ -16,6 +16,8 @@ use SilverStripe\ORM\DataObject;
  *   sake dev/tasks/orm-query class=File schema=1
  *   sake dev/tasks/orm-query class=Page sql=1
  *   sake dev/tasks/orm-query class=Page "where=ParentID > 0 AND ShowInMenus = 1" limit=10
+ *   sake dev/tasks/orm-query class=DataSyncItem groupBy=Type
+ *   sake dev/tasks/orm-query class=DataSyncItem min=Created max=Created
  */
 class OrmQueryTask extends BuildTask
 {
@@ -95,10 +97,27 @@ class OrmQueryTask extends BuildTask
             return;
         }
 
+        $hasFilters = $filters || $excludes || $where;
+
         // Count-only mode
         if ($request->getVar('count')) {
             echo "Class: {$fqcn}\n";
             echo "Count: {$list->count()}\n";
+            return;
+        }
+
+        // GroupBy mode — group by field and show counts per value
+        $groupByField = $request->getVar('groupBy');
+        if ($groupByField) {
+            $groupLimit = min((int) ($request->getVar('limit') ?: 50), 100);
+            $this->printGroupBy($list, $fqcn, $groupByField, $groupLimit, $hasFilters);
+            return;
+        }
+
+        // Aggregate mode — show sum/avg/min/max values
+        $aggregates = $this->getAggregates($request);
+        if ($aggregates) {
+            $this->printAggregates($list, $fqcn, $aggregates, $hasFilters);
             return;
         }
 
@@ -121,7 +140,6 @@ class OrmQueryTask extends BuildTask
         }
 
         $total = $fqcn::get()->count();
-        $hasFilters = $filters || $excludes || $where;
         $filtered = $hasFilters ? " (filtered from {$total})" : '';
 
         echo "Class: {$fqcn}\n";
@@ -323,6 +341,114 @@ class OrmQueryTask extends BuildTask
         return (string) $value;
     }
 
+    /**
+     * Group by a field and show counts per unique value.
+     */
+    private function printGroupBy($list, string $fqcn, string $field, int $limit, bool $hasFilters): void
+    {
+        # Get all values for the field (no limit — we need all matching records)
+        try {
+            $values = $list->limit(null)->column($field);
+        } catch (\InvalidArgumentException $e) {
+            echo "Invalid field: {$field}\n";
+            echo "Use schema=1 to see available fields.\n";
+            return;
+        }
+        $total = count($values);
+
+        # Count occurrences, treating null/empty as "(empty)"
+        $counts = [];
+        foreach ($values as $value) {
+            $key = ($value === null || $value === '') ? '(empty)' : (string) $value;
+            $counts[$key] = ($counts[$key] ?? 0) + 1;
+        }
+
+        # Sort by count descending
+        arsort($counts);
+
+        $groupCount = count($counts);
+        $filtered = $hasFilters ? ' (filtered)' : '';
+
+        echo "Class: {$fqcn}{$filtered}\n";
+        echo "Total: {$total} records in {$groupCount} groups\n\n";
+
+        if ($groupCount === 0) {
+            echo "No records found.\n";
+            return;
+        }
+
+        # Determine column widths
+        $maxFieldWidth = max(strlen($field), ...array_map('strlen', array_keys($counts)));
+        $maxFieldWidth = min($maxFieldWidth, 50);
+        $maxCountWidth = max(5, strlen((string) max($counts)));
+
+        # Print header
+        echo str_pad($field, $maxFieldWidth + 2);
+        echo str_pad('Count', $maxCountWidth + 2);
+        echo "%\n";
+        echo str_repeat('-', $maxFieldWidth) . '  ';
+        echo str_repeat('-', $maxCountWidth) . '  ';
+        echo "------\n";
+
+        # Print rows
+        $shown = 0;
+        foreach ($counts as $value => $count) {
+            if ($shown >= $limit) {
+                break;
+            }
+            $displayValue = strlen((string) $value) > 50
+                ? substr((string) $value, 0, 47) . '...'
+                : (string) $value;
+            $pct = $total > 0 ? round($count / $total * 100, 1) : 0;
+            echo str_pad($displayValue, $maxFieldWidth + 2);
+            echo str_pad((string) $count, $maxCountWidth + 2);
+            echo "{$pct}%\n";
+            $shown++;
+        }
+
+        if ($groupCount > $limit) {
+            echo "\n... and " . ($groupCount - $limit) . " more groups (use limit=N to show more)\n";
+        }
+    }
+
+    /**
+     * Collect aggregate parameters (sum, avg, min, max) from the request.
+     */
+    private function getAggregates($request): array
+    {
+        $aggregates = [];
+        foreach (['sum', 'avg', 'min', 'max'] as $func) {
+            $field = $request->getVar($func);
+            if ($field) {
+                $aggregates[] = ['func' => $func, 'field' => $field];
+            }
+        }
+        return $aggregates;
+    }
+
+    /**
+     * Print aggregate values (sum, avg, min, max) for the list.
+     */
+    private function printAggregates($list, string $fqcn, array $aggregates, bool $hasFilters): void
+    {
+        $filtered = $hasFilters ? ' (filtered)' : '';
+        echo "Class: {$fqcn}{$filtered}\n";
+        echo "Records: {$list->count()}\n\n";
+
+        foreach ($aggregates as $agg) {
+            $func = $agg['func'];
+            $field = $agg['field'];
+            try {
+                $value = $list->$func($field);
+            } catch (\InvalidArgumentException $e) {
+                echo ucfirst($func) . "({$field}): ERROR - Invalid field\n";
+                continue;
+            }
+            $label = ucfirst($func) . "({$field})";
+            echo "{$label}: {$value}\n";
+        }
+    }
+
     private function printUsage(): void
     {
         echo "Usage: sake dev/tasks/orm-query class=ClassName [options]\n\n";
@@ -336,6 +462,11 @@ class OrmQueryTask extends BuildTask
         echo "  sort=Field,DESC                  Sort field and direction\n";
         echo "  limit=N                          Max records (default 20, max 100)\n";
         echo "  count=1                          Show count only\n";
+        echo "  groupBy=Field                    Group by field with counts and percentages\n";
+        echo "  sum=Field                        Sum of field values\n";
+        echo "  avg=Field                        Average of field values\n";
+        echo "  min=Field                        Minimum field value\n";
+        echo "  max=Field                        Maximum field value\n";
         echo "  sql=1                            Show generated SQL query\n";
         echo "  schema=1                         Show class schema (\$db, relations, extensions)\n";
         echo "\n";
@@ -359,5 +490,9 @@ class OrmQueryTask extends BuildTask
         echo "  sake dev/tasks/orm-query class=Page \"where=ParentID > 0 AND ShowInMenus = 1\"\n";
         echo "  sake dev/tasks/orm-query class=Page sql=1\n";
         echo "  sake dev/tasks/orm-query class=File schema=1\n";
+        echo "  sake dev/tasks/orm-query class=DataSyncItem groupBy=ClassName\n";
+        echo "  sake dev/tasks/orm-query class=DataSyncItem \"filter[ClassName]=Page\" groupBy=ParentID\n";
+        echo "  sake dev/tasks/orm-query class=Member min=Created max=Created\n";
+        echo "  sake dev/tasks/orm-query class=File sum=Size avg=Size\n";
     }
 }
