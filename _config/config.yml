@@ -34,6 +34,10 @@ SilverStripe\CMS\Model\SiteTree:
 SilverStripe\ORM\DataObject:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\DataObjectExtension
+# Remove duplicate "View X-Y of Z" from GridField toolbar (already shown in footer)
+SilverStripe\Forms\GridField\GridField:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\GridFieldTweaksExtension
 
 # NOTE: this extension adds various extra fields & functionality to siteadmin, activate on a per-project basis
 #SilverStripe\SiteConfig\SiteConfig:
