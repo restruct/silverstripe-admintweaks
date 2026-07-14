@@ -33,9 +33,20 @@ class EnhancedErrorFormatter extends DetailedErrorFormatter
     private static $format_mode = 'html';
 
     /**
-     * $_SERVER keys to include in Details section
+     * $_SERVER keys to include in the Details section.
+     *
+     * @config
+     *
+     * NB: read via static::config()->get('server_vars'), NOT `self::$server_vars` — the latter
+     * bypasses the Config layer entirely, so any YAML that adds keys here is silently ignored.
+     * (It did exactly that until 2026-07-14.)
      */
     private static array $server_vars = [
+        # Set by QueuedJobContextExtension while a queued job is running, so a fatal inside the queue
+        # runner names the job/step/memory instead of only "GET dev/tasks/ProcessJobQueueTask".
+        # Listed first so they lead the Details section. Skipped silently when not set (web requests).
+        'QUEUED_JOB',
+        'QUEUED_JOB_MEMORY',
         'HTTP_ACCEPT',
         'HTTP_ACCEPT_LANGUAGE',
         'HTTP_ACCEPT_ENCODING',
@@ -153,7 +164,7 @@ class EnhancedErrorFormatter extends DetailedErrorFormatter
 
         # Add $_SERVER details as key=value lines
         $text .= "\n== Server Details ==\n";
-        foreach (self::$server_vars as $key) {
+        foreach ((array) static::config()->get('server_vars') as $key) {
             $value = $_SERVER[$key] ?? '';
             if ($value !== '') {
                 $text .= "  {$key} = {$value}\n";
@@ -224,7 +235,7 @@ class EnhancedErrorFormatter extends DetailedErrorFormatter
     {
         $output = '<div class="info"><h3>Details</h3><table class="details-table">';
 
-        foreach (self::$server_vars as $key) {
+        foreach ((array) static::config()->get('server_vars') as $key) {
             $value = $_SERVER[$key] ?? '';
             if ($value !== '') {
                 $output .= '<tr>';
