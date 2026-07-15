@@ -3,6 +3,7 @@
 namespace Restruct\Silverstripe\AdminTweaks\Jobs;
 
 use Exception;
+use Throwable;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
@@ -144,7 +145,7 @@ class ScheduledMethodCall
                 ), 'WARNING');
             }
 
-        } catch(Exception $e){
+        } catch(Throwable $e){
             $this->addMessage(sprintf(
                 "%s::%s ERROR: %s (%s)",
                 $this->objectClass,
@@ -152,8 +153,16 @@ class ScheduledMethodCall
                 $e->getCode(),
                 $e->getMessage()
             ));
-            $this->jobStatus = self::STATUS_BROKEN;
-            return;
+            # 3.15.0: RE-THROW instead of `$this->jobStatus = self::STATUS_BROKEN; return;`. That assignment
+            # only wrote a magic jobData property QueuedJobService never reads — the service saw no exception
+            # and no isComplete, so it looped process() indefinitely, with addMessage() re-serialised onto the
+            # descriptor every pass (DHUB prod 2026-07-15: descriptor #152177 reached step 2563/1 and OOM'd the
+            # runner at ~400MB). Throwing is the documented failure signal: runJob() catches Throwable, logs
+            # the error against the descriptor and marks it Broken (no retry loop). Also catch Throwable, not
+            # Exception, so Errors (eg a TypeError from a bad call target) get the job-context message too.
+            //            $this->jobStatus = self::STATUS_BROKEN;
+            //            return;
+            throw $e;
         }
 
 //        $this->addMessage('Called: ' . $this->getContextDescription());
