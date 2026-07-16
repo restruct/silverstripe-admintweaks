@@ -77,11 +77,15 @@
         if(this.prop( "checked" )){
           this.siblings('.checkbox_zero_input').remove();
         } else {
+          // NB insertBefore, NOT insertAfter: inserting AFTER the checkbox landed the hidden input BETWEEN
+          // the checkbox and an adjacent widget (e.g. a Switchery span), silently breaking
+          // `input.checkbox + .widget` adjacent-sibling CSS mid-interaction. Submit order stays correct:
+          // when checked the zero-input is removed; when unchecked the checkbox submits nothing anyway.
           $('<input>').attr({
             class: 'checkbox_zero_input',
             type: 'hidden',
             name: this.attr('name')
-          }).insertAfter(this);
+          }).insertBefore(this);
         }
         this._super();
       }
