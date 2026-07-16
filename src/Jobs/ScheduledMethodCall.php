@@ -3,6 +3,8 @@
 namespace Restruct\Silverstripe\AdminTweaks\Jobs;
 
 use Exception;
+use InvalidArgumentException;
+use RuntimeException;
 use Throwable;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injector;
@@ -63,6 +65,17 @@ class ScheduledMethodCall
 
         if($ObjectOrClass && $method){ // initialize (job data is serialized between calls)
             if(is_a($ObjectOrClass, DataObject::class)){
+                # 3.16.0: fail FAST on an unwritten record. With ID=0 the stored objectID is falsy, so
+                # process() would silently degrade to a STATIC call and fatal at cron time ("method
+                # cannot be called statically") — far from the actual cause. Hit on DHUB prod:
+                # a record scheduled a method on itself from onBeforeWrite of its INITIAL save.
+                if (!$ObjectOrClass->ID) {
+                    throw new InvalidArgumentException(sprintf(
+                        'ScheduledMethodCall: cannot schedule %s::%s() on an UNWRITTEN record (ID=0) — write() it first (or schedule from onAfterWrite)',
+                        $ObjectOrClass->ClassName,
+                        $method
+                    ));
+                }
                 $this->objectID = $ObjectOrClass->ID;
                 $this->objectClass = $ObjectOrClass->ClassName;
             } elseif (is_object($ObjectOrClass)) {
@@ -130,6 +143,16 @@ class ScheduledMethodCall
         $objectOrClassName = $this->objectClass;
         if($this->objectID){
             $objectOrClassName = DataObject::get_by_id($this->objectClass, $this->objectID);
+            # 3.16.0: a deleted record used to fatal on the next line (property-set on null); throw a
+            # clear failure instead so the service marks the job Broken with an attributable message.
+            if (!$objectOrClassName) {
+                throw new RuntimeException(sprintf(
+                    'ScheduledMethodCall: %s #%d no longer exists — cannot call %s() (record deleted since scheduling?)',
+                    $this->objectClass,
+                    $this->objectID,
+                    $this->method
+                ));
+            }
             $objectOrClassName->scheduled_job_instance = $this;
         }
 
