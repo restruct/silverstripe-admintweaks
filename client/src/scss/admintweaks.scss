@@ -1,35 +1,41 @@
 // @TODO:
-// - Checkboxes
 // - ModelAdmin advanced search
 // - etc (check ss3-tweaks.scss)
 
 
-//// Checkboxes (in gridfields)
-//input.checkbox.styled-checkbox {
-//  &.styled-checkbox-hide {
-//    display: none;
-//  }
-//  + label:before
-//    content: '';
-//    box-sizing: border-box;
-//    display: block;
-//    width: 20px;
-//    height: 20px;
-//    background-color: white;
-//    outline: 1px solid rgb(210, 213, 216);
-//    text-align: center;
-//  }
-//  &:checked +label:before {
-//    //content: '🔗\uFE0E'; // 𐄂
-//    color: white;
-//    //font-size: 24px;
-//    line-height: 10px;
-//    background-color: rgb(51, 141, 193);
-//    //border-color: rgb(51, 141, 193);
-//    border: 2px solid white;
-//    //outline: 1px solid ;
-//  }
-//}
+// Styled checkboxes (paired with the .styled-checkbox JS injector in admintweaks.js, which hides the
+// input and injects an inner <label for> whose :before draws the box). These styles sat in the
+// UNCOMPILED _legacy_ss3-tweaks.scss, so the injector ran without its styling — ported 2026-07.
+input.checkbox.styled-checkbox {
+  &.styled-checkbox-hide {
+    display: none;
+  }
+  + label:before {
+    content: '';
+    box-sizing: border-box;
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    outline: 1px solid rgb(210, 213, 216);
+    text-align: center;
+  }
+  &:checked + label:before {
+    color: white;
+    line-height: 10px;
+    background-color: rgb(51, 141, 193);
+    border: 2px solid white;
+  }
+}
+// SS5 form-check markup wraps the input INSIDE the outer label, so the injected inner label's absolute
+// :before box lands ON the label text — pull it into the form-check gutter and render it at 16x16
+// (native admin checkbox size) so it clears the text. Grid/td contexts (no .form-check ancestor) keep 20x20.
+.form-check input.checkbox.styled-checkbox + label:before {
+  margin-left: -1.5385rem;
+  margin-top: -1px;
+  width: 16px;
+  height: 16px;
+}
 
 
 // nicely stack optionsets into columns
