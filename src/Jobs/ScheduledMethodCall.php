@@ -28,11 +28,13 @@ if(!ClassInfo::exists(AbstractQueuedJob::class)) {
  * Calls the $method argument on the $object argument, optionally with $arguments
  */
 /**
- * @deprecated CONSOLIDATION PENDING: the canonical home for this job is restruct/silverstripe-queuedjobs-enhancements.
- * This copy stays for now because (as of 2026-07-16) the enhancements copy LACKS the 3.15.0 rethrow fix
- * (jobStatus-assignment no-op -> infinite process() loop / message-log OOM) and the 3.16.0 deleted-record
- * fail-fast. Once those are ported there: switch consumers' imports (fuse DocSys_Document), then remove
- * this class (no QueuedJobDescriptor rows reference this FQCN on fuse local/prod, verified 2026-07-16).
+ * @deprecated CONSOLIDATION PENDING: the canonical home for this job is restruct/silverstripe-queuedjobs-enhancements
+ * (its 1.2.1 carries the 3.15.0 rethrow + the deleted-record fail-fast; fuse switched its import 2026-07-16).
+ * This copy must STAY until BOTH remaining blockers clear:
+ *   1. DHUB still imports this FQCN (site/src/Models/InfoRequest.php) — migrate DHUB first.
+ *   2. The enhancements copy still lacks the 3.16.0 ID=0 UNWRITTEN-record constructor guard (see below in
+ *      __construct — the schedule-from-onBeforeWrite silent-static-call bug that hit DHUB prod) — port it.
+ * Then remove this class (check QueuedJobDescriptor rows for this FQCN per project first; fuse = zero).
  */
 class ScheduledMethodCall
     extends AbstractQueuedJob
