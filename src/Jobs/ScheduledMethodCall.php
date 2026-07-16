@@ -27,6 +27,13 @@ if(!ClassInfo::exists(AbstractQueuedJob::class)) {
  * A universal ScheduledExecution_Job that gets scheduled and executed once, async (eg for sending out an email)
  * Calls the $method argument on the $object argument, optionally with $arguments
  */
+/**
+ * @deprecated CONSOLIDATION PENDING: the canonical home for this job is restruct/silverstripe-queuedjobs-enhancements.
+ * This copy stays for now because (as of 2026-07-16) the enhancements copy LACKS the 3.15.0 rethrow fix
+ * (jobStatus-assignment no-op -> infinite process() loop / message-log OOM) and the 3.16.0 deleted-record
+ * fail-fast. Once those are ported there: switch consumers' imports (fuse DocSys_Document), then remove
+ * this class (no QueuedJobDescriptor rows reference this FQCN on fuse local/prod, verified 2026-07-16).
+ */
 class ScheduledMethodCall
     extends AbstractQueuedJob
 {
