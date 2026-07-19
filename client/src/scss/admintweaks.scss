@@ -39,6 +39,10 @@ input.checkbox.styled-checkbox {
 
 
 // nicely stack optionsets into columns
+// NB (2026-07-18): this only affects ul-rendered optionsets (regular CMS edit forms, e.g. the
+// DevPath checkbox groups) — the SS5 GridField 'Search options' popover renders checkboxsets as
+// div.form-check, so this rule never touches it (the popover overlap had a different cause: the
+// .form-control holder-height issue fixed below).
 @media (min-width: 992px) {
   .optionset {
     ul {
@@ -51,6 +55,22 @@ input.checkbox.styled-checkbox {
       float: none;
       width: auto;
     }
+  }
+}
+
+// SS5 'Search options' popover fixes (2026-07-18): the search-form schema rendering puts the
+// input classes on the field HOLDER div, so composite holders (checkboxset/optionset) end up
+// with Bootstrap's fixed-height .form-control -> the holder collapses to ~36px and its
+// checkboxes paint over the fields below it (observed in VW CourseAdmin, but generic).
+// Restore auto height on holder divs, and keep long option lists scrollable inside the popover.
+.cms-search-form {
+  .field.form-control {
+    height: auto;
+  }
+  .field.checkboxset .form__field-holder,
+  .field.optionset .form__field-holder {
+    max-height: 14rem;
+    overflow-y: auto;
   }
 }
 

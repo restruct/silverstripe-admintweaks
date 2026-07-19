@@ -12,6 +12,11 @@ SilverStripe\Admin\LeftAndMain:
   extra_requirements_javascript:
     - 'restruct/silverstripe-admintweaks:client/dist/js/admintweaks.js'
 
+# Per-ModelAdmin opt-in tweaks (eg auto_expand_gridfield_search — set the config on your subclass)
+SilverStripe\Admin\ModelAdmin:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\ModelAdminExtension
+
 # Hide admin sections that clients rarely use (override with ignore_menuitem: false in project config)
 SilverStripe\CampaignAdmin\CampaignAdmin:
   ignore_menuitem: true

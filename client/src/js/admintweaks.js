@@ -203,35 +203,54 @@
 
   });
 
-  // @TODO: check/fix this based on FUSE/DocSys?
-  // Advanced search toggle for modeladmins
-  $('#Form_SearchForm_q_Advanced').entwine({
+  // Auto-expand the GridField search bar on load (opt-in PER ModelAdmin subclass:
+  // auto_expand_gridfield_search config -> ModelAdminExtension adds the marker class on the
+  // GridField). The magnifier toggle only exists while the search bar is CLOSED (React
+  // unmounts it on open), so onmatch fires exactly once per closed search bar and the click
+  // is inherently idempotent.
+  $('.grid-field.at-auto-expand-search .grid-field__filter-open').entwine({
     onmatch: function () {
       this._super();
-      this.parents('.ModelAdmin').addClass('HasAdvancedSearch');
-      this.checkState();
-      // apply Switchery
-      new Switchery(this[0], {
-        // color: '#3EBAE0',
-        // color: '#55a4d2',
-        color: '#338DC1',
-        secondaryColor: '#D2D5D8',
-        size: 'small'
-      });
-    },
-    onchange: function () {
-      this._super();
-      this.checkState();
-    },
-    checkState: function () {
-      // console.log('called', this.prop('checked'));
-      if (this.prop('checked')) {
-        $('#Form_SearchForm').addClass('show_advanced_searchfields');
-      } else {
-        $('#Form_SearchForm').removeClass('show_advanced_searchfields');
-      }
+      var btn = this[0];
+      // defer so React has finished mounting its click handlers
+      setTimeout(function () { btn.click(); }, 0);
     }
   });
+
+  // @TODO: check/fix this based on FUSE/DocSys?
+  // Advanced search toggle for modeladmins
+  // DISABLED 2026-07-18: SS3-era feature, dead on SS5 — #Form_SearchForm_q_Advanced never exists
+  // (SS5 search forms are named Form_<Model>SearchForm and render in the React 'Search options'
+  // popover; the CourseAdmin::getSearchContext() override that added the q[Advanced] checkbox was
+  // itself dead code and has been removed). Kept as reference with the matching
+  // .HasAdvancedSearch block in _legacy_ss3-tweaks.scss.
+  //$('#Form_SearchForm_q_Advanced').entwine({
+  //  onmatch: function () {
+  //    this._super();
+  //    this.parents('.ModelAdmin').addClass('HasAdvancedSearch');
+  //    this.checkState();
+  //    // apply Switchery
+  //    new Switchery(this[0], {
+  //      // color: '#3EBAE0',
+  //      // color: '#55a4d2',
+  //      color: '#338DC1',
+  //      secondaryColor: '#D2D5D8',
+  //      size: 'small'
+  //    });
+  //  },
+  //  onchange: function () {
+  //    this._super();
+  //    this.checkState();
+  //  },
+  //  checkState: function () {
+  //    // console.log('called', this.prop('checked'));
+  //    if (this.prop('checked')) {
+  //      $('#Form_SearchForm').addClass('show_advanced_searchfields');
+  //    } else {
+  //      $('#Form_SearchForm').removeClass('show_advanced_searchfields');
+  //    }
+  //  }
+  //});
 
 
   /**

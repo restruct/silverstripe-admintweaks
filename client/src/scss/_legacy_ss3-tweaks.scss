@@ -670,36 +670,39 @@ div.displaylogicwrapper:last-child > .field {
 
 
 // ModelAdmin advanced_search tweaks
-.ModelAdmin {
-  //&.DocSys_DocAdmin, &.DocSys_DocCollAdmin, &.Notes_Admin, &.CourseAdmin {
-  &.HasAdvancedSearch {
-    #filters-button { display: none; }
-    .cms-content-filters {
-      display: block !important;
-      .field { margin: 0; }
-      h3 { display: none; }
-      #Form_SearchForm_q_Advanced_Holder {
-        margin-top: 16px;
-        margin-bottom: 8px;
-
-        .filtertitle {
-          font-size: 16px;
-          font-weight: bold;
-          float: left;
-          margin-right: 20px;
-        }
-        .switchery {
-          margin-top: -4px;
-        }
-      }
-    }
-    .advanced_search { display: none; }
-    .show_advanced_searchfields .advanced_search { display: inline-block; }
-  }
-
-  //#Form_SearchForm_Advanced{
-  //  width: 100%;
-  //  max-width: none;
-  //}
-
-}
+// DISABLED 2026-07-18: SS3-era advanced-filter toggle, dead on SS5 — the .HasAdvancedSearch class
+// was only ever added by the (also disabled) #Form_SearchForm_q_Advanced entwine in admintweaks.js,
+// which targeted the SS3 search form id. Kept as reference.
+//.ModelAdmin {
+//  //&.DocSys_DocAdmin, &.DocSys_DocCollAdmin, &.Notes_Admin, &.CourseAdmin {
+//  &.HasAdvancedSearch {
+//    #filters-button { display: none; }
+//    .cms-content-filters {
+//      display: block !important;
+//      .field { margin: 0; }
+//      h3 { display: none; }
+//      #Form_SearchForm_q_Advanced_Holder {
+//        margin-top: 16px;
+//        margin-bottom: 8px;
+//
+//        .filtertitle {
+//          font-size: 16px;
+//          font-weight: bold;
+//          float: left;
+//          margin-right: 20px;
+//        }
+//        .switchery {
+//          margin-top: -4px;
+//        }
+//      }
+//    }
+//    .advanced_search { display: none; }
+//    .show_advanced_searchfields .advanced_search { display: inline-block; }
+//  }
+//
+//  //#Form_SearchForm_Advanced{
+//  //  width: 100%;
+//  //  max-width: none;
+//  //}
+//
+//}
