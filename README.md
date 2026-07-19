@@ -41,6 +41,28 @@ Most features are opt-in via configuration. The module provides sensible default
 - **Menu Grouping** - Groups admin sections under "Advanced" (requires `symbiote/silverstripe-grouped-cms-menu`)
 - **Permission Badges** - Shows permission codes in Security admin
 - **Checkbox Fixes** - Proper handling of unchecked checkboxes in editable GridFields
+- **Search-popover fixes** - GridField 'Search options' popover: checkboxset/optionset holders no
+  longer collapse/overlap when a `form-control` class leaks onto the field holder (eg from
+  project code that decorates scaffolded search fields for front-end reuse), and long option
+  lists scroll within the popover (automatic, CSS-only)
+
+### Per-ModelAdmin Tweaks (opt-in via config)
+
+`ModelAdminExtension` is registered on `ModelAdmin`; enable per subclass (or project-wide via
+yml on `SilverStripe\Admin\ModelAdmin`, with per-subclass overrides):
+
+```php
+class ProductAdmin extends ModelAdmin
+{
+    // Open the GridField search bar on load instead of hiding it behind the magnifier icon
+    private static bool $auto_expand_gridfield_search = true;
+
+    // Hide the framework-scaffolded Export to CSV / Print / Import CSV buttons
+    // (the scaffolded export just dumps summary_fields; the default CsvBulkLoader
+    // import is a data-integrity risk on synced/managed models)
+    private static bool $hide_scaffolded_csv_buttons = true;
+}
+```
 
 ```php
 // Add Bootstrap icon to a button

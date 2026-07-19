@@ -58,14 +58,19 @@ input.checkbox.styled-checkbox {
   }
 }
 
-// SS5 'Search options' popover fixes (2026-07-18): the search-form schema rendering puts the
-// input classes on the field HOLDER div, so composite holders (checkboxset/optionset) end up
-// with Bootstrap's fixed-height .form-control -> the holder collapses to ~36px and its
-// checkboxes paint over the fields below it (observed in VW CourseAdmin, but generic).
-// Restore auto height on holder divs, and keep long option lists scrollable inside the popover.
+// SS5 'Search options' popover fixes (2026-07-18): a 'form-control' class leaking onto a field
+// HOLDER div (eg from project code that decorates scaffolded search fields for front-end reuse)
+// input-styles the holder — Bootstrap's fixed height collapses checkboxset holders to ~36px so
+// their options paint over the fields below, and the border/padding renders every field as a
+// nested bordered box. A holder div is not an input: neutralise the input-styling, and keep
+// long option lists scrollable inside the popover.
 .cms-search-form {
   .field.form-control {
     height: auto;
+    border: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
   }
   .field.checkboxset .form__field-holder,
   .field.optionset .form__field-holder {
