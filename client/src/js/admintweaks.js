@@ -275,3 +275,37 @@
 //		});
 
 })(jQuery);
+
+// ---------------------------------------------------------------------------------------------
+// Entwine comment-node shim (2026-07-19)
+//
+// silverstripe/admin's jquery-entwine MutationObserver bridge (thirdparty/jquery-entwine
+// jquery.entwine.js handleMutation(), still present in admin 2.4.23) filters only '#text'
+// nodes from addedNodes — COMMENT nodes pass through into event.targets. Entwine then runs
+// every registered (compiled Sizzle) selector against them, and any class/attribute matcher
+// calls el.getAttribute -> "Uncaught TypeError: el.getAttribute is not a function", ABORTING
+// the whole EntwineElementsAdded batch — which can randomly kill onadd/onmatch inits for
+// legitimate elements inserted in the same batch (observed: empty HTMLEditorField areas).
+// Triggered on every PJAX EditForm load by admin's OWN template comments
+// (LeftAndMain_EditForm.ss:23 "<!-- <div class=...cms-content-search...  -->" and :42
+// "<div class=\"clear\"><!-- --></div>").
+// The clean upstream fix is `node.nodeType !== 1` (the child-walker right below it already
+// does exactly that); until that lands, sanitize the synthetic event's targets before
+// entwine's document handler sees them.
+(function ($) {
+  var origTriggerHandler = $.fn.triggerHandler;
+  $.fn.triggerHandler = function (event) {
+    if (event && event.targets
+      && (event.type === 'EntwineElementsAdded' || event.type === 'EntwineElementsRemoved')
+    ) {
+      var elementsOnly = Array.prototype.filter.call(event.targets, function (node) {
+        return node && node.nodeType === 1; // ELEMENT_NODE only
+      });
+      if (!elementsOnly.length) {
+        return undefined; // nothing for entwine to do; skip the trigger entirely
+      }
+      event.targets = elementsOnly;
+    }
+    return origTriggerHandler.apply(this, arguments);
+  };
+})(jQuery);
