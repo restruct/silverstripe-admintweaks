@@ -95,10 +95,19 @@ SilverStripe\Core\Injector\Injector:
   # Email template for error notifications (env vars resolved by Injector)
   ErrorNotificationEmail:
     class: SilverStripe\Control\Email\Email
-    calls:
-      From: [ setFrom, [ '`APP_LOG_MAIL_SENDER`' ] ]
-      To: [ setTo, [ '`APP_LOG_MAIL_RECIPIENT`' ] ]
-      Subject: [ setSubject, [ '`APP_LOG_MAIL_SUBJECT`' ] ]
+    # 'from' MUST be passed as the FIRST CONSTRUCTOR ARG, not via calls: setFrom.
+    # Email::__construct() runs setFrom($from ?: getDefaultFrom()) itself — so a
+    # `calls: setFrom` override happens too late: the constructor already resolved the
+    # default. And getDefaultFrom() falls back to no-reply@<Director::host()>, which is
+    # RFC-invalid when the request Host is malformed (trailing-dot FQDN from a scanner)
+    # AND admin_email is empty (it can be, during early-bootstrap error logging) — a
+    # FATAL that turns any error into a 500 (see admintweaks#56). Passing 'from' to the
+    # constructor skips getDefaultFrom() entirely, removing the dependency on both
+    # admin_email timing and the request host.
+    constructor:
+      - '`APP_LOG_MAIL_SENDER`'
+      - '`APP_LOG_MAIL_RECIPIENT`'
+      - '`APP_LOG_MAIL_SUBJECT`'
 
   # DedupSymfonyMailerHandler — sends via Symfony Mailer with cache-based dedup
   # bubble: true — safe because MailHandler is on the standard logger (Psr\Log\LoggerInterface),
