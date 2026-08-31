@@ -1,26 +1,39 @@
 <?php
 
 use SilverStripe\Core\Environment;
+use SilverStripe\Control\Email\Email;
 
 //
-// Set system email sender via ENV (moved to _config.php because BACKTICKS ENV VARS in Yaml are only supported via Injector)
+// Set system email sender + queued-job report recipient from ENV.
+// (Done imperatively here, not in YAML, because backtick ENV vars in YAML are only
+// resolved via Injector, and these are Config API values that Email reads via Config.)
 //
+// FALLBACK SEMANTICS (fixed 2026-08-31, admintweaks#58): env only fills these when the
+// PROJECT HAS NOT explicitly set them. An explicit YAML/config value always wins — env is
+// a convenience fallback, not an override. Previously env clobbered an explicitly-assigned
+// value (e.g. a project's `queued_job_admin_email: admin@example.com` was overwritten),
+// which is the opposite of the intended "sane default, explicit wins" behaviour.
+//
+
+// --- System email sender (admin_email) ---
 $sys_email = Environment::getEnv('APP_SYSTEM_EMAIL_ADDRESS');
 $sys_name = Environment::getEnv('APP_SYSTEM_EMAIL_SENDER');
-if ($sys_email && $sys_name) {
-    SilverStripe\Control\Email\Email::config()->set('admin_email', [$sys_email => $sys_name]);
+$admin_email_config = Email::config()->get('admin_email');
+// '' is the framework default (Email::$admin_email = ''); [] / null also count as "unset".
+$admin_email_unset = ($admin_email_config === '' || $admin_email_config === null || $admin_email_config === []);
+if ($sys_email && $sys_name && $admin_email_unset) {
+    Email::config()->set('admin_email', [$sys_email => $sys_name]);
 }
 
-//
-// Update queued_job_admin_email as well if defined in ENV (see note above on Injector)
-//
-// 2026-08-31: was APP_LOG_MAIL_SENDER (since 1c3b176) — but queuedjobs uses queued_job_admin_email as the
-// RECIPIENT of its broken/stalled/missing-default-job reports, so reports went TO the no-reply sender.
-// $qjobs_email_from = Environment::getEnv('APP_LOG_MAIL_SENDER');
+// --- Queued-job report recipient (queued_job_admin_email) ---
+// NOTE: queuedjobs' EmailService uses this as the RECIPIENT of broken/stalled/missing-
+// default-job reports (createReport() 'to'), so it follows the error-mail RECIPIENT, not
+// the no-reply SENDER (that was the 3.20.4 fix, admintweaks#57).
 $qjobs_email_to = Environment::getEnv('APP_LOG_MAIL_RECIPIENT');
-$qjobs_email_config = SilverStripe\Control\Email\Email::config()->get('queued_job_admin_email');
-if ($qjobs_email_to && $qjobs_email_config !== false) {
-    // if defined in env (and not explictly set to false on Email), update
-    SilverStripe\Control\Email\Email::config()->set('queued_job_admin_email', $qjobs_email_to);
-//    Config::modify()->set(Email::class, 'queued_job_admin_email', $qjobs_email_from);
+$qjobs_email_config = Email::config()->get('queued_job_admin_email');
+// Fill from env only when unset. `false` stays untouched (the opt-out: no queued-job mail);
+// any explicit address stays untouched (the project's deliberate choice wins).
+$qjobs_email_unset = ($qjobs_email_config === null || $qjobs_email_config === '');
+if ($qjobs_email_to && $qjobs_email_unset) {
+    Email::config()->set('queued_job_admin_email', $qjobs_email_to);
 }

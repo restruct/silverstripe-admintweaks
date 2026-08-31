@@ -1,5 +1,17 @@
 # Changelog
 
+## 3.20.5
+
+### Fixed
+
+- **Env-based email config no longer clobbers an explicitly-set project value** (admintweaks#58).
+  `_config.php` set `admin_email` (from `APP_SYSTEM_EMAIL_ADDRESS`/`_SENDER`) and
+  `queued_job_admin_email` (from `APP_LOG_MAIL_RECIPIENT`) **unconditionally**, overwriting any value
+  the project had explicitly assigned in YAML — the opposite of the intended "sane default, explicit
+  wins" behaviour (e.g. a project's `queued_job_admin_email: admin@example.com` was silently replaced
+  by the env value). Both are now **fallback-only**: env fills them only when the project hasn't set
+  them. An explicit value always wins; `false` remains the opt-out for `queued_job_admin_email`.
+
 ## 3.20.3
 
 Error-mail handler: fix a fatal on malformed request hosts, and cap the flood risk.
