@@ -31,11 +31,17 @@ After:
   - '#queuedjobsettings'
 Only:
   envvarset:
-    - APP_LOG_MAIL_SENDER
+#    - APP_LOG_MAIL_SENDER
+    - APP_LOG_MAIL_RECIPIENT
 ---
 SilverStripe\Core\Injector\Injector:
   SilverStripe\Control\Email\Email:
-    queued_job_admin_email: '`APP_LOG_MAIL_SENDER`'
+    # 2026-08-31: queuedjobs' EmailService uses queued_job_admin_email primarily as the RECIPIENT of its
+    # broken/stalled/missing-default-job reports (createReport(): to; only the missing-job mail also uses it
+    # as From). Wiring it to APP_LOG_MAIL_SENDER (a no-reply address) since 1c3b176 sent every queue report
+    # into a black hole — it must follow the error-mail RECIPIENT.
+#    queued_job_admin_email: '`APP_LOG_MAIL_SENDER`'
+    queued_job_admin_email: '`APP_LOG_MAIL_RECIPIENT`'
 
 
 # SMTP mailer config for SS4 (SwiftMailer)
