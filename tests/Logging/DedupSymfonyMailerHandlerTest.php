@@ -95,4 +95,39 @@ class DedupSymfonyMailerHandlerTest extends SapphireTest
         }
         $this->assertSame(1, $this->sent, 'dedup still applies with the cap disabled');
     }
+
+    public function testFailingSendNeverThrowsIntoTheLoggingCallSiteAndFallsBackToErrorLog(): void
+    {
+        // admintweaks#59: with no current controller the framework's MailerSubscriber derefs
+        // Controller::curr() = null inside Mailer::send(). Simulate that exact Error at the
+        // transport, so the test doesn't depend on the controller stack state of the test run.
+        DedupSymfonyMailerHandler::config()->set('max_emails_per_window', 100);
+        $mailer = new class implements MailerInterface {
+            public function send(RawMessage $message, $envelope = null): void
+            {
+                throw new \Error('Call to a member function getRequest() on null');
+            }
+        };
+        $h = new DedupSymfonyMailerHandler(
+            $mailer,
+            Email::create('from@example.com', 'to@example.com', 'Err'),
+            Level::Error,
+            true
+        );
+
+        // Capture error_log() output in a temp file, restoring the ini afterwards.
+        $logFile = tempnam(sys_get_temp_dir(), 'at59');
+        $previous = ini_set('error_log', $logFile);
+        try {
+            $this->fire($h, 'original error that must not be lost');
+        } finally {
+            ini_set('error_log', (string) $previous);
+        }
+
+        $logged = (string) file_get_contents($logFile);
+        unlink($logFile);
+        $this->assertStringContainsString('[admintweaks] Error email not sent (Error: Call to a member function getRequest() on null', $logged);
+        $this->assertStringContainsString('original error that must not be lost', $logged,
+            'the record that triggered the mail is still recorded via error_log');
+    }
 }

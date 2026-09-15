@@ -97,7 +97,31 @@ class DedupSymfonyMailerHandler extends SymfonyMailerHandler
             # down, which is rare; losing error visibility entirely is the worse failure.
         }
 
-        parent::send($content, $records);
+        # A failing send must never throw into the code that logged (admintweaks#59). Monolog
+        # rethrows handler exceptions when no exceptionHandler is set (Logger::handleException),
+        # so an unguarded send turns `$logger->error()` into a throw at the call site: inside a
+        # queued job that marks the job Broken, and every handler below this one never sees the
+        # record. This is a SECONDARY safety net: the known cause (no current controller ->
+        # framework HTTP::absoluteURLs derefs Controller::curr() = null, silverstripe/framework
+        # #11678) is fixed at the source by Email\CliSafeMailerSubscriber, so those mails now send.
+        # What still lands here: transport failures (SMTP/API down, rejected credentials), invalid
+        # addresses and any other exception thrown while sending.
+        try {
+            parent::send($content, $records);
+        } catch (\Throwable $e) {
+            # Fall back to PHP's error_log — deliberately NOT a logger call: re-logging through
+            # Monolog would re-enter this handler (recursion). Include the original record so
+            # the error that triggered the mail is still recorded somewhere.
+            error_log(sprintf(
+                '[admintweaks] Error email not sent (%s: %s at %s:%d). Original %s record: %s',
+                get_class($e),
+                $e->getMessage(),
+                $e->getFile(),
+                $e->getLine(),
+                $record->level->getName(),
+                substr($record->message, 0, 1000)
+            ));
+        }
     }
 
     /**
