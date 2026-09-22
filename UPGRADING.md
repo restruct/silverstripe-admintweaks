@@ -1,13 +1,13 @@
 # Upgrading
 
-## 3.x -> 5.0
+## 3.x -> 4.1
 
-**5.0 is the Silverstripe 6 line.** Silverstripe 4 and 5 stay on the 3.x line, which continues to
-get security and bug fixes until Silverstripe 5 reaches end of life (April 2027). Nothing in 5.0
+**4.1 is the Silverstripe 6 line.** Silverstripe 4 and 5 stay on the 3.x line, which continues to
+get security and bug fixes until Silverstripe 5 reaches end of life (April 2027). Nothing in 4.1
 is backported, and 3.x is not installable on Silverstripe 6.
 
 ```
-composer require restruct/silverstripe-admintweaks:^5   # Silverstripe 6
+composer require restruct/silverstripe-admintweaks:^4   # Silverstripe 6
 composer require restruct/silverstripe-admintweaks:^3   # Silverstripe 4 / 5
 ```
 
@@ -17,7 +17,7 @@ Requirements changed with the line: PHP `^8.3` (was `^7.4 | ^8`), `silverstripe/
 
 A `4.0.x` exists on Packagist from an earlier, abandoned Silverstripe 6 attempt. It shipped without
 tests, with one of the six tasks, and with `symbiote/silverstripe-gridfieldextensions` as a hard
-requirement. `5.0` restores the full module, and that dependency is **optional** again - if your
+requirement. `4.1` restores the full module, and that dependency is **optional** again - if your
 project used it only because admintweaks pulled it in, require it explicitly:
 
 ```
@@ -25,7 +25,7 @@ composer require symbiote/silverstripe-gridfieldextensions
 ```
 
 Everything else below applies to you too, except the menu-hiding change: `4.0.x` did not hide those
-sections either, so `5.0` behaves the same way for you.
+sections either, so `4.1` behaves the same way for you.
 
 ---
 
@@ -44,7 +44,7 @@ SilverStripe\Admin\LeftAndMain:
 ```
 
 If you are happy with them visible, set it to `false` explicitly. Either value silences the
-one-off dev-mode notice that 5.0 logs for projects that have not decided:
+one-off dev-mode notice that 4.1 logs for projects that have not decided:
 
 ```yaml
 SilverStripe\Admin\LeftAndMain:
@@ -55,7 +55,7 @@ SilverStripe\Admin\LeftAndMain:
 (`ignore_menuitem: false`) only worked if the project's own config fragment also carried
 `After: '#admintweaks-leftandmain'` - same-key scalar config is decided by fragment *order*, not by
 project-beats-vendor, so without it the override silently lost. That whole dance is now
-unnecessary: 5.0 applies the setting at runtime, so a project that sets `ignore_menuitem` itself
+unnecessary: 4.1 applies the setting at runtime, so a project that sets `ignore_menuitem` itself
 always wins.
 
 ```yaml
@@ -77,7 +77,7 @@ Silverstripe 6 rebuilt `BuildTask` on `symfony/console`, so every task in this m
 **declared options** instead of query/request variables. The legacy `dev/tasks/...` URL form is
 deprecated framework-wide; these are the spellings to use.
 
-| 3.x | 5.0 |
+| 3.x | 4.1 |
 |---|---|
 | `sake dev/tasks/fix-folder-filefilename apply=1` | `sake tasks:fix-folder-filefilename --apply` |
 | `sake dev/tasks/fix-misclassified-images apply=1` | `sake tasks:fix-misclassified-images --apply` |
@@ -88,7 +88,7 @@ deprecated framework-wide; these are the spellings to use.
 
 Two `orm-query` options changed shape rather than just spelling:
 
-| 3.x | 5.0 | why |
+| 3.x | 4.1 | why |
 |---|---|---|
 | `"filter[Email:PartialMatch]=example"` | `--filter='Email:PartialMatch=example'` | symfony/console has no bracket notation; the option is repeatable instead |
 | `groupBy=Type` | `--group-by=Type` | console options are kebab-case |

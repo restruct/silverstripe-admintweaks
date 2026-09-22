@@ -29,7 +29,7 @@ class LeftAndMainExtension extends Extension
      * @config
      * Hide the CMS sections most clients never use (Reports and Campaigns) from the left menu.
      *
-     * OPT-IN since 5.0 (admintweaks#54). Up to 3.x this module hid both sections by hardcoding
+     * OPT-IN since 4.1 (admintweaks#54). Up to 3.x this module hid both sections by hardcoding
      * `ignore_menuitem: true` on their controllers, which is surprising for a QoL module: the
      * section keeps working at its URL (only the menu item goes), so a project that adds its own
      * Report subclass sees it "not register" and goes looking for a manifest or flush problem.

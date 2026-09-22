@@ -1,16 +1,18 @@
 # Changelog
 
-## 5.0.0
+## 4.1.0
 
 **The Silverstripe 6 line, rebuilt.** Silverstripe 4 and 5 continue on the 3.x line (branch `3.x`)
 until Silverstripe 5 reaches end of life in April 2027. Nothing here is backported; 3.x cannot be
 installed on Silverstripe 6. Upgrade guide: [UPGRADING.md](UPGRADING.md).
 
-Note on the version number: `4.0.0`-`4.0.2` were tagged from an earlier Silverstripe 6 attempt that
-shipped without tests, with one of the six tasks, and with `symbiote/silverstripe-gridfieldextensions`
-as a hard requirement. This release restores the full module on top of the maintained line and makes
-that dependency optional again - a breaking change for anyone who relied on it being pulled in - so
-it is a major rather than a `4.1`.
+`4.0.0`-`4.0.2` were tagged from an earlier Silverstripe 6 attempt that shipped without tests, with
+one of the six tasks, and with `symbiote/silverstripe-gridfieldextensions` as a hard requirement.
+This release restores the full module on top of the maintained line.
+
+**One thing to check if you are on `4.0.x`:** `symbiote/silverstripe-gridfieldextensions` is optional
+again. If your project used it only because admintweaks pulled it in, require it explicitly -
+`composer require symbiote/silverstripe-gridfieldextensions` - before upgrading.
 
 Requires PHP `^8.3` and `silverstripe/framework ^6`.
 

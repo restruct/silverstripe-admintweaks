@@ -17,7 +17,7 @@ SilverStripe\Admin\ModelAdmin:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\ModelAdminExtension
 
-# Hiding the CMS sections clients rarely use (Reports, Campaigns) is OPT-IN since 5.0
+# Hiding the CMS sections clients rarely use (Reports, Campaigns) is OPT-IN since 4.1
 # (admintweaks#54). Up to 3.x it was hardcoded here:
 #
 #    SilverStripe\CampaignAdmin\CampaignAdmin:
