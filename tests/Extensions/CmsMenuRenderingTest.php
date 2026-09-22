@@ -19,7 +19,15 @@ use SilverStripe\Dev\FunctionalTest;
  */
 class CmsMenuRenderingTest extends FunctionalTest
 {
-    protected static $fixture_file = null;
+    /**
+     * Required. Without it SapphireTest builds no temporary database and the test runs against
+     * whatever database the environment is pointed at - which passed locally only because that
+     * database happened to be built already, and failed in CI with
+     * "Table 'ss_ci.LoginSession' doesn't exist". Driving the CMS needs the full schema (the
+     * authentication handler reads session-manager's tables), and a test must never be able to
+     * touch a real database.
+     */
+    protected $usesDatabase = true;
 
     private function cmsMenuHtml(): string
     {
