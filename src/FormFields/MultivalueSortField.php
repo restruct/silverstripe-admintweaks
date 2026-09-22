@@ -5,6 +5,17 @@ namespace Restruct\Silverstripe\AdminTweaks\FormFields;
 use SilverStripe\View\Requirements;
 use Symbiote\MultiValueField\Fields\MultiValueDropdownField;
 
+// symbiote/silverstripe-multivaluefield is OPTIONAL (it is in `suggest`, not `require`), so its
+// classes may be absent. Declaring a subclass of a missing parent is not merely a dormant error
+// here: silverstripe/config's PrivateStaticTransformer calls class_exists() on EVERY class in the
+// manifest during bootstrap (PrivateStaticTransformer.php:43), which autoloads this file and
+// fatals the entire application - CMS, front end and CLI alike - not just this field.
+// Returning early leaves the class undeclared, which class_exists() reports as false and the
+// transformer then skips. Same guard as SelectiveLumberjack and GridFieldSiteTreeAddNewButton.
+if (!class_exists(MultiValueDropdownField::class)) {
+    return;
+}
+
 /**
  * A sort-only variant of MultiValueDropdownField.
  *

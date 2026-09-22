@@ -45,29 +45,33 @@ SilverStripe\Core\Injector\Injector:
 
 
 # SMTP mailer config for SS4 (SwiftMailer)
-# For SS5+, use MAILER_DSN in .env instead (e.g., smtp://user:pass@smtp.example.com:587)
----
-Name: admintweaks-smtp-email-transport
-Only:
-  classexists: Swift_SmtpTransport
-  envvarset:
-    - APP_SMTP_HOST
-    - APP_SMTP_PORT
-    - APP_SMTP_ENCRYPTION
-    - APP_SMTP_USERNAME
-    - APP_SMTP_PASSWORD
----
-SilverStripe\Core\Injector\Injector:
-  Swift_Transport:
-    class: Swift_SmtpTransport
-    properties:
-      Host: '`APP_SMTP_HOST`'
-      Port: '`APP_SMTP_PORT`'
-      Encryption: '`APP_SMTP_ENCRYPTION`'
-    calls:
-      Username: [ setUsername, ['`APP_SMTP_USERNAME`'] ]
-      Password: [ setPassword, ['`APP_SMTP_PASSWORD`'] ]
-      AuthMode: [ setAuthMode, ['login'] ]
+# On this Silverstripe 6 line, configure SMTP with MAILER_DSN in .env instead
+# (e.g. smtp://user:pass@smtp.example.com:587). SwiftMailer was replaced by Symfony Mailer in
+# SS5 and Swift_SmtpTransport cannot exist here, so the fragment below could never activate;
+# it is kept commented as the record of what the APP_SMTP_* vars used to drive. The SS5/SS4
+# line (branch v3) still ships it live.
+#---
+#Name: admintweaks-smtp-email-transport
+#Only:
+#  classexists: Swift_SmtpTransport
+#  envvarset:
+#    - APP_SMTP_HOST
+#    - APP_SMTP_PORT
+#    - APP_SMTP_ENCRYPTION
+#    - APP_SMTP_USERNAME
+#    - APP_SMTP_PASSWORD
+#---
+#SilverStripe\Core\Injector\Injector:
+#  Swift_Transport:
+#    class: Swift_SmtpTransport
+#    properties:
+#      Host: '`APP_SMTP_HOST`'
+#      Port: '`APP_SMTP_PORT`'
+#      Encryption: '`APP_SMTP_ENCRYPTION`'
+#    calls:
+#      Username: [ setUsername, ['`APP_SMTP_USERNAME`'] ]
+#      Password: [ setPassword, ['`APP_SMTP_PASSWORD`'] ]
+#      AuthMode: [ setAuthMode, ['login'] ]
 
 
 # Email error handler — sends error emails via Symfony Mailer with cache-based deduplication.

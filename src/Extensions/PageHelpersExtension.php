@@ -5,14 +5,14 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
 
     use SilverStripe\CMS\Controllers\RootURLController;
     use SilverStripe\CMS\Model\SiteTree;
-    use SilverStripe\CMS\Model\SiteTreeExtension;
+    // use SilverStripe\CMS\Model\SiteTreeExtension; // unused, and removed in SS6 (all extension bases are now Extension)
     use SilverStripe\Control\Controller;
     use SilverStripe\Control\Director;
     use SilverStripe\Core\Extension;
-    use SilverStripe\ORM\ArrayList;
+    use SilverStripe\Model\List\ArrayList;
     use SilverStripe\ORM\DataObject;
     use SilverStripe\Versioned\Versioned;
-    use SilverStripe\View\ArrayData;
+    use SilverStripe\Model\ArrayData;
     use SilverStripe\View\Requirements;
     use SilverStripe\View\SSViewer;
     use SilverStripe\View\ThemeResourceLoader;

@@ -9,6 +9,10 @@ use SilverStripe\Assets\Storage\AssetStore;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\BuildTask;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Generate the CMS thumbnail variants for existing image files.
@@ -37,11 +41,11 @@ use SilverStripe\Dev\BuildTask;
  */
 class GenerateCmsThumbnailsTask extends BuildTask
 {
-    private static $segment = 'generate-cms-thumbnails';
+    protected static string $commandName = 'generate-cms-thumbnails';
 
-    protected $title = 'Migration: generate CMS thumbnails for existing images';
+    protected string $title = 'Migration: generate CMS thumbnails for existing images';
 
-    protected $description = 'Creates the asset-admin thumbnail variants for migrated images (the CMS grid does not generate them). Dry-run unless apply=1.';
+    protected static string $description = 'Creates the asset-admin thumbnail variants for migrated images (the CMS grid does not generate them). Dry-run unless apply=1.';
 
     /**
      * ImageThumbnailHelper ships with silverstripe/asset-admin, which this module does not require
@@ -53,10 +57,15 @@ class GenerateCmsThumbnailsTask extends BuildTask
         return parent::isEnabled() && class_exists(ImageThumbnailHelper::class);
     }
 
-    public function run($request)
+    private PolyOutput $output;
+
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
-        $apply = (bool) $request->getVar('apply');
-        $this->out($apply ? 'mode: APPLY' : 'mode: DRY-RUN (pass apply=1 to generate)');
+        // SS6: the task is a symfony/console command, so `apply` is a declared
+        // OPTION (see getOptions() below) rather than a query/request var.
+        $this->output = $output;
+        $apply = (bool) $input->getOption('apply');
+        $this->out($apply ? 'mode: APPLY' : 'mode: DRY-RUN (pass --apply to generate)');
 
         [$present, $missing] = $this->countGridThumbnails();
         $this->out(sprintf(
@@ -67,7 +76,8 @@ class GenerateCmsThumbnailsTask extends BuildTask
         ));
 
         if (!$apply) {
-            return;
+            // A dry run is a successful run: it reported the counts it was asked for.
+            return Command::SUCCESS;
         }
 
         # The helper generates BOTH sizes the CMS uses (UploadField's small thumb + the grid thumb),
@@ -80,6 +90,8 @@ class GenerateCmsThumbnailsTask extends BuildTask
 
         [, $stillMissing] = $this->countGridThumbnails();
         $this->out(sprintf('grid thumbnails still missing after run: %d', $stillMissing));
+
+        return Command::SUCCESS;
     }
 
     /**
@@ -111,8 +123,19 @@ class GenerateCmsThumbnailsTask extends BuildTask
         return [$present, $missing];
     }
 
+    /**
+     * PolyOutput renders for CLI or for the browser task runner itself, so the
+     * Director::is_cli() branch this method used to carry is no longer needed.
+     */
     private function out(string $line): void
     {
-        echo $line . (Director::is_cli() ? "\n" : "<br>\n");
+        $this->output->writeln($line);
+    }
+
+    public function getOptions(): array
+    {
+        return [
+            new InputOption('apply', null, InputOption::VALUE_NONE, 'Actually generate changes (default is a dry run)'),
+        ];
     }
 }

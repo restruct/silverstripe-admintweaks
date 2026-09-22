@@ -13,7 +13,7 @@ class DBNullableInt extends \SilverStripe\ORM\FieldType\DBInt
         parent::__construct($name);
     }
 
-    public function requireField()
+    public function requireField(): void
     {
         $parts = [
             'datatype' => 'int',

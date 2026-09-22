@@ -20,10 +20,10 @@ use SilverStripe\Forms\Tab;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\TreeDropdownField;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 
-class SiteConfigExtension extends DataExtension
+class SiteConfigExtension extends Extension
 {
     // Inspiration: https://github.com/silverstripe/cwp-agencyextensions/blob/2/src/Extensions/CWPSiteConfigExtension.php
     private static $db = [

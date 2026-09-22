@@ -2,7 +2,7 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Helpers {
 
-    use SilverStripe\View\TemplateIteratorProvider;
+    use SilverStripe\TemplateEngine\TemplateIteratorProvider;
 
     /**
      * Provides some extra iterator properties to SSviewer when looping in templates

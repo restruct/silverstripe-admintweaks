@@ -4,9 +4,9 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
 
     use SilverStripe\Control\Controller;
     use SilverStripe\Dev\Debug;
-    use SilverStripe\View\ViewableData;
+    use SilverStripe\Model\ModelData;
 
-    class CurrentYearShortcode extends ViewableData
+    class CurrentYearShortcode extends ModelData
     {
         /**
          * @config string

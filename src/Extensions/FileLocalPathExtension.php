@@ -10,7 +10,7 @@ use SilverStripe\Assets\Flysystem\FlysystemAssetStore;
 use SilverStripe\Assets\Flysystem\LocalFilesystemAdapter;
 use SilverStripe\Assets\Storage\AssetStore;
 use SilverStripe\Core\Injector\Injector;
-use SilverStripe\ORM\DataExtension;
+use SilverStripe\Core\Extension;
 
 /**
  * Adds getLocalPath() to File objects for resolving the actual filesystem path.
@@ -22,9 +22,9 @@ use SilverStripe\ORM\DataExtension;
  * Primary use case: passing file paths to external CLI tools (cpdf, pdftotext, wkhtmltopdf, etc.)
  * For reading file content only, prefer $file->getString() instead.
  *
- * @extends DataExtension<File>
+ * @extends Extension<File>
  */
-class FileLocalPathExtension extends DataExtension
+class FileLocalPathExtension extends Extension
 {
     /**
      * Get the absolute local filesystem path for this file.

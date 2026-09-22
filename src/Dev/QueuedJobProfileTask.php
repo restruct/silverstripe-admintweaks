@@ -5,6 +5,10 @@ namespace Restruct\Silverstripe\AdminTweaks\Dev;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Dev\BuildTask;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
 
 /**
@@ -14,18 +18,19 @@ use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
  * call: memory usage (+ delta), peak, the real currentStep, the serialized jobData size and the
  * message count — i.e. the per-step cost the descriptor write pays.
  *
- * Call with no `class` to list the queued jobs it can profile. `maxcalls` caps the run (default 500).
+ * Call with no `--class` to list the queued jobs it can profile. `--maxcalls` caps the run
+ * (default 500).
  *
- * NB the arguments differ by context — on the CLI they are SPACE-SEPARATED, not a query string
- * (`?class=…` is silently ignored there, and you just get the job list back):
+ * SS6: these are symfony/console OPTIONS, so the same spelling works on the CLI and in the browser
+ * task runner. (Under SS5 the CLI wanted space-separated `class=…` and the browser a query string,
+ * and mixing them up silently returned just the job list.)
  *
- *   CLI  php cli-script.php dev/tasks/qjob-profile class=My\Jobs\SyncJob maxcalls=50
- *   web  dev/tasks/qjob-profile?class=My\Jobs\SyncJob&maxcalls=50
+ *   sake tasks:qjob-profile --class='My\Jobs\SyncJob' --maxcalls=50
  *
  * Run it with the ceiling the CRON actually has, or the result means nothing — a job that only
  * survives because *you* ran it with `-d memory_limit=2G` will still die on the scheduled run:
  *
- *   php -d memory_limit=512M vendor/silverstripe/framework/cli-script.php dev/tasks/qjob-profile class=...
+ *   php -d memory_limit=512M vendor/bin/sake tasks:qjob-profile --class=...
  *
  * Reading the output:
  *  - Δmem ≈ 0 across calls  -> the job does NOT leak. Stop hunting for one; if it still OOMs, the
@@ -42,38 +47,47 @@ use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
  */
 class QueuedJobProfileTask extends BuildTask
 {
-    private static $segment = 'qjob-profile';
+    protected static string $commandName = 'qjob-profile';
 
-    protected $title = 'Profile a queued job (memory + jobData per process() call)';
+    protected string $title = 'Profile a queued job (memory + jobData per process() call)';
 
-    protected $description = 'Runs a job in-process and reports per-call memory/step/jobData/message stats, to find what a job accumulates. Dev-only (it really runs the job).';
+    protected static string $description = 'Runs a job in-process and reports per-call memory/step/jobData/message stats, to find what a job accumulates. Dev-only (it really runs the job).';
 
-    public function run($request)
+    private PolyOutput $output;
+
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
-        if (!Director::isDev()) {
-            echo "Dev-only: this task actually RUNS the job (and writes whatever the job writes).\n";
+        // SS6: writing through PolyOutput rather than echo/printf, so the browser task
+        // runner renders this the same way the CLI does.
+        $this->output = $output;
 
-            return;
+        if (!Director::isDev()) {
+            $output->writeln('<error>Dev-only: this task actually RUNS the job (and writes whatever the job writes).</>');
+
+            return Command::FAILURE;
         }
 
-        $class = (string) $request->getVar('class');
+        $class = (string) $input->getOption('class');
         if (!$class) {
             $this->listJobClasses();
 
-            return;
+            // No class named is a usage error, not a success.
+            return Command::INVALID;
         }
 
         if (!class_exists($class) || !is_subclass_of($class, AbstractQueuedJob::class)) {
-            echo "Not a queued job class: {$class}\n\n";
+            $output->writeln("<error>Not a queued job class: {$class}</>");
+            $output->writeln('');
             $this->listJobClasses();
 
-            return;
+            return Command::INVALID;
         }
 
-        $maxCalls = max(1, (int) ($request->getVar('maxcalls') ?: 500));
+        $maxCalls = max(1, (int) ($input->getOption('maxcalls') ?: 500));
 
-        printf("Profiling %s (php memory_limit=%s, max %d process() calls)\n\n", $class, ini_get('memory_limit'), $maxCalls);
-        printf("%-5s %-24s %-10s %-10s %-10s %-10s %s\n", 'call', 'phase/step', 'mem', 'delta', 'peak', 'jobData', 'msgs');
+        $output->writeln(sprintf('Profiling %s (php memory_limit=%s, max %d process() calls)', $class, ini_get('memory_limit'), $maxCalls));
+        $output->writeln('');
+        $output->writeln(sprintf('%-5s %-24s %-10s %-10s %-10s %-10s %s', 'call', 'phase/step', 'mem', 'delta', 'peak', 'jobData', 'msgs'));
 
         /** @var AbstractQueuedJob $job */
         $job = new $class();
@@ -97,7 +111,7 @@ class QueuedJobProfileTask extends BuildTask
             $data = $job->getJobData();
             $phase = $data->jobData->phase ?? '';
 
-            printf("%-5d %-24s %-10s %-10s %-10s %-10s %d\n",
+            $output->writeln(sprintf('%-5d %-24s %-10s %-10s %-10s %-10s %d',
                 $call,
                 substr($phase . '/' . $stepProp->getValue($job), 0, 23),
                 $mb($mem),
@@ -105,25 +119,40 @@ class QueuedJobProfileTask extends BuildTask
                 $mb(memory_get_peak_usage(true)),
                 number_format(strlen(serialize($data->jobData)) / 1024, 1) . 'K',
                 count((array) $data->messages)
-            );
+            ));
             $prev = $mem;
         }
 
-        printf("\n%s after %d call(s) in %.1fs — peak %s, final jobData %sK, %d message(s)\n",
+        $output->writeln('');
+        $output->writeln(sprintf('%s after %d call(s) in %.1fs - peak %s, final jobData %sK, %d message(s)',
             $job->jobFinished() ? 'COMPLETE' : 'STOPPED (maxcalls reached)',
             $call,
             microtime(true) - $start,
             $mb(memory_get_peak_usage(true)),
             number_format(strlen(serialize($job->getJobData()->jobData)) / 1024, 1),
             count((array) $job->getJobData()->messages)
-        );
+        ));
+
+        return Command::SUCCESS;
+    }
+
+    public function getOptions(): array
+    {
+        return [
+            new InputOption('class', null, InputOption::VALUE_REQUIRED, 'Fully qualified queued job class to profile'),
+            new InputOption('maxcalls', null, InputOption::VALUE_REQUIRED, 'Stop after this many process() calls (default 500)'),
+        ];
     }
 
     private function listJobClasses(): void
     {
-        echo "Usage: dev/tasks/qjob-profile?class=<FQCN>[&maxcalls=N]\n\nQueued jobs found:\n";
+        $this->output->writeln('Usage: sake tasks:qjob-profile --class=<FQCN> [--maxcalls=N]');
+        $this->output->writeln('');
+        $this->output->writeln('Queued jobs found:');
+        $this->output->startList();
         foreach (ClassInfo::subclassesFor(AbstractQueuedJob::class, false) as $jobClass) {
-            echo "  {$jobClass}\n";
+            $this->output->writeListItem($jobClass);
         }
+        $this->output->stopList();
     }
 }

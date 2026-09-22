@@ -10,9 +10,9 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
     use SilverStripe\Forms\TextField;
     use SilverStripe\ORM\DataObject;
     use SilverStripe\View\SSViewer;
-    use SilverStripe\View\ViewableData;
+    use SilverStripe\Model\ModelData;
 
-    class FeaturedImageShortcode extends ViewableData
+    class FeaturedImageShortcode extends ModelData
     {
         /**
          * @config string the actual shortcode used/inserted into the HTML editor

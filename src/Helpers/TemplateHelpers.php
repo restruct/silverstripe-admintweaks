@@ -8,7 +8,7 @@ use SilverStripe\i18n\i18n;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\View\TemplateGlobalProvider;
 use SilverStripe\View\ThemeResourceLoader;
-use SilverStripe\View\ViewableData;
+use SilverStripe\Model\ModelData;
 
 class TemplateHelpers
     implements TemplateGlobalProvider
@@ -44,7 +44,7 @@ class TemplateHelpers
 
     public static function ImagePlaceholder($W, $H, $Label='', $AddClass='', $DataUriBase64=false)
     {
-        $svgStr = ViewableData::create()
+        $svgStr = ModelData::create()
             ->customise([
                 'W' => (int) $W,
                 'H' => (int) $H,

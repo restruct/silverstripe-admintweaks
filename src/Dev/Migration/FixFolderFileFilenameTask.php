@@ -5,6 +5,10 @@ namespace Restruct\Silverstripe\AdminTweaks\Dev\Migration;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Control\Director;
 use SilverStripe\Dev\BuildTask;
+use SilverStripe\PolyExecution\PolyOutput;
+use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use SilverStripe\ORM\DB;
 
 /**
@@ -29,11 +33,11 @@ use SilverStripe\ORM\DB;
  */
 class FixFolderFileFilenameTask extends BuildTask
 {
-    private static $segment = 'fix-folder-filefilename';
+    protected static string $commandName = 'fix-folder-filefilename';
 
-    protected $title = 'Migration: clear FileFilename on Folder rows';
+    protected string $title = 'Migration: clear FileFilename on Folder rows';
 
-    protected $description = 'Folders must not carry a FileFilename — a populated value breaks /admin/assets with "buildFileID requires an $hash value". Dry-run unless apply=1.';
+    protected static string $description = 'Folders must not carry a FileFilename — a populated value breaks /admin/assets with "buildFileID requires an $hash value". Dry-run unless apply=1.';
 
     /**
      * Versioned tables that may also carry the artifact. File_Live is absent on projects that removed
@@ -41,12 +45,17 @@ class FixFolderFileFilenameTask extends BuildTask
      */
     private const TABLES = ['File', 'File_Live', 'File_Versions'];
 
-    public function run($request)
+    private PolyOutput $output;
+
+    protected function execute(InputInterface $input, PolyOutput $output): int
     {
-        $apply = (bool) $request->getVar('apply');
+        // SS6: the task is a symfony/console command, so `apply` is a declared
+        // OPTION (see getOptions() below) rather than a query/request var.
+        $this->output = $output;
+        $apply = (bool) $input->getOption('apply');
 
         $this->out(sprintf('DB: %s', DB::get_conn()->getSelectedDatabase()));
-        $this->out($apply ? 'mode: APPLY' : 'mode: DRY-RUN (pass apply=1 to write)');
+        $this->out($apply ? 'mode: APPLY' : 'mode: DRY-RUN (pass --apply to write)');
         $this->out('');
 
         foreach (self::TABLES as $table) {
@@ -87,6 +96,8 @@ class FixFolderFileFilenameTask extends BuildTask
             $this->out('');
             $this->out(sprintf('Folders resolving correctly after run: %s', $this->verifyFolders()));
         }
+
+        return Command::SUCCESS;
     }
 
     /**
@@ -109,8 +120,19 @@ class FixFolderFileFilenameTask extends BuildTask
         return sprintf('%d ok, %d failed', $ok, $failed);
     }
 
+    /**
+     * PolyOutput renders for CLI or for the browser task runner itself, so the
+     * Director::is_cli() branch this method used to carry is no longer needed.
+     */
     private function out(string $line): void
     {
-        echo $line . (Director::is_cli() ? "\n" : "<br>\n");
+        $this->output->writeln($line);
+    }
+
+    public function getOptions(): array
+    {
+        return [
+            new InputOption('apply', null, InputOption::VALUE_NONE, 'Actually write changes (default is a dry run)'),
+        ];
     }
 }

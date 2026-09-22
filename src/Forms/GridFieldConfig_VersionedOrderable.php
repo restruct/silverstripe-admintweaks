@@ -16,6 +16,14 @@ use SilverStripe\ORM\SS_List;
 use SilverStripe\Versioned\Versioned;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
+// symbiote/silverstripe-gridfieldextensions is optional (it is not in `require`), and a subclass of
+// a missing parent fatals the whole application during bootstrap - silverstripe/config's
+// PrivateStaticTransformer class_exists()es every manifest class, which autoloads this file.
+// Same guard as SelectiveLumberjack and GridFieldSiteTreeAddNewButton.
+if (!class_exists(GridFieldOrderableRows::class)) {
+    return;
+}
+
 class GridFieldConfig_VersionedOrderable
     extends GridFieldOrderableRows
 {
