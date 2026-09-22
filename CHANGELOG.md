@@ -52,6 +52,21 @@ Requires PHP `^8.3` and `silverstripe/framework ^6`.
   instead of its intended no-op: it called `DB::field_list()` on the `Image` table without checking
   the table exists. `Image` carries no fields of its own, so there is no such table unless
   something (normally FocusPoint itself) added one.
+- **A failing upstream is no longer re-requested on every call** (admintweaks#55).
+  `CacheHelpers::cached_http_request()` only ever wrote to cache on a 200, and the underlying
+  `GeneralHelpers::perform_http_request()` *throws* on a connection failure - so the common
+  real-world failure never even reached the cache write, and a dead upstream was contacted again
+  on every single call. The cache stopped working exactly when it was needed most. Failures are
+  now cached on their own short TTL (`CacheHelpers.failure_cache_duration`, default 60s), and a
+  repeat call inside that window fails immediately without touching the network. The
+  caller-visible contract is unchanged: failures still throw, non-200s are still returned.
+- **Outbound HTTP requests are bounded** (admintweaks#55). Guzzle ships no default `timeout` or
+  `connect_timeout` (`configureDefaults()` sets neither, so both are 0 = unlimited), so an
+  outbound call on a render path against a vanished upstream blocked indefinitely and pinned a
+  PHP-FPM worker - one crawler burst on such a page then saturates the pool and 504s the whole
+  site, which is what took a production site down on 2026-08-17. Defaults are now 5s connect /
+  10s total, configurable via `GeneralHelpers.http_connect_timeout` and
+  `GeneralHelpers.http_timeout`, and a caller passing its own `$options` still wins.
 - **Two classes extending optional dependencies could fatal the entire application.**
   `MultivalueSortField` (`symbiote/silverstripe-multivaluefield`) and
   `GridFieldConfig_VersionedOrderable` (`symbiote/silverstripe-gridfieldextensions`) now guard on

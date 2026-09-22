@@ -11,6 +11,7 @@ use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\Storage\AssetStore;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Environment;
 use SilverStripe\Dev\Deprecation;
 use SilverStripe\Forms\FieldList;
@@ -18,6 +19,27 @@ use SilverStripe\Forms\Tab;
 
 class GeneralHelpers
 {
+    use Configurable;
+
+    /**
+     * @config
+     * Seconds to wait for a CONNECTION before giving up.
+     *
+     * Guzzle ships NO default for this (configureDefaults() sets neither timeout nor
+     * connect_timeout, so both are 0 = unlimited). An outbound call on a render path against an
+     * upstream that has gone away therefore blocks indefinitely and pins a PHP-FPM worker for the
+     * duration - and one crawler burst on such a page saturates the pool and takes the whole site
+     * down with 504s. That is not hypothetical: it is what happened to a production site on
+     * 2026-08-17 (admintweaks#55).
+     */
+    private static int $http_connect_timeout = 5;
+
+    /**
+     * @config
+     * Seconds to wait for the WHOLE request (connect + transfer) before giving up.
+     */
+    private static int $http_timeout = 10;
+
     /**
      * Insert a tab at a certain position (if it doesnt exist yet)
      *
@@ -217,6 +239,14 @@ class GeneralHelpers
         // HTTPlug allows you to write reusable libraries and applications that need an HTTP client without
         // binding to a specific implementation (https://docs.php-http.org/en/latest/httplug/introduction.html)
         // Using an adapter makes Guzzle conform to PSR-18 https://www.php-fig.org/psr/psr-18/ (Guzzle7 does out of the box)
+        // Bound the request unless the caller said otherwise. Guzzle's own defaults are
+        // unlimited (see $http_connect_timeout), which on a render path is an availability bug,
+        // not a slow page. A caller passing its own value in $options still wins.
+        $options = $options + [
+            'connect_timeout' => static::config()->get('http_connect_timeout'),
+            'timeout' => static::config()->get('http_timeout'),
+        ];
+
         try {
             $client = new Client();
             // Making Guzzle requests: https://docs.guzzlephp.org/en/stable/
