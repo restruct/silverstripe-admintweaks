@@ -1,5 +1,31 @@
 # Changelog
 
+## 3.20.8
+
+### Fixed
+
+- **`orm-query`: two `filter[...]` arguments now both apply** (admintweaks#60). Passing two filters
+  silently applied only the last one, while the output still reported itself as filtered - so a
+  narrower-than-intended result read as a reassuring small number. This is the task people reach
+  for to check data before a migration or a destructive task.
+
+  The loss was upstream, not in this task: `CLIRequestBuilder::cleanEnvironment()` parses each CLI
+  argument in isolation and then `array_merge()`s the results into `$_GET`
+  (framework 5.4.26 `CLIRequestBuilder.php:50-57`), and `array_merge()` overwrites string keys, so
+  the second `filter[...]` argument replaced the whole array from the first. The task now re-parses
+  `argv` itself and merges the inner arrays, falling back to the request for non-CLI invocations
+  where PHP's own query-string parsing already handles repeated bracket keys correctly.
+
+  Verified end-to-end on Silverstripe 5.4 before and after: with `ClassName=Page` alone returning 3
+  and `ShowInMenus=0` alone returning 2, the two together returned **2 or 3 depending on argument
+  order** before the fix, and **0 either way** after it.
+
+### Changed
+
+- **`orm-query` now names the conditions it actually applied**, on both the listing and the bare
+  `count=1` output, instead of only saying `(filtered)`. A result that is narrower than intended
+  should not be able to look like a correct answer.
+
 ## 3.20.7
 
 ### Fixed

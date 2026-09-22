@@ -63,14 +63,16 @@ class OrmQueryTask extends BuildTask
         $list = $fqcn::get();
 
         // Apply filters (supports ORM filter operators via bracket notation)
-        $filters = $request->getVar('filter');
-        if ($filters && is_array($filters)) {
+        // NOT $request->getVar('filter') - see collectBracketArgs() for why that silently loses
+        // every filter but the last one on the CLI (admintweaks#60).
+        $filters = $this->collectBracketArgs($request, 'filter');
+        if ($filters) {
             $list = $list->filter($filters);
         }
 
         // Apply excludes
-        $excludes = $request->getVar('exclude');
-        if ($excludes && is_array($excludes)) {
+        $excludes = $this->collectBracketArgs($request, 'exclude');
+        if ($excludes) {
             $list = $list->exclude($excludes);
         }
 
@@ -103,6 +105,9 @@ class OrmQueryTask extends BuildTask
         if ($request->getVar('count')) {
             echo "Class: {$fqcn}\n";
             echo "Count: {$list->count()}\n";
+            // A bare count is exactly where a narrower-than-intended query misleads - there is no
+            // row listing to notice anything missing in - so name the conditions here too.
+            $this->echoAppliedConditions($filters, $excludes, $where);
             return;
         }
 
@@ -143,7 +148,11 @@ class OrmQueryTask extends BuildTask
         $filtered = $hasFilters ? " (filtered from {$total})" : '';
 
         echo "Class: {$fqcn}\n";
-        echo "Showing: {$list->count()} records{$filtered}\n\n";
+        echo "Showing: {$list->count()} records{$filtered}\n";
+        // Name the conditions actually applied rather than just saying "(filtered)": a result that
+        // is narrower than intended should not be able to look like a correct answer.
+        $this->echoAppliedConditions($filters, $excludes, $where);
+        echo "\n";
 
         if ($list->count() === 0) {
             echo "No records found.\n";
@@ -151,6 +160,55 @@ class OrmQueryTask extends BuildTask
         }
 
         $this->printTable($list, $fieldNames);
+    }
+
+    /**
+     * Collect every `name[key]=value` CLI argument into one array.
+     *
+     * Works around a framework behaviour, not a bug in this task (admintweaks#60).
+     * `CLIRequestBuilder::cleanEnvironment()` parses each CLI argument in ISOLATION and then does
+     * `$variables['_GET'] = array_merge($variables['_GET'], $newItems)` (framework 5.4.26
+     * `CLIRequestBuilder.php:50-57`). `array_merge()` OVERWRITES string keys, so a second
+     * `filter[...]` argument replaces the whole `filter` array from the first.
+     *
+     * The damage is silent: the query still reports itself as filtered, and a
+     * narrower-than-intended result reads as a reassuring small number. This task is the one
+     * people reach for to check data before a migration or a destructive task, so a wrong small
+     * number here is expensive.
+     *
+     * Re-parsing argv ourselves and merging the INNER arrays fixes it. Those inner keys are field
+     * names, so they are distinct across separate arguments; two filters naming the SAME field
+     * still collapse, but that is inherent to the array form of DataList::filter() and is visible
+     * in the echoed filter list.
+     *
+     * Falls back to the request for any non-CLI invocation, where PHP's own query-string parsing
+     * already handles repeated bracket keys correctly.
+     *
+     * @return array<string, mixed>
+     */
+    private function collectBracketArgs($request, string $name): array
+    {
+        $merged = [];
+
+        foreach (array_slice($_SERVER['argv'] ?? [], 2) as $arg) {
+            if (!is_string($arg) || strpos($arg, '=') === false) {
+                continue;
+            }
+            $parsed = [];
+            parse_str(substr($arg, 0, 2) === '--' ? substr($arg, 2) : $arg, $parsed);
+            if (isset($parsed[$name]) && is_array($parsed[$name])) {
+                $merged = array_merge($merged, $parsed[$name]);
+            }
+        }
+
+        if (!$merged) {
+            $fromRequest = $request->getVar($name);
+            if (is_array($fromRequest)) {
+                $merged = $fromRequest;
+            }
+        }
+
+        return $merged;
     }
 
     /**
@@ -446,6 +504,22 @@ class OrmQueryTask extends BuildTask
             }
             $label = ucfirst($func) . "({$field})";
             echo "{$label}: {$value}\n";
+        }
+    }
+
+    /**
+     * Echo the conditions that were actually applied, so a query is self-describing.
+     */
+    private function echoAppliedConditions(array $filters, array $excludes, $where): void
+    {
+        foreach ($filters as $field => $value) {
+            echo "  filter:  {$field} = {$value}\n";
+        }
+        foreach ($excludes as $field => $value) {
+            echo "  exclude: {$field} = {$value}\n";
+        }
+        if ($where) {
+            echo "  where:   {$where}\n";
         }
     }
 
