@@ -90,6 +90,18 @@ Requires PHP `^8.3` and `silverstripe/framework ^6`.
 - The SwiftMailer SMTP config fragment. It could not activate from Silverstripe 5 onwards; use
   `MAILER_DSN`.
 
+- **Two `--filter` arguments now both apply** (admintweaks#60). On the 3.x line two
+  `filter[...]` CLI arguments silently collapsed to the last one: framework's
+  `CLIRequestBuilder` parses each argument in isolation and `array_merge()`s the results, which
+  overwrites string keys. The query still reported itself as filtered, so a
+  narrower-than-intended result read as a reassuring small number.
+
+  This line cannot reproduce it - tasks are symfony/console commands and `--filter` is declared
+  `VALUE_IS_ARRAY`, so repeats collect rather than overwrite. Verified against a real dataset:
+  two filters AND correctly and give the same answer in either order, where "last filter wins"
+  would have returned a different count per order. Pinned by tests so the option declaration
+  cannot quietly regress.
+
 ### Added
 
 - **Continuous integration** (`.github/workflows/ci.yml`): the suite on Silverstripe 6 against PHP
