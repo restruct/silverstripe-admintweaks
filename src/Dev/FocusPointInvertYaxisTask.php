@@ -25,6 +25,16 @@ class FocusPointInvertYaxisTask
     {
         $schema = DataObject::getSchema();
         $imageTable = $schema->tableName(Image::class);
+
+        // Check the TABLE before asking for its columns. Image carries no fields of its own, so
+        // it has no table unless something added one - FocusPoint's FocusPointX/Y is normally what
+        // does. Without that, DB::field_list() raises a DatabaseException ("Table ... doesn't
+        // exist") before the missing-column guard below can report the far friendlier no-op.
+        if (!DB::get_schema()->hasTable($imageTable)) {
+            $output->writeln("<comment>There is no \"$imageTable\" table - the FocusPoint module is not installed. Nothing to do.</>");
+            return Command::SUCCESS;
+        }
+
         $fields = DB::field_list($imageTable);
 
         if (!isset($fields["FocusPointY"])) {

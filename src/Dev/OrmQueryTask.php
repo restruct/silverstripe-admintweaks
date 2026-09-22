@@ -215,8 +215,8 @@ class OrmQueryTask extends BuildTask
     {
         return [
             new InputOption('class', null, InputOption::VALUE_REQUIRED, 'Short or fully qualified class name (required)'),
-            new InputOption('filter', null, InputOption::VALUE_REQUIRED | InputOption::IS_ARRAY, 'Filter as Field=Value or Field:Operator=Value (repeatable)'),
-            new InputOption('exclude', null, InputOption::VALUE_REQUIRED | InputOption::IS_ARRAY, 'Exclude as Field=Value or Field:Operator=Value (repeatable)'),
+            new InputOption('filter', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Filter as Field=Value or Field:Operator=Value (repeatable)'),
+            new InputOption('exclude', null, InputOption::VALUE_REQUIRED | InputOption::VALUE_IS_ARRAY, 'Exclude as Field=Value or Field:Operator=Value (repeatable)'),
             new InputOption('where', null, InputOption::VALUE_REQUIRED, 'Raw SQL WHERE clause'),
             new InputOption('fields', null, InputOption::VALUE_REQUIRED, 'Comma-separated fields to display'),
             new InputOption('sort', null, InputOption::VALUE_REQUIRED, 'Sort as Field or Field,DESC'),

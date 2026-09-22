@@ -4,6 +4,8 @@ namespace Restruct\Silverstripe\AdminTweaks\Tests\FormFields;
 
 use Restruct\Silverstripe\AdminTweaks\FormFields\CopyTextField;
 use SilverStripe\Dev\SapphireTest;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
 
 /**
  * Tests for CopyTextField form field.
@@ -20,7 +22,9 @@ class CopyTextFieldTest extends SapphireTest
 
         $this->assertInstanceOf(CopyTextField::class, $field);
         $this->assertEquals('TestField', $field->getName());
-        $this->assertEquals('Test Value', $field->Value());
+        // SS6 removed FormField::Value() (0 declarations in framework/src, against getValue()
+        // as the control). getValue(): mixed is the surviving accessor.
+        $this->assertEquals('Test Value', $field->getValue());
     }
 
     public function testFieldIsReadonlyByDefault(): void
@@ -131,5 +135,34 @@ class CopyTextFieldTest extends SapphireTest
             'Restruct/Silverstripe/AdminTweaks/FormFields/CopyTextField',
             $templates
         );
+    }
+
+    // ------------------------------------------------------------- rendering
+
+    public function testFieldRendersItsValue()
+    {
+        // The template writes value="$Value", and SS6 REMOVED FormField::Value() - only
+        // getValue() survives. Asserting getTemplates() contains a path (above) would not have
+        // caught that; only rendering does. A FormField must belong to a Form before it can
+        // render: FieldHolder() calls Link().
+        $field = CopyTextField::create('TestField', 'Test Label', 'SENTINEL-VALUE-123');
+        Form::create(null, 'TestForm', FieldList::create($field), FieldList::create());
+
+        $html = (string) $field->FieldHolder();
+
+        $this->assertStringContainsString(
+            'SENTINEL-VALUE-123',
+            $html,
+            'The field must render its value; a removed template accessor would silently blank it'
+        );
+    }
+
+    public function testFieldRendersItsButtonLabel()
+    {
+        $field = CopyTextField::create('TestField', 'Test Label', 'value')
+            ->setButtonLabel('SENTINEL-BUTTON');
+        Form::create(null, 'TestForm', FieldList::create($field), FieldList::create());
+
+        $this->assertStringContainsString('SENTINEL-BUTTON', (string) $field->FieldHolder());
     }
 }

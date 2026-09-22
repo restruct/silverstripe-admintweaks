@@ -1,5 +1,6 @@
 <?php
 
+use Restruct\Silverstripe\AdminTweaks\Extensions\LeftAndMainExtension;
 use SilverStripe\Core\Environment;
 use SilverStripe\Control\Email\Email;
 
@@ -37,3 +38,9 @@ $qjobs_email_unset = ($qjobs_email_config === null || $qjobs_email_config === ''
 if ($qjobs_email_to && $qjobs_email_unset) {
     Email::config()->set('queued_job_admin_email', $qjobs_email_to);
 }
+
+//
+// Hide the rarely-used CMS sections (Reports, Campaigns) - OPT-IN since 4.0, admintweaks#54.
+// The logic lives on the extension so it can be tested; see applyMenuVisibilityConfig().
+//
+LeftAndMainExtension::applyMenuVisibilityConfig();
