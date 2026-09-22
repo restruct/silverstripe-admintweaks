@@ -7,7 +7,7 @@ A portable toolkit of admin UI enhancements, form field utilities, template help
 | Module line | Silverstripe | PHP | Status |
 |---|---|---|---|
 | `^4` (branch `main`) | 6.x | `^8.3` | active development |
-| `^3` (branch `v3`) | 4.13+, 5.x | `^7.4 \| ^8` | security and bug fixes until Silverstripe 5 EOL (April 2027) |
+| `^3` (branch `3.x`) | 4.13+, 5.x | `^7.4 \| ^8` | security and bug fixes until Silverstripe 5 EOL (April 2027) |
 
 ## Installation
 

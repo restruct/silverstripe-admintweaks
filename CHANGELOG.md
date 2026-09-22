@@ -3,7 +3,7 @@
 ## 4.0.0
 
 **First release of the Silverstripe 6 line.** Silverstripe 4 and 5 continue on the 3.x line
-(branch `v3`) until Silverstripe 5 reaches end of life in April 2027. Nothing here is backported;
+(branch `3.x`) until Silverstripe 5 reaches end of life in April 2027. Nothing here is backported;
 3.x cannot be installed on Silverstripe 6. Upgrade guide: [UPGRADING.md](UPGRADING.md).
 
 Requires PHP `^8.3` and `silverstripe/framework ^6`.

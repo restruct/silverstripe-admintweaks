@@ -49,7 +49,7 @@ SilverStripe\Core\Injector\Injector:
 # (e.g. smtp://user:pass@smtp.example.com:587). SwiftMailer was replaced by Symfony Mailer in
 # SS5 and Swift_SmtpTransport cannot exist here, so the fragment below could never activate;
 # it is kept commented as the record of what the APP_SMTP_* vars used to drive. The SS5/SS4
-# line (branch v3) still ships it live.
+# line (branch 3.x) still ships it live.
 #---
 #Name: admintweaks-smtp-email-transport
 #Only:
