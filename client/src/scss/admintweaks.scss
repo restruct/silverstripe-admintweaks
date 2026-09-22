@@ -104,7 +104,11 @@ label,
     height: 60px;
     position: absolute;
     //background-color: white;
-    background-color: #999999;
+    // Lightened from #999999 (admintweaks#44): the checkerboard sits behind transparent
+    // thumbnails, and at #999 against the %23aaaaaa squares the contrast was heavy enough to
+    // read as part of the image rather than as "this area is transparent".
+    //background-color: #999999;
+    background-color: #cccccc;
     background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 8 8" fill="%23aaaaaa"><rect width="4" height="4" x="0" y="0" /><rect width="4" height="4" x="4" y="4" /></svg>');
   }
   .uploadfield-item__thumbnail {
