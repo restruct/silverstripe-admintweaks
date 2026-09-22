@@ -2,7 +2,7 @@
 
 ## 4.1.0
 
-**The Silverstripe 6 line, rebuilt.** Silverstripe 4 and 5 continue on the 3.x line (branch `3.x`)
+**The Silverstripe 6 line, rebuilt.** Silverstripe 4 and 5 continue on the 3.x line (branch `v3`)
 until Silverstripe 5 reaches end of life in April 2027. Nothing here is backported; 3.x cannot be
 installed on Silverstripe 6. Upgrade guide: [UPGRADING.md](UPGRADING.md).
 

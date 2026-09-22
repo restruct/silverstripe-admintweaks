@@ -2,7 +2,7 @@
 
 ## 3.x -> 4.1
 
-**4.1 is the Silverstripe 6 line.** Silverstripe 4 and 5 stay on the 3.x line, which continues to
+**4.1 is the Silverstripe 6 line.** Silverstripe 4 and 5 stay on the 3.x line (branch `v3`), which continues to
 get security and bug fixes until Silverstripe 5 reaches end of life (April 2027). Nothing in 4.1
 is backported, and 3.x is not installable on Silverstripe 6.
 
