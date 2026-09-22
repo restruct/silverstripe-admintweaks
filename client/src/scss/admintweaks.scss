@@ -1,38 +1,48 @@
 // @TODO:
-// - Checkboxes
 // - ModelAdmin advanced search
 // - etc (check ss3-tweaks.scss)
 
 
-//// Checkboxes (in gridfields)
-//input.checkbox.styled-checkbox {
-//  &.styled-checkbox-hide {
-//    display: none;
-//  }
-//  + label:before
-//    content: '';
-//    box-sizing: border-box;
-//    display: block;
-//    width: 20px;
-//    height: 20px;
-//    background-color: white;
-//    outline: 1px solid rgb(210, 213, 216);
-//    text-align: center;
-//  }
-//  &:checked +label:before {
-//    //content: '🔗\uFE0E'; // 𐄂
-//    color: white;
-//    //font-size: 24px;
-//    line-height: 10px;
-//    background-color: rgb(51, 141, 193);
-//    //border-color: rgb(51, 141, 193);
-//    border: 2px solid white;
-//    //outline: 1px solid ;
-//  }
-//}
+// Styled checkboxes (paired with the .styled-checkbox JS injector in admintweaks.js, which hides the
+// input and injects an inner <label for> whose :before draws the box). These styles sat in the
+// UNCOMPILED _legacy_ss3-tweaks.scss, so the injector ran without its styling — ported 2026-07.
+input.checkbox.styled-checkbox {
+  &.styled-checkbox-hide {
+    display: none;
+  }
+  + label:before {
+    content: '';
+    box-sizing: border-box;
+    display: block;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    outline: 1px solid rgb(210, 213, 216);
+    text-align: center;
+  }
+  &:checked + label:before {
+    color: white;
+    line-height: 10px;
+    background-color: rgb(51, 141, 193);
+    border: 2px solid white;
+  }
+}
+// SS5 form-check markup wraps the input INSIDE the outer label, so the injected inner label's absolute
+// :before box lands ON the label text — pull it into the form-check gutter and render it at 16x16
+// (native admin checkbox size) so it clears the text. Grid/td contexts (no .form-check ancestor) keep 20x20.
+.form-check input.checkbox.styled-checkbox + label:before {
+  margin-left: -1.5385rem;
+  margin-top: -1px;
+  width: 16px;
+  height: 16px;
+}
 
 
 // nicely stack optionsets into columns
+// NB (2026-07-18): this only affects ul-rendered optionsets (regular CMS edit forms, e.g. the
+// DevPath checkbox groups) — the SS5 GridField 'Search options' popover renders checkboxsets as
+// div.form-check, so this rule never touches it (the popover overlap had a different cause: the
+// .form-control holder-height issue fixed below).
 @media (min-width: 992px) {
   .optionset {
     ul {
@@ -45,6 +55,27 @@
       float: none;
       width: auto;
     }
+  }
+}
+
+// SS5 'Search options' popover fixes (2026-07-18): a 'form-control' class leaking onto a field
+// HOLDER div (eg from project code that decorates scaffolded search fields for front-end reuse)
+// input-styles the holder — Bootstrap's fixed height collapses checkboxset holders to ~36px so
+// their options paint over the fields below, and the border/padding renders every field as a
+// nested bordered box. A holder div is not an input: neutralise the input-styling, and keep
+// long option lists scrollable inside the popover.
+.cms-search-form {
+  .field.form-control {
+    height: auto;
+    border: 0;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+  .field.checkboxset .form__field-holder,
+  .field.optionset .form__field-holder {
+    max-height: 14rem;
+    overflow-y: auto;
   }
 }
 
@@ -149,6 +180,12 @@ label,
   margin-top: -.6rem !important;
   margin-bottom: -.6rem !important;
 }
+
+// CopyTextField inside GridField rows
+.ss-gridfield-item .copy-text-field {
+  margin-top: -.6rem;
+  margin-bottom: -.6rem;
+}
 .grid-field .ss-gridfield-item img {
   margin-top: -1.2rem;
   margin-bottom: -1.2rem;
@@ -203,8 +240,13 @@ label,
 }
 
 //
-// PAGE ICONS https://fontawesome.com/search?f=classic&ic=free&o=r
+// PAGE ICONS - Configurable icon provider (Bootstrap Icons default, FontAwesome optional)
 //
+// To use FontAwesome instead of Bootstrap Icons, set $icon-provider: 'fontawesome' before importing this file
+// or add body.use-fontawesome class via PHP config
+//
+
+// FontAwesome font-face (for optional FA mode)
 @font-face {
   font-family: 'FA 7 Free';
   font-style: normal;
@@ -220,60 +262,59 @@ label,
   src: url("../../fonts/fontawesome-free-7.1.0-web/webfonts/fa-solid-900.woff2");
 }
 
-@mixin fa_page_icon($icon, $version:'fas'){
-  font-family: 'FA 7 Free' !important;
-  font-weight: if($version=='fas',900,400) !important;
-  content: $icon;
-  width: 1.2rem;
-  font-size: 1.2rem;
-  text-align: center;
-  display: block;
-}
+// Page icons using inline SVG (no font required)
+@import "page-icons-svg";
 
+// Page icon container styles
 li.jstree-leaf > a .jstree-pageicon, .page-icon {
   line-height: 1.25rem;
   height: 1.2rem !important;
   width: 1.4rem !important;
   margin-right: .4rem !important;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 
-  //&[class*="SiteTree"]:before { @include fa_page_icon("\f850"); }
-  &[class*="Page"]:before, &[class*="SiteTree"]:before { @include fa_page_icon("\f15b"); }
-  &[class*="HomePage"]:before, &.homepage:before { @include fa_page_icon("\f015"); }
-  &[class*="RedirectorPage"]:before { @include fa_page_icon("\f5eb"); }
-  &[class*="VirtualPage"]:before { @include fa_page_icon("\f24d"); }
-  &[class*="SubsitesVirtualPage"]:before, &[class*="CrossSubsiteVirtualPage"]:before { @include fa_page_icon("\f24d"); }
-  &[class*="UserDefinedForm"]:before { @include fa_page_icon("\f46d"); }
-  &[class*="ErrorPage"]:before { @include fa_page_icon("\f06a"); }
-  &[class*="Profile"]:before { @include fa_page_icon("\f2bb"); }
-  &[class*="Cart"]:before { @include fa_page_icon("\f07a"); }
-  &[class*="AlbumPage"]:before { @include fa_page_icon("\f302"); }
-  &[class*="Catalog"]:before { @include fa_page_icon("\f02d"); }
-  &[class*="CatalogItem"]:before { @include fa_page_icon("\f15c"); }
-  &[class*="Specialist"]:before { @include fa_page_icon("\f0f0"); }
-  &[class*="SpecialistCatalog"]:before { @include fa_page_icon("\f80d"); }
-  &[class*="SpecialistFilteredCatalog"]:before { @include fa_page_icon("\f80d"); }
-  &[class*="PublicationCatalog "]:before { @include fa_page_icon("\f02d"); }
-  &[class*="SitemapPage"]:before { @include fa_page_icon("\f0e8"); }
-  &[class*="SimpleCalendar"]:before { @include fa_page_icon("\f073"); }
-  &[class*="SimpleCalendar"] { background: none !important; }
-  &[class*="ArchivePage"]:before { @include fa_page_icon("\f187"); }
-  &[class*="ContactPage"]:before { @include fa_page_icon("\f87b"); }
-  &[class*="InfoPage"]:before { @include fa_page_icon("\f05a"); }
-  &[class*="BlocksPage"]:before, &[class*="BlockPage"]:before { @include fa_page_icon("\f009"); }
-  &[class*="VideoPage"]:before { @include fa_page_icon("\f1c8"); }
-  &[class*="Department"]:before { @include fa_page_icon("\f1ad"); }
-  &[class*="DepartmentHolder"]:before { @include fa_page_icon("\f277"); }
-  &[class*="ReservationPage"]:before { @include fa_page_icon("\f274"); }
-  &[class*="IFramePage"]:before { @include fa_page_icon("\f247"); }
-  &[class*="NewsGridHolder"]:before { @include fa_page_icon("\f0ac"); }
-  &[class*="NewsGridPage"]:before { @include fa_page_icon("\f1ea"); }
-  &[class*="NewsGridHolder"], &[class*="NewsGridPage"] { background: none !important; }
-  &[class*="LifestylePage"]:before { @include fa_page_icon("\f496"); }
-  &[class*="ProtectedPage"]:before { @include fa_page_icon("\f023"); }
-  &[class*="ImportedContent"]:before { @include fa_page_icon("\f59d"); }
-  &[class*="SettingsPage"]:before { @include fa_page_icon("\f013"); }
-  &[class*="DialogPage"]:before { @include fa_page_icon("\f086"); }
-  &[class*="HelpPage"]:before { @include fa_page_icon("\f1cd"); }
+  // Hide any :before content (legacy cleanup)
+  &:before { content: none !important; }
+}
+
+// Page type icons - using SVG backgrounds
+li.jstree-leaf > a .jstree-pageicon, .page-icon {
+  &[class*="Page"], &[class*="SiteTree"] { @include page-icon-svg('page'); }
+  &[class*="HomePage"], &.homepage { @include page-icon-svg('home'); }
+  &[class*="RedirectorPage"] { @include page-icon-svg('redirect'); }
+  &[class*="VirtualPage"] { @include page-icon-svg('virtual'); }
+  &[class*="SubsitesVirtualPage"], &[class*="CrossSubsiteVirtualPage"] { @include page-icon-svg('virtual'); }
+  &[class*="UserDefinedForm"] { @include page-icon-svg('form'); }
+  &[class*="ErrorPage"] { @include page-icon-svg('error'); }
+  &[class*="Profile"] { @include page-icon-svg('profile'); }
+  &[class*="Cart"] { @include page-icon-svg('cart'); }
+  &[class*="AlbumPage"] { @include page-icon-svg('images'); }
+  &[class*="Catalog"] { @include page-icon-svg('book'); }
+  &[class*="CatalogItem"] { @include page-icon-svg('file-text'); }
+  &[class*="Person"], &[class*="Specialist"] { @include page-icon-svg('person'); }
+  &[class*="PersonCatalog"], &[class*="SpecialistCatalog"],
+  &[class*="SpecialistFilteredCatalog"] { @include page-icon-svg('people-catalog'); }
+  &[class*="PublicationCatalog"] { @include page-icon-svg('book'); }
+  &[class*="SitemapPage"] { @include page-icon-svg('sitemap'); }
+  &[class*="SimpleCalendar"] { @include page-icon-svg('calendar'); }
+  &[class*="ArchivePage"] { @include page-icon-svg('archive'); }
+  &[class*="ContactPage"] { @include page-icon-svg('phone'); }
+  &[class*="InfoPage"] { @include page-icon-svg('info'); }
+  &[class*="BlocksPage"], &[class*="BlockPage"] { @include page-icon-svg('grid'); }
+  &[class*="VideoPage"] { @include page-icon-svg('video'); }
+  &[class*="Department"] { @include page-icon-svg('building'); }
+  &[class*="DepartmentHolder"] { @include page-icon-svg('signpost'); }
+  &[class*="ReservationPage"] { @include page-icon-svg('calendar-check'); }
+  &[class*="IFramePage"] { @include page-icon-svg('window'); }
+  &[class*="NewsGridHolder"] { @include page-icon-svg('globe'); }
+  &[class*="NewsGridPage"] { @include page-icon-svg('newspaper'); }
+  &[class*="ProtectedPage"] { @include page-icon-svg('lock'); }
+  &[class*="ImportedContent"] { @include page-icon-svg('import'); }
+  &[class*="SettingsPage"] { @include page-icon-svg('gear'); }
+  &[class*="DialogPage"] { @include page-icon-svg('chat'); }
+  &[class*="HelpPage"] { @include page-icon-svg('help'); }
 }
 
 
@@ -286,11 +327,7 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
   display: none !important;
 }
 
-// Hide admin sections that clients rarely use
-#Menu-SilverStripe-CampaignAdmin-CampaignAdmin,
-#Menu-SilverStripe-Reports-ReportAdmin {
-  display: none !important;
-}
+// CampaignAdmin + ReportAdmin hidden via ignore_menuitem config (admintweaks.yml)
 
 // Fixes for grouped CMS menu
 .cms-menu__list {
@@ -375,4 +412,58 @@ li.jstree-leaf > a .jstree-pageicon, .page-icon {
 // ?
 fieldset.grid.grid-field.ss-gridfield.field {
   margin-bottom: 2em !important;
+}
+
+
+//
+// Permission code badges in Security admin (added via JS)
+//
+.permissioncheckboxset li label .badge {
+  margin-left: 0.5em;
+  font-size: 10px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  vertical-align: middle;
+}
+
+
+// Bootstrap Icons (.bi-* classes) loaded from CDN via include_bootstrap_icons config
+// Button/layout helpers for .bi-* icons in CMS context (CDN CSS doesn't include these)
+
+// Button-specific icon positioning (matches framework's .font-icon-* on buttons)
+.btn[class*=" bi-"]:before,
+.btn[class^="bi-"]:before,
+.dropdown-item[class*=" bi-"]:before,
+.dropdown-item[class^="bi-"]:before {
+  position: relative;
+  margin-right: 6px;
+  line-height: 19.999px;
+  vertical-align: top;
+  font-size: 1.231rem;
+}
+
+// Action link specific (GridField actions, etc.)
+a.action[class*=" bi-"]:before,
+a.action[class^="bi-"]:before {
+  margin-right: 0.4em;
+}
+
+// Icon-only buttons (no text, just icon)
+.bi-icon-only:before {
+  margin-right: 0 !important;
+}
+
+// Allow text utility classes (text-success, text-danger, etc.) to color icons
+// in grid-field actions by inheriting the parent's color (including hover/focus)
+.grid-field__icon-action.text-success,
+.grid-field__icon-action.text-danger,
+.grid-field__icon-action.text-warning,
+.grid-field__icon-action.text-info,
+.grid-field__icon-action.text-muted,
+.grid-field__icon-action.text-secondary {
+  &:before,
+  &:hover:before,
+  &:focus:before,
+  &:active:before {
+    color: inherit;
+  }
 }

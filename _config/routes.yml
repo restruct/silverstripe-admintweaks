@@ -1,0 +1,1 @@
+# No custom routes — all admin controllers use LeftAndMain with url_segment config

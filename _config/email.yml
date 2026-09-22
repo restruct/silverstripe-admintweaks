@@ -31,17 +31,25 @@ After:
   - '#queuedjobsettings'
 Only:
   envvarset:
-    - APP_LOG_MAIL_SENDER
+#    - APP_LOG_MAIL_SENDER
+    - APP_LOG_MAIL_RECIPIENT
 ---
 SilverStripe\Core\Injector\Injector:
   SilverStripe\Control\Email\Email:
-    queued_job_admin_email: '`APP_LOG_MAIL_SENDER`'
+    # 2026-08-31: queuedjobs' EmailService uses queued_job_admin_email primarily as the RECIPIENT of its
+    # broken/stalled/missing-default-job reports (createReport(): to; only the missing-job mail also uses it
+    # as From). Wiring it to APP_LOG_MAIL_SENDER (a no-reply address) since 1c3b176 sent every queue report
+    # into a black hole — it must follow the error-mail RECIPIENT.
+#    queued_job_admin_email: '`APP_LOG_MAIL_SENDER`'
+    queued_job_admin_email: '`APP_LOG_MAIL_RECIPIENT`'
 
 
-# SMTP mailer config (define `APP_SMTP_USERNAME` etc in .env)
+# SMTP mailer config for SS4 (SwiftMailer)
+# For SS5+, use MAILER_DSN in .env instead (e.g., smtp://user:pass@smtp.example.com:587)
 ---
 Name: admintweaks-smtp-email-transport
 Only:
+  classexists: Swift_SmtpTransport
   envvarset:
     - APP_SMTP_HOST
     - APP_SMTP_PORT
@@ -51,26 +59,31 @@ Only:
 ---
 SilverStripe\Core\Injector\Injector:
   Swift_Transport:
-    # WORKING: php mail, default SS4 but to be deprecated in SwiftMailer 6
-#    class: Swift_MailTransport
-    # NOT WORKING on live: Sendmail binary
-#    class: Swift_SendmailTransport
-    # SMTP transport:
     class: Swift_SmtpTransport
     properties:
       Host: '`APP_SMTP_HOST`'
-      # Mailgun servers listen on ports 25, 465 (SSL/TLS), 587 (STARTTLS), and 2525
       Port: '`APP_SMTP_PORT`'
-      # NOTE: SwiftMail 'ssl' => SMTP over SSL/TLS / 'tls' => STARTTLS
       Encryption: '`APP_SMTP_ENCRYPTION`'
     calls:
-      # Prefix Username/Password/AuthMode to prevent https://github.com/silverstripe/silverstripe-framework/issues/9075
       Username: [ setUsername, ['`APP_SMTP_USERNAME`'] ]
       Password: [ setPassword, ['`APP_SMTP_PASSWORD`'] ]
       AuthMode: [ setAuthMode, ['login'] ]
 
 
-# Add email error handler (if no Sentry etc)
+# Email error handler — sends error emails via Symfony Mailer with cache-based deduplication.
+# Only activates when ALL env vars below are set. To disable on dev/test,
+# simply don't define these vars in those environments.
+#
+# Required in .env (on live only):
+#   APP_LOG_MAIL_RECIPIENT="admin@example.com"
+#   APP_LOG_MAIL_SUBJECT="Error on MyApp"
+#   APP_LOG_MAIL_SENDER="noreply@example.com"
+#   APP_LOG_MAIL_LEVEL="error"  # info / warning / error
+#
+# Features:
+# - Enhanced error format with inline-styled HTML + $_SERVER details (like SS3 had)
+# - Cache-based deduplication to prevent email bombing (e.g., when DB crashes)
+# - Configurable: dedup_time (DedupSymfonyMailerHandler), format_mode (EnhancedErrorFormatter)
 ---
 Name: admintweaks-error-email-logger
 Only:
@@ -84,17 +97,35 @@ SilverStripe\Core\Injector\Injector:
   Psr\Log\LoggerInterface:
     calls:
       MailHandler: [ pushHandler, [ '%$MailHandler' ] ]
-  MailHandler:
-    class: Monolog\Handler\NativeMailerHandler
+
+  # Email template for error notifications (env vars resolved by Injector)
+  ErrorNotificationEmail:
+    class: SilverStripe\Control\Email\Email
+    # 'from' MUST be passed as the FIRST CONSTRUCTOR ARG, not via calls: setFrom.
+    # Email::__construct() runs setFrom($from ?: getDefaultFrom()) itself — so a
+    # `calls: setFrom` override happens too late: the constructor already resolved the
+    # default. And getDefaultFrom() falls back to no-reply@<Director::host()>, which is
+    # RFC-invalid when the request Host is malformed (trailing-dot FQDN from a scanner)
+    # AND admin_email is empty (it can be, during early-bootstrap error logging) — a
+    # FATAL that turns any error into a 500 (see admintweaks#56). Passing 'from' to the
+    # constructor skips getDefaultFrom() entirely, removing the dependency on both
+    # admin_email timing and the request host.
     constructor:
-#      - dev@[UNCONFIGURED].nl
-      - '`APP_LOG_MAIL_RECIPIENT`'
-#      - Error on [UNCONFIGURED]
-      - '`APP_LOG_MAIL_SUBJECT`'
-#      - noreply-logger@[UNCONFIGURED].nl
       - '`APP_LOG_MAIL_SENDER`'
-      - error # minimum logging level at which this handler will be triggered: info / warning / error / ...
+      - '`APP_LOG_MAIL_RECIPIENT`'
+      - '`APP_LOG_MAIL_SUBJECT`'
+
+  # DedupSymfonyMailerHandler — sends via Symfony Mailer with cache-based dedup
+  # bubble: true — safe because MailHandler is on the standard logger (Psr\Log\LoggerInterface),
+  # NOT on the errorhandler logger (which has HTTPOutputHandler). The original bubble:false was
+  # to prevent formatted HTML from leaking to HTTPOutputHandler when both were on the same logger.
+  # Now they're separate, and bubble:true allows downstream handlers (e.g. SentryHandler) to fire.
+  MailHandler:
+    class: Restruct\Silverstripe\AdminTweaks\Logging\DedupSymfonyMailerHandler
+    constructor:
+      - '%$Symfony\Component\Mailer\MailerInterface'
+      - '%$ErrorNotificationEmail'
       - '`APP_LOG_MAIL_LEVEL`'
+      - true
     properties:
-      ContentType: text/html
-      Formatter: '%$SilverStripe\Logging\DetailedErrorFormatter'
+      Formatter: '%$Restruct\Silverstripe\AdminTweaks\Logging\EnhancedErrorFormatter'

@@ -5,7 +5,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Forms;
 use SilverStripe\Forms\GridField\GridField_ActionMenu;
 use SilverStripe\Forms\GridField\GridFieldAddNewButton;
 use SilverStripe\Forms\GridField\GridFieldButtonRow;
-use SilverStripe\Forms\GridField\GridFieldConfig;
+    use SilverStripe\Forms\GridField\GridFieldConfig;
 use SilverStripe\Forms\GridField\GridFieldDataColumns;
 use SilverStripe\Forms\GridField\GridFieldDeleteAction;
 use SilverStripe\Forms\GridField\GridFieldDetailForm;
@@ -13,45 +13,54 @@ use SilverStripe\Forms\GridField\GridFieldEditButton;
 use SilverStripe\Forms\GridField\GridFieldFilterHeader;
 use SilverStripe\Forms\GridField\GridFieldSortableHeader;
 use SilverStripe\Forms\GridField\GridFieldToolbarHeader;
-use Symbiote\GridFieldExtensions\GridFieldAddNewInlineButton;
-use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
-use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
-use Symbiote\GridFieldExtensions\GridFieldTitleHeader;
+    use Symbiote\GridFieldExtensions\GridFieldAddNewInlineButton;
+    use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
+    use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
+    use Symbiote\GridFieldExtensions\GridFieldTitleHeader;
 
 class GridFieldConfigs
 {
     /**
      * EditableOrderable gridfieldconfig
      */
-    public static function editable_orderable(): GridFieldConfig
+    public static function editable_orderable()
     {
         return GridFieldConfig::create()
-            ->addComponent(GridFieldButtonRow::create('after'))
-            ->addComponent(GridFieldToolbarHeader::create())
+            ->addComponent(new GridFieldButtonRow('after'))
+            ->addComponent(new GridFieldToolbarHeader())
             ->addComponent(new GridFieldTitleHeader())
             ->addComponent(new GridFieldEditableColumns())
             ->addComponent(new GridFieldOrderableRows())
-            ->addComponent(GridFieldDeleteAction::create())
+            ->addComponent(new GridFieldDeleteAction())
             ->addComponent(new GridFieldAddNewInlineButton('buttons-after-left'));
     }
 
     /**
+     * Filterable, orderable GridField with record editor
      * Copied from bigfork/silverstripe-recipe
-     * @param $showAdd
+     *
+     * @param bool|null $showAdd
+     * @return GridFieldConfig
      */
-    public static function filterable_orderable_recordeditor($showAdd = null): GridFieldConfig
+    public static function filterable_orderable_recordeditor($showAdd = null)
     {
-        return GridFieldConfig::create()
-            ->addComponent(GridFieldButtonRow::create('before'))
-            ->addComponent(GridFieldAddNewButton::create('buttons-before-left'))
-            ->addComponent(GridFieldToolbarHeader::create())
-            ->addComponent(GridFieldSortableHeader::create())
-            ->addComponent(GridFieldFilterHeader::create())
-            ->addComponent(GridFieldDataColumns::create())
-            ->addComponent(GridFieldEditButton::create())
-            ->addComponent(GridFieldDeleteAction::create())
-            ->addComponent(GridField_ActionMenu::create())
-            ->addComponent(GridFieldDetailForm::create(null, null, $showAdd));
+        $conf = GridFieldConfig::create()
+            ->addComponent(new GridFieldButtonRow('before'))
+            ->addComponent(new GridFieldAddNewButton('buttons-before-left'))
+            ->addComponent(new GridFieldToolbarHeader())
+            ->addComponent($sort = new GridFieldSortableHeader())
+            ->addComponent($filter = new GridFieldFilterHeader())
+            ->addComponent(new GridFieldDataColumns())
+            ->addComponent(new GridFieldEditButton())
+            ->addComponent(new GridFieldDeleteAction())
+            ->addComponent(new GridField_ActionMenu())
+            ->addComponent(new GridFieldDetailForm(null, null, $showAdd))
+            ->addComponent(new GridFieldOrderableRows());
+
+        $sort->setThrowExceptionOnBadDataType(false);
+        $filter->setThrowExceptionOnBadDataType(false);
+
+        return $conf;
     }
 
 }

@@ -6,14 +6,13 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Forms;
 
-use Override;
-use SilverStripe\Model\List\SS_List;
 use Exception;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\ORM\ManyManyThroughList;
+use SilverStripe\ORM\SS_List;
 use SilverStripe\Versioned\Versioned;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
@@ -47,9 +46,10 @@ class GridFieldConfig_VersionedOrderable
      * Patched to allow copying sort order directly to live table
      *
      * @param SS_List $list
+     * @param array $values
+     * @param array $sortedIDs
      * @throws Exception
      */
-    #[Override]
     protected function reorderItems($list, array $values, array $sortedIDs)
     {
         // setup
@@ -88,7 +88,7 @@ class GridFieldConfig_VersionedOrderable
 
             $isBaseTable = ($baseTable == $sortTable);
             if (!$list instanceof ManyManyList && $isBaseTable) {
-                $additionalSQL = sprintf(", \"LastEdited\" = '%s'", $now);
+                $additionalSQL = ", \"LastEdited\" = '$now'";
             }
 
             foreach ($sortedIDs as $newSortValue => $targetRecordID) {
@@ -135,7 +135,7 @@ class GridFieldConfig_VersionedOrderable
                         $table = DataObject::getSchema()->tableForField($record, $sortField);
                         $liveTable = $record->stageTable($table, Versioned::LIVE);
                         DB::prepared_query(
-                            sprintf('UPDATE %s SET %s = ? WHERE ID = ?', $liveTable, $sortField),
+                            "UPDATE {$liveTable} SET {$sortField} = ? WHERE ID = ?",
                             [
                                 (int)$newSortValue,
                                 (int)$record->ID

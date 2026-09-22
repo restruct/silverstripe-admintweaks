@@ -3,38 +3,38 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions {
 
-    use SilverStripe\Model\ArrayData;
-    use SilverStripe\Model\List\ArrayList;
     use SilverStripe\CMS\Controllers\RootURLController;
     use SilverStripe\CMS\Model\SiteTree;
+    use SilverStripe\CMS\Model\SiteTreeExtension;
     use SilverStripe\Control\Controller;
     use SilverStripe\Control\Director;
     use SilverStripe\Core\Extension;
+    use SilverStripe\ORM\ArrayList;
     use SilverStripe\ORM\DataObject;
     use SilverStripe\Versioned\Versioned;
+    use SilverStripe\View\ArrayData;
     use SilverStripe\View\Requirements;
     use SilverStripe\View\SSViewer;
     use SilverStripe\View\ThemeResourceLoader;
 
-    class PageHelpersExtension extends Extension
+    class PageHelpersExtension
+        extends Extension
     {
         // Little helper to insert unique IDs per page without directly conveying exact DB ID
         public function PageID_MD5()
         {
-            return md5((string) $this->getOwner()->ID);
+            return md5($this->owner->ID);
         }
 
         public function BreadCrumbPath($append = null)
         {
-            if ($append) {
-                $append = ' > ' . $append;
+            if ($append) $append = " > $append";
+            $append = $this->owner->MenuTitle . "$append";
+            if ($this->owner->Parent()->exists()) {
+                return $this->owner->Parent()->BreadCrumbPath($append);
+            } else {
+                return $append;
             }
-
-            $append = $this->getOwner()->MenuTitle . $append;
-            if ($this->getOwner()->Parent()->exists()) {
-                return $this->getOwner()->Parent()->BreadCrumbPath($append);
-            }
-            return $append;
         }
 
         public function RequestStatusCode()
@@ -44,7 +44,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
 
         public function RequestedURL()
         {
-            return preg_replace("/[^a-zA-Z0-9\-\.\/\?\&\=]+/", "", (string) $_SERVER['REQUEST_URI']);
+            return preg_replace("/[^a-zA-Z0-9\-\.\/\?\&\=]+/", "", $_SERVER['REQUEST_URI']);
         }
 
         public function StaleCacheKey($delayInSeconds = 300)
@@ -52,7 +52,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             return (int)(time() / $delayInSeconds); // Returns a new number every five minutes
         }
 
-        public function RandomNumber($max = 4)
+        function RandomNumber($max = 4)
         {
             return random_int(1, $max);
         }
@@ -93,28 +93,6 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             return Director::isLive();
         }
 
-        ////// FOR FLUENT/MULTI-LINGUAL
-        /**
-         * @TODO: somehow check if Fluent is available
-         * Retrieves information about this object in the CURRENT locale
-         *
-         * @param string $locale The locale information to request, or null to use the default locale
-         * @return ArrayData Mapped list of locale properties
-         */
-        public function CurrentLocaleInformation()
-        {
-            $locale = Fluent::current_locale();
-            // Store basic locale information
-            $data = [
-                'Locale' => $locale,
-                'LocaleRFC1766' => i18n::convert_rfc1766($locale),
-                'Alias' => Fluent::alias($locale),
-                'Title' => i18n::get_locale_name($locale),
-                'LanguageNative' => i18n::get_language_name(i18n::get_lang_from_locale($locale), true)
-            ];
-            return new ArrayData($data);
-        }
-
         ////// REQUIREMENTS (callable from templates)
 
         public function RequireCustomCSS($css)
@@ -125,7 +103,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
         public function RequireCustomTemplatedCSS($template)
         {
             $template = SSViewer::fromString($template);
-            $result = $template->process($this->getOwner());
+            $result = $template->process($this->owner);
             Requirements::customCSS($result);
         }
 
@@ -149,8 +127,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             $template = str_replace('<script>', '', $template);
             $template = str_replace('</script>', '', $template);
             $template = SSViewer::fromString($template);
-
-            $result = $template->process($this->getOwner());
+            $result = $template->process($this->owner);
             Requirements::customScript($result);
         }
 
@@ -162,7 +139,8 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             $themes = SSViewer::get_themes();
             //Debug::show($themes);
             //$themedir = SSViewer::current_theme();
-            $themedir = 'themes';
+            $themedir = 'themes';// SSViewer::current_theme();
+            $file = "themes/$themedir/$pathrelativetotheme";
 
             //$to_combine = [ $file ];
             $to_combine = [
@@ -170,7 +148,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             ];
 
 
-            $combine_name = sprintf('%s-%s', $themedir, $combine_name);
+            $combine_name = "$themedir-$combine_name";
             $previously_included = Requirements::get_combine_files();
             // append to existing array, if any
             if ( array_key_exists($combine_name, $previously_included) ) {
@@ -180,7 +158,6 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
                     $to_combine = array_merge($previously_included[ $combine_name ], $to_combine);
                 }
             }
-
             Requirements::combine_files($combine_name, $to_combine);
         }
 
@@ -200,7 +177,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
         public function getTitleFirstChar()
         {
             // consider only alphanumeric (not '()' etc)
-            $title = preg_replace('/\W|_/iu', '', (string) $this->getOwner()->Title);
+            $title = preg_replace('/\W|_/iu', '', $this->owner->Title);
 
             return strtolower($title[ 0 ]);
         }
@@ -245,9 +222,8 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
             //for first iteration
             $arrayList = ArrayList::create();
             if ( $parentObject === null ) {
-                $parentObject = $this->getOwner();
+                $parentObject = $this->owner;
             }
-
             $children = $parentObject->$childRelation();
 
             if ( $children->count() > 0 ) {
@@ -260,7 +236,6 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
                     }
                 }
             }
-
             return $arrayList;
         }
 

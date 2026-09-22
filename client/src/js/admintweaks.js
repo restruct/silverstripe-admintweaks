@@ -34,6 +34,21 @@
       }
     });
 
+    // Show permission codes as badges in Security admin
+    $('.permissioncheckboxset li label').entwine({
+      onadd: function (e) {
+        // Get the permission code from sibling input's value attribute
+        var input = this.siblings('input[type="checkbox"]');
+        if (input.length && !this.find('.badge').length) {
+          var code = input.attr('value');
+          if (code) {
+            this.append($('<span class="badge badge-pill badge-light font-weight-normal text-black-50"></span>').text(code));
+          }
+        }
+        this._super();
+      }
+    });
+
     // // missing button icons in gridfield... workaround
     // //	$('button.gridfield-button-delete').entwine({
     // //		onadd: function(e){
@@ -62,16 +77,64 @@
         if(this.prop( "checked" )){
           this.siblings('.checkbox_zero_input').remove();
         } else {
+          // NB insertBefore, NOT insertAfter: inserting AFTER the checkbox landed the hidden input BETWEEN
+          // the checkbox and an adjacent widget (e.g. a Switchery span), silently breaking
+          // `input.checkbox + .widget` adjacent-sibling CSS mid-interaction. Submit order stays correct:
+          // when checked the zero-input is removed; when unchecked the checkbox submits nothing anyway.
           $('<input>').attr({
             class: 'checkbox_zero_input',
             type: 'hidden',
             name: this.attr('name')
-          }).insertAfter(this);
+          }).insertBefore(this);
         }
         this._super();
       }
     });
 
+    /**
+     * CopyTextField - copy to clipboard with visual feedback
+     * On click: copies input value, button turns green with checkmark for 2 seconds
+     * Optional alert via data-copy-alert attribute on .copy-text-field container
+     */
+    $('.copy-text-field .copy-text-field__btn').entwine({
+      onclick: function (e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        var btn = this;
+        var container = btn.closest('.copy-text-field');
+        var input = container.find('input');
+        var value = input.val();
+
+        if (!value) return;
+
+        // Copy to clipboard using modern API
+        navigator.clipboard.writeText(value).then(function() {
+          // Show success state - outline green + green icon
+          btn.addClass('btn-outline-success').removeClass('btn-outline-secondary');
+          btn.find('.copy-text-field__icon-copy').hide();
+          btn.find('.copy-text-field__icon-check').show();
+
+          // Revert after 2 seconds
+          setTimeout(function() {
+            btn.removeClass('btn-outline-success').addClass('btn-outline-secondary');
+            btn.find('.copy-text-field__icon-check').hide();
+            btn.find('.copy-text-field__icon-copy').show();
+          }, 2000);
+
+          // Optional alert
+          var alertMsg = container.data('copy-alert');
+          if (alertMsg) {
+            alert(alertMsg);
+          }
+        }).catch(function(err) {
+          console.error('Failed to copy:', err);
+          // Fallback for older browsers
+          input.select();
+          document.execCommand('copy');
+        });
+      }
+    });
 
     // @TODO: fix this based on HLCL publisher update publications action
     // Add optional loading feedback overlay to buttons
@@ -140,35 +203,54 @@
 
   });
 
-  // @TODO: check/fix this based on FUSE/DocSys?
-  // Advanced search toggle for modeladmins
-  $('#Form_SearchForm_q_Advanced').entwine({
+  // Auto-expand the GridField search bar on load (opt-in PER ModelAdmin subclass:
+  // auto_expand_gridfield_search config -> ModelAdminExtension adds the marker class on the
+  // GridField). The magnifier toggle only exists while the search bar is CLOSED (React
+  // unmounts it on open), so onmatch fires exactly once per closed search bar and the click
+  // is inherently idempotent.
+  $('.grid-field.at-auto-expand-search .grid-field__filter-open').entwine({
     onmatch: function () {
       this._super();
-      this.parents('.ModelAdmin').addClass('HasAdvancedSearch');
-      this.checkState();
-      // apply Switchery
-      new Switchery(this[0], {
-        // color: '#3EBAE0',
-        // color: '#55a4d2',
-        color: '#338DC1',
-        secondaryColor: '#D2D5D8',
-        size: 'small'
-      });
-    },
-    onchange: function () {
-      this._super();
-      this.checkState();
-    },
-    checkState: function () {
-      // console.log('called', this.prop('checked'));
-      if (this.prop('checked')) {
-        $('#Form_SearchForm').addClass('show_advanced_searchfields');
-      } else {
-        $('#Form_SearchForm').removeClass('show_advanced_searchfields');
-      }
+      var btn = this[0];
+      // defer so React has finished mounting its click handlers
+      setTimeout(function () { btn.click(); }, 0);
     }
   });
+
+  // @TODO: check/fix this based on FUSE/DocSys?
+  // Advanced search toggle for modeladmins
+  // DISABLED 2026-07-18: SS3-era feature, dead on SS5 — #Form_SearchForm_q_Advanced never exists
+  // (SS5 search forms are named Form_<Model>SearchForm and render in the React 'Search options'
+  // popover; the CourseAdmin::getSearchContext() override that added the q[Advanced] checkbox was
+  // itself dead code and has been removed). Kept as reference with the matching
+  // .HasAdvancedSearch block in _legacy_ss3-tweaks.scss.
+  //$('#Form_SearchForm_q_Advanced').entwine({
+  //  onmatch: function () {
+  //    this._super();
+  //    this.parents('.ModelAdmin').addClass('HasAdvancedSearch');
+  //    this.checkState();
+  //    // apply Switchery
+  //    new Switchery(this[0], {
+  //      // color: '#3EBAE0',
+  //      // color: '#55a4d2',
+  //      color: '#338DC1',
+  //      secondaryColor: '#D2D5D8',
+  //      size: 'small'
+  //    });
+  //  },
+  //  onchange: function () {
+  //    this._super();
+  //    this.checkState();
+  //  },
+  //  checkState: function () {
+  //    // console.log('called', this.prop('checked'));
+  //    if (this.prop('checked')) {
+  //      $('#Form_SearchForm').addClass('show_advanced_searchfields');
+  //    } else {
+  //      $('#Form_SearchForm').removeClass('show_advanced_searchfields');
+  //    }
+  //  }
+  //});
 
 
   /**
@@ -192,4 +274,38 @@
 ////			}
 //		});
 
+})(jQuery);
+
+// ---------------------------------------------------------------------------------------------
+// Entwine comment-node shim (2026-07-19)
+//
+// silverstripe/admin's jquery-entwine MutationObserver bridge (thirdparty/jquery-entwine
+// jquery.entwine.js handleMutation(), still present in admin 2.4.23) filters only '#text'
+// nodes from addedNodes — COMMENT nodes pass through into event.targets. Entwine then runs
+// every registered (compiled Sizzle) selector against them, and any class/attribute matcher
+// calls el.getAttribute -> "Uncaught TypeError: el.getAttribute is not a function", ABORTING
+// the whole EntwineElementsAdded batch — which can randomly kill onadd/onmatch inits for
+// legitimate elements inserted in the same batch (observed: empty HTMLEditorField areas).
+// Triggered on every PJAX EditForm load by admin's OWN template comments
+// (LeftAndMain_EditForm.ss:23 "<!-- <div class=...cms-content-search...  -->" and :42
+// "<div class=\"clear\"><!-- --></div>").
+// The clean upstream fix is `node.nodeType !== 1` (the child-walker right below it already
+// does exactly that); until that lands, sanitize the synthetic event's targets before
+// entwine's document handler sees them.
+(function ($) {
+  var origTriggerHandler = $.fn.triggerHandler;
+  $.fn.triggerHandler = function (event) {
+    if (event && event.targets
+      && (event.type === 'EntwineElementsAdded' || event.type === 'EntwineElementsRemoved')
+    ) {
+      var elementsOnly = Array.prototype.filter.call(event.targets, function (node) {
+        return node && node.nodeType === 1; // ELEMENT_NODE only
+      });
+      if (!elementsOnly.length) {
+        return undefined; // nothing for entwine to do; skip the trigger entirely
+      }
+      event.targets = elementsOnly;
+    }
+    return origTriggerHandler.apply(this, arguments);
+  };
 })(jQuery);

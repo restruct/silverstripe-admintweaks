@@ -26,8 +26,9 @@ mix.sourceMaps(null, 'source-map');
 mix.setPublicPath('client/dist');
 
 // Examples: https://laravel-mix.com/docs/6.0/examples
-//mix.sass('client/src/scss/admintweaks.scss', 'client/dist/css/admintweaks.css');
-mix.sass('client/src/scss/admintweaks.scss', 'css');
+mix.sass('client/src/scss/admintweaks.scss', 'css');      // Main styles (SVG page icons, no font dependency)
+// Bootstrap Icons now loaded directly from CDN via LeftAndMainExtension (include_bootstrap_icons config)
+mix.sass('client/src/scss/multivaluesortfield.scss', 'css');
 
 // mix.scripts = basic concattenation
 // mix.babel = concattenation + babel (ES2015 -> vanilla)

@@ -1,0 +1,31 @@
+// SVG encoding functions for data URIs
+// Based on Bootstrap's approach: https://github.com/twbs/bootstrap/blob/main/scss/_functions.scss
+
+// Replace `$search` with `$replace` in `$string`
+@function str-replace($string, $search, $replace: "") {
+  $index: str-index($string, $search);
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+  @return $string;
+}
+
+// Encode SVG for use in data URI
+// Handles special characters that need escaping in URLs
+@function escape-svg($string) {
+  $escaped: $string;
+  $escaped: str-replace($escaped, "<", "%3C");
+  $escaped: str-replace($escaped, ">", "%3E");
+  $escaped: str-replace($escaped, "#", "%23");
+  $escaped: str-replace($escaped, '"', "'");
+  @return $escaped;
+}
+
+// Generate a data URI from SVG content
+// $svg: Raw SVG string
+// $color: Fill color (default: #666 for CMS icons)
+@function svg-uri($svg, $color: "%23666") {
+  // Replace currentColor with the specified color
+  $svg: str-replace($svg, "currentColor", $color);
+  @return url("data:image/svg+xml,#{escape-svg($svg)}");
+}

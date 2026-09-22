@@ -5,11 +5,15 @@ namespace Restruct\Silverstripe\AdminTweaks\Helpers;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\TransferStats;
 use SilverStripe\AssetAdmin\Controller\AssetAdmin;
 use SilverStripe\Assets\File;
+use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\Storage\AssetStore;
 use SilverStripe\Core\Environment;
+use SilverStripe\Dev\Deprecation;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Tab;
 
 class GeneralHelpers
@@ -25,7 +29,7 @@ class GeneralHelpers
      */
     public static function add_tab_if_not_exists($fields, $tabName, $tabTitle=null, $insertAfter=null)
     {
-        $tabPath = str_starts_with((string) $tabName, 'Root.') ? $tabName : 'Root.' . $tabName;
+        $tabPath = strpos($tabName, 'Root.')===0 ? $tabName : "Root.{$tabName}";
         if($fields->findTab($tabPath)) {
             return;
         }
@@ -52,7 +56,7 @@ class GeneralHelpers
     {
         $translations = array_combine($options, $options);
         foreach ($options as $option){
-            $translations[$option] = _t($prefix . $option, $option);
+            $translations[$option] = _t("{$prefix}{$option}", $option);
         }
 
         return $translations;
@@ -65,7 +69,6 @@ class GeneralHelpers
         if ( is_string($prop_arr) ) {
             $prop_arr = explode('->', $prop_arr);
         }
-
         // get property to test for
         $prop = array_shift($prop_arr);
         // return null if not property exists
@@ -81,51 +84,65 @@ class GeneralHelpers
         return self::safelyGetProperty($object->{$prop}, $prop_arr);
     }
 
-    // Get file assets file, also when not published yet
-    public static function getFileAssetsPath($file)
+    /**
+     * Get the absolute local filesystem path for a File asset.
+     *
+     * Delegates to FileLocalPathExtension::getLocalPath() which checks both
+     * public and protected stores with hash-prefixed and natural paths.
+     *
+     * For reading file content only (not passing to external tools), prefer $file->getString().
+     *
+     * @param File|null $file
+     * @return string|null Absolute filesystem path, or null if not found
+     */
+    public static function getFileAssetsPath($file): ?string
     {
-        $meta = $file->getMetaData();
-        if ($meta == null) {
+        if (!$file || !$file->exists()) {
             return null;
         }
-        if (!isset($meta['path'])) {
-            return null;
+
+        if (method_exists($file, 'getLocalPath')) {
+            return $file->getLocalPath();
         }
-        if (!$path = $meta['path']) {
-            return null;
-        }
-        if ($rootpath = Environment::getEnv('SS_PROTECTED_ASSETS_PATH')) {
-            return $rootpath . DIRECTORY_SEPARATOR . $path;
-        }
-        return ASSETS_PATH . '/.protected' . DIRECTORY_SEPARATOR . $path;
+
+        return null;
     }
 
     /**
      * (Down)load a file from path or url and store it as File/Image asset object
      *
      * @param string $filePathOrUrl URL to internet file or path to local file (direct or with 'file:' prefix)
-     * @param string $assetDir folder/directory in which to create asset
-     * @param string|null $fileName name to assign to File asset
+     * @param string|null $assetPath folder/filename path in asset store (e.g. 'Imports/my-file.txt')
+     * @param bool $publish whether to publish the file after import
+     * @param string $conflictResolution AssetStore conflict strategy (default: CONFLICT_OVERWRITE)
      * @return File|Image|null
      * @throws Exception
      */
-    public static function import_file_asset(string $filePathOrUrl, string $assetPath=null, bool $publish=true)
-    {
-        return self::download_and_save_asset($filePathOrUrl, $assetPath, $publish);
+    public static function import_file_asset(
+        string $filePathOrUrl,
+        string $assetPath = null,
+        bool $publish = true,
+        string $conflictResolution = AssetStore::CONFLICT_OVERWRITE
+    ) {
+        return self::download_and_save_asset($filePathOrUrl, $assetPath, $publish, $conflictResolution);
     }
 
     // Download/load a file into assets (set to private and replaced with add_file_to_assets in order to phase out $write argument)
-    private static function download_and_save_asset($filePathOrUrl, $assetPath=null, $publish=true)
-    {
+    private static function download_and_save_asset(
+        $filePathOrUrl,
+        $assetPath = null,
+        $publish = true,
+        $conflictResolution = AssetStore::CONFLICT_OVERWRITE
+    ) {
         // fallback to just filename of original file
-        $fileName = basename((string) $assetPath ?: (string) $filePathOrUrl);
+        $fileName = basename($assetPath ?: $filePathOrUrl);
         $fileExt = File::get_file_extension($fileName);
         $dirPath = ltrim(dirname(trim($assetPath ?? '', '/')), '.'); // copied from Folder::find_or_make
         $assetPath = implode(DIRECTORY_SEPARATOR, array_filter([$dirPath, $fileName]));
 
         // Check if allowed file type
         if(!in_array($fileExt, File::getAllowedExtensions())){
-            throw new Exception(sprintf('FILE EXTENSION NOT ALLOWED IN ASSETS (%s)', $fileExt));
+            throw new Exception("FILE EXTENSION NOT ALLOWED IN ASSETS ({$fileExt})");
         }
 
         $File = File::find($assetPath);
@@ -133,29 +150,53 @@ class GeneralHelpers
             $File = File::get_app_category($fileExt) == 'image' ? Image::create() : File::create();
         }
 
+        # Track whether we created a temp file (for cleanup)
+        $tempFilePath = null;
+
         // Create pointer to (temp) local file
-        if(str_starts_with((string) $filePathOrUrl, 'file:')) {
+        if(strpos($filePathOrUrl, 'file:')===0) {
             $localFilePath = '/' . str_replace(['file:///', 'file://', 'file:/', 'file:'], '', $filePathOrUrl);
         } elseif (is_file($filePathOrUrl)) {
             $localFilePath = $filePathOrUrl;
         } else {
+            # Download URL to temp file — pass path string (not handle) so Guzzle manages open/close
             $client = new Client();
-            $localFilePath = tempnam(sys_get_temp_dir(), 'asset');
-            $client->request('GET', $filePathOrUrl, ['sink' => fopen($localFilePath, 'w')]);
+            $tempFilePath = tempnam(sys_get_temp_dir(), 'asset');
+            $client->request('GET', $filePathOrUrl, ['sink' => $tempFilePath]);
+            $localFilePath = $tempFilePath;
         }
 
-        // Create & save to File https://api.silverstripe.org/4/SilverStripe/Assets/File.html#method_setFromLocalFile
-        // setFromLocalFile(string $path, string $filename = null, string $hash = null, string $variant = null, array $config = []) Assign a local file to the backend.
-        // setFromStream(resource $stream, string $filename, string $hash = null, string $variant = null, array $config = []) Assign a stream to the backend
-        // setFromString(string $data, string $filename, string $hash = null, string $variant = null, array $config = []) Assign a set of data to the backend
-        $File->setFromLocalFile($localFilePath, $assetPath, null, null, [ 'conflict' => AssetStore::CONFLICT_OVERWRITE, ]);
+        if (!is_file($localFilePath) || filesize($localFilePath) === 0) {
+            # Clean up temp file before throwing
+            if ($tempFilePath) {
+                @unlink($tempFilePath);
+            }
+            throw new Exception("Source file is missing or empty: {$filePathOrUrl}");
+        }
 
-        // ->generateThumbnails for asset manager (for some reason only works after first ->write())
-        $File->write();
-        AssetAdmin::singleton()->generateThumbnails($File);
+        try {
+            // setFromLocalFile assigns content to the asset store backend
+            $File->setFromLocalFile($localFilePath, $assetPath, null, null, [
+                'conflict' => $conflictResolution,
+            ]);
 
-        if($publish) {
-            $File->publishRecursive();
+            # Verify content was actually stored (setFromLocalFile can fail silently)
+            if (!$File->getHash()) {
+                throw new Exception("setFromLocalFile() failed to store content for: {$assetPath}");
+            }
+
+            // ->generateThumbnails for asset manager (for some reason only works after first ->write())
+            $File->write();
+            AssetAdmin::singleton()->generateThumbnails($File);
+
+            if($publish) {
+                $File->publishRecursive();
+            }
+        } finally {
+            # Always clean up temp files
+            if ($tempFilePath) {
+                @unlink($tempFilePath);
+            }
         }
 
         return $File;
@@ -166,6 +207,7 @@ class GeneralHelpers
      *
      * @param $reqUrl
      * @param string $reqMethod
+     * @param array $options
      * @return array [ 'body'=>..., 'statuscode'=>..., 'requesturl'=>... 'effectiveurl'=>..., ]
      * @throws Exception
      */
@@ -183,8 +225,8 @@ class GeneralHelpers
 //            };
             $response = $client->request($reqMethod, $reqUrl, $options);
 
-        } catch ( GuzzleException $guzzleException ) {
-            throw new Exception(sprintf('GUZZLE EXCEPTION [%d]: %s', $guzzleException->getCode(), $guzzleException->getMessage()), $guzzleException->getCode(), $guzzleException);
+        } catch ( GuzzleException $exception ) {
+            throw new Exception("GUZZLE EXCEPTION [{$exception->getCode()}]: {$exception->getMessage()}");
         }
 
         return [

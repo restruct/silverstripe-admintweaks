@@ -2,17 +2,19 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
-use SilverStripe\Core\Extension;
-use SilverStripe\Core\Validation\ValidationResult;
 use SilverStripe\Core\Convert;
+use SilverStripe\Dev\Debug;
+use SilverStripe\Forms\Form;
+use SilverStripe\Forms\FormField;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
+use SilverStripe\ORM\ValidationResult;
 
-class FormFieldTweaksExtension extends Extension
+class FormFieldTweaksExtension extends \SilverStripe\Core\Extension
 {
     public function onBeforeRender()
     {
-        if ($this->getOwner()->getMessage()) {
-            $this->getOwner()->addExtraClass($this->getOwner()->getMessageType()==ValidationResult::TYPE_GOOD ? 'is-valid' : 'is-invalid');
+        if ($this->owner->getMessage()) {
+            $this->owner->addExtraClass($this->owner->getMessageType()==ValidationResult::TYPE_GOOD ? 'is-valid' : 'is-invalid');
         }
     }
 
@@ -26,13 +28,13 @@ class FormFieldTweaksExtension extends Extension
      */
     public function setHolderAttribute($name, $value)
     {
-        if(!$this->getOwner()->holder_attributes){
-            $this->getOwner()->holder_attributes = [];
+        if(!$this->owner->holder_attributes){
+            $this->owner->holder_attributes = [];
         }
 
-        $this->getOwner()->holder_attributes[$name] = $value;
+        $this->owner->holder_attributes[$name] = $value;
 
-        return $this->getOwner();
+        return $this->owner;
     }
 
     /**
@@ -47,7 +49,11 @@ class FormFieldTweaksExtension extends Extension
     {
         $attributes = $this->getHolderAttributes();
 
-        return $attributes[$name] ?? null;
+        if (isset($attributes[$name])) {
+            return $attributes[$name];
+        }
+
+        return null;
     }
 
     /**
@@ -59,9 +65,9 @@ class FormFieldTweaksExtension extends Extension
      */
     public function getHolderAttributes()
     {
-        $attributes = $this->getOwner()->holder_attributes;
+        $attributes = $this->owner->holder_attributes;
 
-        $this->getOwner()->extend('updateHolderAttributes', $attributes);
+        $this->owner->extend('updateHolderAttributes', $attributes);
 
         return $attributes;
     }
@@ -76,18 +82,15 @@ class FormFieldTweaksExtension extends Extension
         // Create markup
         $parts = [];
 
-        if ($attr = $this->getHolderAttributes()) {
-            foreach ($attr as $name => $value) {
-                if ($value === true) {
-                    $value = $name;
-                } elseif (is_scalar($value)) {
-                    $value = (string) $value;
-                } else {
-                    $value = json_encode($value);
-                }
-
-                $parts[] = sprintf('%s="%s"', Convert::raw2att($name), Convert::raw2att($value));
+        if($attr = $this->getHolderAttributes()) foreach ($attr as $name => $value) {
+            if ($value === true) {
+                $value = $name;
+            } else if (is_scalar($value)) {
+                $value = (string) $value;
+            } else {
+                $value = json_encode($value);
             }
+            $parts[] = sprintf('%s="%s"', Convert::raw2att($name), Convert::raw2att($value));
         }
 
         return DBHTMLVarchar::create()->setValue( implode(' ', $parts) );

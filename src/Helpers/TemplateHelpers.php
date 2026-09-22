@@ -1,20 +1,24 @@
 <?php
 
-use SilverStripe\Model\ModelData;
+namespace Restruct\Silverstripe\AdminTweaks\Helpers;
+
 use SilverStripe\Core\Convert;
 use SilverStripe\Core\Manifest\ModuleResourceLoader;
+use SilverStripe\i18n\i18n;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
 use SilverStripe\View\TemplateGlobalProvider;
 use SilverStripe\View\ThemeResourceLoader;
+use SilverStripe\View\ViewableData;
 
-class TemplateHelpers implements TemplateGlobalProvider
+class TemplateHelpers
+    implements TemplateGlobalProvider
 {
     public static function get_template_global_variables()
     {
         return [
             'themeDirResourceURL',
             'ImagePlaceholder',
-            'i18nLocale',
+            'CurrentLocale',
         ];
     }
 
@@ -40,7 +44,7 @@ class TemplateHelpers implements TemplateGlobalProvider
 
     public static function ImagePlaceholder($W, $H, $Label='', $AddClass='', $DataUriBase64=false)
     {
-        $svgStr = ModelData::create()
+        $svgStr = ViewableData::create()
             ->customise([
                 'W' => (int) $W,
                 'H' => (int) $H,
@@ -57,15 +61,15 @@ class TemplateHelpers implements TemplateGlobalProvider
     }
 
     /**
-     * Locale fallback for projects sans CMS (SilverStripe\CMS\Controllers\ContentController::ContentLocale()).
      * Returns an RFC1766 compliant locale string, e.g. 'fr-CA'.
+     * Locale fallback for projects sans CMS (SilverStripe\CMS\Controllers\ContentController::ContentLocale()).
      *
      * Suitable for insertion into lang= and xml:lang=
      * attributes in HTML or XHTML output.
      *
      * @return string
      */
-    public function i18nLocale()
+    public static function CurrentLocale()
     {
         $locale = i18n::get_locale();
         return i18n::convert_rfc1766($locale);

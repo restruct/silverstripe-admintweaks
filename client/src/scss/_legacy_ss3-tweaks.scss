@@ -1,44 +1,8 @@
 @charset "UTF-8";
 
-// Checkboxes
-input.checkbox.styled-checkbox {
-  &.styled-checkbox-hide {
-    display: none;
-  }
-  + label:before {
-    content: '';
-    box-sizing: border-box;
-    display: block;
-    width: 20px;
-    height: 20px;
-    background-color: white;
-    outline: 1px solid rgb(210, 213, 216);
-    text-align: center;
-  }
-  &:checked +label:before {
-    //content: '🔗\uFE0E'; // 𐄂
-    color: white;
-    //font-size: 24px;
-    line-height: 10px;
-    background-color: rgb(51, 141, 193);
-    //border-color: rgb(51, 141, 193);
-    border: 2px solid white;
-    //outline: 1px solid ;
-  }
-}
-
-
-.optionset {
-  ul {
-    column-count: 4;
-  }
-  li {
-    float: none;
-    width: auto;
-  }
-}
-
-//
+// NB: this file is deliberately NOT compiled/imported — it is the SS3-era reference sheet.
+// Port rules into admintweaks.scss (compiled) as they become needed, then REMOVE them here.
+// Ported so far: styled-checkbox block (2026-07), //
 ///** -------------------------------------------- Page icons -------------------------------------------- */
 //.page-icon, a .jstree-pageicon {
 //  background-image: url(../icons/page-icons.png);
@@ -706,36 +670,39 @@ div.displaylogicwrapper:last-child > .field {
 
 
 // ModelAdmin advanced_search tweaks
-.ModelAdmin {
-  //&.DocSys_DocAdmin, &.DocSys_DocCollAdmin, &.Notes_Admin, &.CourseAdmin {
-  &.HasAdvancedSearch {
-    #filters-button { display: none; }
-    .cms-content-filters {
-      display: block !important;
-      .field { margin: 0; }
-      h3 { display: none; }
-      #Form_SearchForm_q_Advanced_Holder {
-        margin-top: 16px;
-        margin-bottom: 8px;
-
-        .filtertitle {
-          font-size: 16px;
-          font-weight: bold;
-          float: left;
-          margin-right: 20px;
-        }
-        .switchery {
-          margin-top: -4px;
-        }
-      }
-    }
-    .advanced_search { display: none; }
-    .show_advanced_searchfields .advanced_search { display: inline-block; }
-  }
-
-  //#Form_SearchForm_Advanced{
-  //  width: 100%;
-  //  max-width: none;
-  //}
-
-}
+// DISABLED 2026-07-18: SS3-era advanced-filter toggle, dead on SS5 — the .HasAdvancedSearch class
+// was only ever added by the (also disabled) #Form_SearchForm_q_Advanced entwine in admintweaks.js,
+// which targeted the SS3 search form id. Kept as reference.
+//.ModelAdmin {
+//  //&.DocSys_DocAdmin, &.DocSys_DocCollAdmin, &.Notes_Admin, &.CourseAdmin {
+//  &.HasAdvancedSearch {
+//    #filters-button { display: none; }
+//    .cms-content-filters {
+//      display: block !important;
+//      .field { margin: 0; }
+//      h3 { display: none; }
+//      #Form_SearchForm_q_Advanced_Holder {
+//        margin-top: 16px;
+//        margin-bottom: 8px;
+//
+//        .filtertitle {
+//          font-size: 16px;
+//          font-weight: bold;
+//          float: left;
+//          margin-right: 20px;
+//        }
+//        .switchery {
+//          margin-top: -4px;
+//        }
+//      }
+//    }
+//    .advanced_search { display: none; }
+//    .show_advanced_searchfields .advanced_search { display: inline-block; }
+//  }
+//
+//  //#Form_SearchForm_Advanced{
+//  //  width: 100%;
+//  //  max-width: none;
+//  //}
+//
+//}

@@ -15,6 +15,7 @@
     "@babel/core": "^7.0.0-0",
     "@babel/preset-react": "^7.12.5",
     "bootstrap": "^5.2.0",
+    "bootstrap-icons": "^1.13.1",
     "bootstrap-sass": "^3.4.1",
     "css-loader": "^5.0.0",
     "html-webpack-plugin": "^4.5.0",

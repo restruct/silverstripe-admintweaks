@@ -25,14 +25,3 @@ SilverStripe\Core\Injector\Injector:
       namespace: "adminCache"
       defaultLifetime: 3600
 
-
-## Legacy: DynamicCache helper (cachebuster)
-#---
-#name: dyncasheext
-#Only:
-#  classexists: DynamicCache
-#---
-#DynamicCache:
-#  extensions:
-#    - BetterNavDynCacheExtension
-

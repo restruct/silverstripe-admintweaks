@@ -11,17 +11,17 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions\Image {
     {
         public function PaddedImage($width, $height)
         {
-            return $this->getOwner()->Pad($width, $height);
+            return $this->owner->Pad($width, $height);
         }
 
         public function SetWidth($width)
         {
-            return $this->getOwner()->ScaleWidth($width);
+            return $this->owner->ScaleWidth($width);
         }
 
         public function SetHeight($height)
         {
-            return $this->getOwner()->ScaleHeight($height);
+            return $this->owner->ScaleHeight($height);
         }
     }
 }
