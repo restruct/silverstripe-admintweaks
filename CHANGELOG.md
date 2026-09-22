@@ -1,5 +1,84 @@
 # Changelog
 
+## 4.0.0
+
+**First release of the Silverstripe 6 line.** Silverstripe 4 and 5 continue on the 3.x line
+(branch `v3`) until Silverstripe 5 reaches end of life in April 2027. Nothing here is backported;
+3.x cannot be installed on Silverstripe 6. Upgrade guide: [UPGRADING.md](UPGRADING.md).
+
+Requires PHP `^8.3` and `silverstripe/framework ^6`.
+
+### Changed
+
+- **Hiding the Reports and Campaigns CMS sections is now OPT-IN** (admintweaks#54). Up to 3.x the
+  module shipped `ignore_menuitem: true` for both controllers. Two problems, both silent: a QoL
+  module removing whole core CMS sections is surprising (the section still answers at its URL, so
+  a project adding its own `Report` subclass reads it as "the report did not register"); and the
+  documented override did not work as documented, because same-key scalar config is decided by
+  config *fragment order*, not project-beats-vendor, so `ignore_menuitem: false` silently lost
+  unless the project fragment also carried `After: '#admintweaks-leftandmain'`.
+
+  Set it once, no `After:` needed:
+
+  ```yaml
+  SilverStripe\Admin\LeftAndMain:
+    hide_rarely_used_menu_sections: true
+  ```
+
+  The setting is deliberately nullable. `null` (not decided) shows the sections and logs a one-off
+  **dev-only** notice, since that is exactly the population that may have relied on the 3.x
+  default; setting it to either `true` or `false` acknowledges the change and silences it.
+  Applied at runtime, so a project setting `ignore_menuitem` itself always wins.
+
+- **Tasks are `symfony/console` commands.** Silverstripe 6 rebuilt `BuildTask` on `PolyCommand`,
+  so all six tasks take declared options rather than request variables: `--apply` instead of
+  `apply=1`, `--filter='Field:Op=Value'` instead of `filter[Field:Op]=Value`, `--group-by`
+  instead of `groupBy`. `FocusPointInvertYaxisTask` is reachable as `tasks:focuspoint-invert-yaxis`
+  rather than by class name. Full table in UPGRADING.md - **check your crons**.
+
+- Password policy config follows the framework into `SilverStripe\Security\Validation`. The
+  service is pointed at `RulesPasswordValidator`, because Silverstripe 6 defaults to
+  `EntropyPasswordValidator`, which has no `MinLength`/`HistoricCount`/`MinTestScore` - leaving
+  the old key in place would have dropped this module's password policy with no error.
+
+### Fixed
+
+- **`FocusPointInvertYaxisTask` zeroed every focus point instead of inverting it.** The update ran
+  `assignSQL('FocusPointY', "'FocusPointY' * -1")`. The framework connects with `sql_mode=ANSI`
+  (`MySQLDatabase::$sql_mode`), under which `"FocusPointY"` is an identifier - but `'FocusPointY'`
+  is a string literal in *every* MySQL mode, and `'FocusPointY' * -1` evaluates to `0`. Verified
+  directly against MySQL with a control. Now double-quoted.
+- **`FocusPointInvertYaxisTask` died with a `DatabaseException` when FocusPoint was not installed**,
+  instead of its intended no-op: it called `DB::field_list()` on the `Image` table without checking
+  the table exists. `Image` carries no fields of its own, so there is no such table unless
+  something (normally FocusPoint itself) added one.
+- **Two classes extending optional dependencies could fatal the entire application.**
+  `MultivalueSortField` (`symbiote/silverstripe-multivaluefield`) and
+  `GridFieldConfig_VersionedOrderable` (`symbiote/silverstripe-gridfieldextensions`) now guard on
+  the parent existing, as `SelectiveLumberjack` and `GridFieldSiteTreeAddNewButton` already did.
+  This was not dormant: `silverstripe/config`'s `PrivateStaticTransformer` calls `class_exists()`
+  on every manifest class during bootstrap, which autoloads the file and fatals CMS, front end and
+  CLI alike on any install without those optional modules. **Affects the 3.x line identically.**
+
+### Removed
+
+- `Email\CliSafeMailerSubscriber` and `_config/mailer.yml`. They backported the Silverstripe 6 fix
+  for emails fataling with no current controller (3.20.6, below). The `$CurrentPageURL` rewrite
+  that caused it does not exist anywhere in Silverstripe 6 (0 occurrences, against 1 for
+  `urlRewriter` and 3 for `absoluteURLs` as controls), so there is nothing left to patch.
+- The SwiftMailer SMTP config fragment. It could not activate from Silverstripe 5 onwards; use
+  `MAILER_DSN`.
+
+### Added
+
+- **Continuous integration** (`.github/workflows/ci.yml`): the suite on Silverstripe 6 against PHP
+  8.3 and 8.4 with MariaDB, plus a real `db:build` and `sake config:audit` on a booted host app -
+  the previous Silverstripe 6 attempt failed on a bootstrap fatal, which no unit test catches.
+- Tests for the opt-in menu behaviour, including an end-to-end check that drives the real CMS
+  controller and reads the rendered menu (51 tests total, up from 46).
+- Rendering tests for `CopyTextField`. The suite asserted `getTemplates()` contained the template
+  path but never rendered it, so a removed template accessor would have passed unnoticed.
+
 ## 3.20.6
 
 ### Fixed

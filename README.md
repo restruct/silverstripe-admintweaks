@@ -1,15 +1,23 @@
 # Restruct SilverStripe Admin Tweaks
 
-A portable toolkit of admin UI enhancements, form field utilities, template helpers, and development conveniences for SilverStripe 4/5 projects.
+A portable toolkit of admin UI enhancements, form field utilities, template helpers, and development conveniences for SilverStripe projects.
 
 **Namespace:** `Restruct\Silverstripe\AdminTweaks`
-**Compatibility:** SilverStripe 4.13+ and 5.x
+
+| Module line | Silverstripe | PHP | Status |
+|---|---|---|---|
+| `^4` (branch `main`) | 6.x | `^8.3` | active development |
+| `^3` (branch `v3`) | 4.13+, 5.x | `^7.4 \| ^8` | security and bug fixes until Silverstripe 5 EOL (April 2027) |
 
 ## Installation
 
 ```bash
-composer require restruct/silverstripe-admintweaks
+composer require restruct/silverstripe-admintweaks:^4   # Silverstripe 6
+composer require restruct/silverstripe-admintweaks:^3   # Silverstripe 4 / 5
 ```
+
+Upgrading from 3.x? See [UPGRADING.md](UPGRADING.md) - the CMS menu behaviour and the task
+invocations both changed.
 
 ## Quick Start
 
@@ -142,7 +150,7 @@ ScheduledMethodCall::schedule(
 Quickly delete all broken queued jobs:
 
 ```bash
-vendor/bin/sake dev/tasks/cleanup-broken-jobs
+vendor/bin/sake tasks:cleanup-broken-jobs
 ```
 
 ## Configuration
@@ -221,18 +229,27 @@ These are applied automatically:
 - UserDefinedForm submissions disabled by default (GDPR)
 - Higher image quality (90% JPEG, 8 PNG compression)
 - URL segment character replacements (umlauts, special chars)
-- Hides CampaignAdmin and ReportAdmin from navigation
+
+Hiding the Reports and Campaigns CMS sections is **opt-in** since 4.0 ([#54]), and applied at
+runtime so no `After:` ordering is needed to override it:
+
+```yaml
+SilverStripe\Admin\LeftAndMain:
+  hide_rarely_used_menu_sections: true
+```
+
+[#54]: https://github.com/restruct/silverstripe-admintweaks/issues/54
 
 ## SS3/SS4 → SS5 migration repair tasks
 
 Three `BuildTask`s that fix asset artifacts left behind by a migration to SS5. All are **dry-run by
-default** — pass `apply=1` to write. Run them in this order:
+default** — pass `--apply` to write. Run them in this order:
 
 | # | Task | Fixes |
 |---|------|-------|
-| 1 | `dev/tasks/fix-folder-filefilename` | `/admin/assets` dies with **`HashFileIDHelper::buildFileID requires an $hash value`**. Folder rows must have an EMPTY `FileFilename` (a folder derives its path from the parent chain); a populated value makes the folder's `visibility` lookup build a file ID with no hash. Also reports empty-`FileHash` File rows, which trip the same exception. |
-| 2 | `dev/tasks/fix-misclassified-images` | Image files carried over with `ClassName = File` instead of `Image`. Blank tiles in the asset-admin grid — but more importantly, a `has_one` **Image** relation pointing at such a record renders **nothing on the front end**, because `Fill()`/`FitMax()`/`ScaleWidth()` don't exist on `File`. Resolves the target class via `File::get_class_for_file_extension()`, so `.svg` correctly becomes your registered SVG image class rather than `Image`. |
-| 3 | `dev/tasks/generate-cms-thumbnails` | Blank tiles in the asset-admin file grid. The grid is served by GraphQL and asset-admin deliberately injects a **non-generating** thumbnail generator (`ThumbnailGenerator.graphql` → `Generates: false`), so it emits the `__FitMax[...]` URL but never creates the variant. Normal uploads generate variants on save; migrated files never went through SS5, so their variants don't exist and the `<img>` 404s. SS4 ran `ImageThumbnailHelper` inside `MigrateFileTask` — **SS5 removed the task but kept the helper**. This runs it. |
+| 1 | `sake tasks:fix-folder-filefilename` | `/admin/assets` dies with **`HashFileIDHelper::buildFileID requires an $hash value`**. Folder rows must have an EMPTY `FileFilename` (a folder derives its path from the parent chain); a populated value makes the folder's `visibility` lookup build a file ID with no hash. Also reports empty-`FileHash` File rows, which trip the same exception. |
+| 2 | `sake tasks:fix-misclassified-images` | Image files carried over with `ClassName = File` instead of `Image`. Blank tiles in the asset-admin grid — but more importantly, a `has_one` **Image** relation pointing at such a record renders **nothing on the front end**, because `Fill()`/`FitMax()`/`ScaleWidth()` don't exist on `File`. Resolves the target class via `File::get_class_for_file_extension()`, so `.svg` correctly becomes your registered SVG image class rather than `Image`. |
+| 3 | `sake tasks:generate-cms-thumbnails` | Blank tiles in the asset-admin file grid. The grid is served by GraphQL and asset-admin deliberately injects a **non-generating** thumbnail generator (`ThumbnailGenerator.graphql` → `Generates: false`), so it emits the `__FitMax[...]` URL but never creates the variant. Normal uploads generate variants on save; migrated files never went through SS5, so their variants don't exist and the `<img>` 404s. SS4 ran `ImageThumbnailHelper` inside `MigrateFileTask` — **SS5 removed the task but kept the helper**. This runs it. |
 
 Order matters: (2) before (3), because the thumbnail helper skips anything whose `getIsImage()` is
 false — a file still stuck on `ClassName = File` would be passed over.
