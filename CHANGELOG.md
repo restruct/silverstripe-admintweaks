@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.20.7
+
+### Fixed
+
+- **Two classes extending optional dependencies could fatal the entire application.**
+  `MultivalueSortField` (`symbiote/silverstripe-multivaluefield`) and
+  `GridFieldConfig_VersionedOrderable` (`symbiote/silverstripe-gridfieldextensions`) now guard on
+  their parent class existing, as `SelectiveLumberjack` and `GridFieldSiteTreeAddNewButton`
+  already did.
+
+  This was not a dormant error. `silverstripe/config`'s `PrivateStaticTransformer` calls
+  `class_exists()` on every class in the manifest during bootstrap
+  (`PrivateStaticTransformer.php:43`) to read its config statics, and `class_exists()` autoloads -
+  so merely having the file on disk was enough. On any install without those optional modules the
+  result was a bootstrap fatal taking down CMS, front end and CLI alike, reported as
+  `Class "Symbiote\...\X" not found` from a file nothing had knowingly used.
+
+  Backported from the 4.x line, where it was found while porting to Silverstripe 6.
+
 ## 3.20.6
 
 ### Fixed
