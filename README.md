@@ -6,13 +6,13 @@ A portable toolkit of admin UI enhancements, form field utilities, template help
 
 | Module line | Silverstripe | PHP | Status |
 |---|---|---|---|
-| `^4` (branch `main`) | 6.x | `^8.3` | active development |
+| `^5` (branch `main`) | 6.x | `^8.3` | active development |
 | `^3` (branch `3.x`) | 4.13+, 5.x | `^7.4 \| ^8` | security and bug fixes until Silverstripe 5 EOL (April 2027) |
 
 ## Installation
 
 ```bash
-composer require restruct/silverstripe-admintweaks:^4   # Silverstripe 6
+composer require restruct/silverstripe-admintweaks:^5   # Silverstripe 6
 composer require restruct/silverstripe-admintweaks:^3   # Silverstripe 4 / 5
 ```
 
@@ -230,7 +230,7 @@ These are applied automatically:
 - Higher image quality (90% JPEG, 8 PNG compression)
 - URL segment character replacements (umlauts, special chars)
 
-Hiding the Reports and Campaigns CMS sections is **opt-in** since 4.0 ([#54]), and applied at
+Hiding the Reports and Campaigns CMS sections is **opt-in** since 5.0 ([#54]), and applied at
 runtime so no `After:` ordering is needed to override it:
 
 ```yaml

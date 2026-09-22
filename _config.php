@@ -40,7 +40,7 @@ if ($qjobs_email_to && $qjobs_email_unset) {
 }
 
 //
-// Hide the rarely-used CMS sections (Reports, Campaigns) - OPT-IN since 4.0, admintweaks#54.
+// Hide the rarely-used CMS sections (Reports, Campaigns) - OPT-IN since 5.0, admintweaks#54.
 // The logic lives on the extension so it can be tested; see applyMenuVisibilityConfig().
 //
 LeftAndMainExtension::applyMenuVisibilityConfig();
