@@ -208,7 +208,11 @@
   // GridField). The magnifier toggle only exists while the search bar is CLOSED (React
   // unmounts it on open), so onmatch fires exactly once per closed search bar and the click
   // is inherently idempotent.
-  $('.grid-field.at-auto-expand-search .grid-field__filter-open').entwine({
+  // Two selectors because the toggle markup differs per framework major: SS5 renders it with the
+  // grid-field__filter-open class, framework 6 (SearchContextForm_Button.ss) as a plain
+  // <button name="showFilter"> without that class, so the first selector alone never matched on
+  // SS6 (admintweaks#65). Both are scoped to the opted-in grid via the marker class.
+  $('.grid-field.at-auto-expand-search .grid-field__filter-open, .grid-field.at-auto-expand-search button[name=showFilter]').entwine({
     onmatch: function () {
       this._super();
       var btn = this[0];

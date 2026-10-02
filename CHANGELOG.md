@@ -1,5 +1,16 @@
 # Changelog
 
+## 4.1.1 - 2026-10-02
+
+### Fixed
+
+- **`auto_expand_gridfield_search` did nothing on Silverstripe 6** (admintweaks#65). The GridField
+  got its `at-auto-expand-search` marker class, but the search bar stayed closed: the script waited
+  for the `grid-field__filter-open` toggle, and framework 6 renders that toggle as a plain
+  `button[name=showFilter]` without the class. The script now matches both markups. The browser
+  spec for this opt-in, previously marked fixme on SS6, now runs and passes there. The 3.x line
+  (Silverstripe 5) was not affected.
+
 ## 4.1.0
 
 **The Silverstripe 6 line, rebuilt.** Silverstripe 4 and 5 continue on the 3.x line (branch `v3`)

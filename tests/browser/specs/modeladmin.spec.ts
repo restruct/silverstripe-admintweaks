@@ -1,4 +1,4 @@
-import { test, expect, majorOf, openAdmin, searchBox } from './support';
+import { test, expect, openAdmin, searchBox } from './support';
 
 // ModelAdminExtension's two opt-ins, each against the control admin with the defaults, plus
 // GridFieldConfigExtension, which drops the duplicate "View x-y of z" count from the header.
@@ -22,14 +22,10 @@ test.describe('hide_scaffolded_csv_buttons', () => {
 });
 
 test.describe('auto_expand_gridfield_search', () => {
-    test('the search bar opens on load when it is on', async ({ page }, testInfo) => {
-        // On SS6 the opt-in is dead: framework 6 renders the "Open search and filter" toggle
-        // without the grid-field__filter-open class that admintweaks.js waits for, so nothing
-        // clicks it. Marked fixme there until the module is fixed.
-        test.fixme(
-            majorOf(testInfo.project.name) >= 6,
-            'auto_expand_gridfield_search does nothing on SS6: https://github.com/restruct/silverstripe-admintweaks/issues/65',
-        );
+    test('the search bar opens on load when it is on', async ({ page }) => {
+        // Covers both toggle markups: SS5 renders the "Open search and filter" toggle with the
+        // grid-field__filter-open class, framework 6 as a plain button[name=showFilter]
+        // (admintweaks#65, where this test was fixme on SS6 until admintweaks.js matched both).
         const grid = await openAdmin(page, 'tweaked');
         // The marker class ModelAdminExtension adds is what the script keys on.
         await expect(grid).toHaveClass(/(^|\s)at-auto-expand-search(\s|$)/);
