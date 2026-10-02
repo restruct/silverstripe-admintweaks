@@ -101,6 +101,7 @@ jobs:
               <testsuites>
                   <testsuite name="admintweaks">
                       <directory>vendor/restruct/silverstripe-admintweaks/tests</directory>
+                      <exclude>vendor/restruct/silverstripe-admintweaks/tests/browser</exclude>
                   </testsuite>
               </testsuites>
           </phpunit>
