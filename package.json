@@ -27,7 +27,8 @@
     "webpack": "~5.104.1"
   },
   "resolutions": {
-    "webpack": "~5.104.1"
+    "webpack": "~5.104.1",
+    "webpack-dev-middleware": "^7.4.6"
   },
   "version": "1.0.0",
   "main": "webpack.mix.js",
