@@ -2,6 +2,7 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
+use SilverStripe\CMS\Controllers\CMSMain;
 use SilverStripe\CMS\Controllers\CMSPagesController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
@@ -32,7 +33,14 @@ class SelectiveLumberjack extends Lumberjack
     {
         $controller = Controller::curr();
 
-        return get_class($controller) === CMSPagesController::class
+        # The controller serving admin/pages: CMSPagesController up to Silverstripe 5, CMSMain itself
+        # on Silverstripe 6, which removed CMSPagesController (admintweaks#62). Without this the
+        # comparison was always false on SS6 and nothing was ever filtered. An exact class match, as
+        # before, so the page edit controller (a CMSMain subclass) stays unfiltered on every major.
+        $pagesControllerClass = class_exists(CMSPagesController::class) ? CMSPagesController::class : CMSMain::class;
+
+//        return get_class($controller) === CMSPagesController::class
+        return get_class($controller) === $pagesControllerClass
             // DON'T filter listview, after all, that's what its for (to show large sets of pages)
             // Original list: 'index', 'show', 'treeview', 'listview', 'getsubtree'
             && in_array($controller->getAction(), [ "treeview", "getsubtree" ]);
