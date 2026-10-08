@@ -7,20 +7,24 @@
 - **`GridFieldSiteTreeAddNewButton` fatalled on Silverstripe 6** (admintweaks#61). It called
   `SiteTree::page_type_classes()`, which cms 6 removed, so any Lumberjack GridField using the button
   (including the one `SelectiveLumberjack` builds) errored as soon as a parent could add children.
-  It now uses `ClassInfo::getValidSubClasses()` plus `SiteTree::updateAllowedSubClasses()`, the same
-  replacement Lumberjack's own button uses, so `hide_pagetypes` still applies. A parent without
+  It now uses `ClassInfo::getValidSubClasses()` plus the `updateAllowedSubClasses()` hook, invoked
+  with extensions as `CMSMain` does, so `hide_pagetypes` and project extensions that drop page types
+  both apply. A parent without
   `hide_from_cms_tree` no longer raises a `foreach()` warning, and the method signature now declares
   `?SiteTree` explicitly (PHP 8.4 deprecation).
 - **`SelectiveLumberjack` never filtered the site tree on Silverstripe 6** (admintweaks#62). It only
   filtered on `CMSPagesController`, which cms 6 removed; `CMSMain` serves `admin/pages` there. The
   filter now matches whichever of the two serves the Pages section, still for `treeview` and
-  `getsubtree` only. **Visible on upgrade:** Lumberjack children hidden from the tree on 3.x are now
-  hidden on 4.x too.
+  `getsubtree` only. **Visible on upgrade:** Lumberjack children hidden from the Pages section's
+  tree on 3.x are now hidden there on 4.x too. The tree beside a page being edited
+  (`admin/pages/edit`, `CMSPageEditController`) stays unfiltered, as it was on 3.x.
 
 ### Tests
 
 - Regression test pinning the queued-job report recipient to `APP_LOG_MAIL_RECIPIENT`
   (admintweaks#57; the fix itself shipped in 3.20.4 and has been on this line since 4.1.0).
+- `GridFieldSiteTreeAddNewButton` tests cover the `canCreate()` guard and extension-dropped page
+  types, through a test-only SiteTree extension (no test DataObjects).
 - The Lumberjack tests skip when `silverstripe/lumberjack` is not installed.
 
 ## 4.1.1 - 2026-10-02
