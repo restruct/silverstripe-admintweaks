@@ -3,6 +3,7 @@
 namespace Restruct\Silverstripe\AdminTweaks\Tests\Forms;
 
 use Restruct\Silverstripe\AdminTweaks\Forms\GridFieldSiteTreeAddNewButton;
+use Restruct\Silverstripe\AdminTweaks\Tests\Stub\PageTypeRulesExtension;
 use SilverStripe\CMS\Model\RedirectorPage;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\CMS\Model\VirtualPage;
@@ -24,6 +25,11 @@ class GridFieldSiteTreeAddNewButtonTest extends SapphireTest
 {
     # A Member is written by logInWithPermission(), and canAddChildren() needs one.
     protected $usesDatabase = true;
+
+    # Inert unless a test configures it: stands in for a project's own page-type rules.
+    protected static $required_extensions = [
+        SiteTree::class => [PageTypeRulesExtension::class],
+    ];
 
     protected function setUp(): void
     {
@@ -58,6 +64,32 @@ class GridFieldSiteTreeAddNewButtonTest extends SapphireTest
         $children = (new GridFieldSiteTreeAddNewButton())->getAllowedChildren($parent);
 
         $this->assertArrayNotHasKey(RedirectorPage::class, $children);
+    }
+
+    public function testPageTypeDroppedByAnExtensionIsNotOffered()
+    {
+        # Project extensions hooking updateAllowedSubClasses() must apply here as they do in
+        # CMSMain::getAllowedSubClasses(), so the button never offers a type the CMS refuses.
+        Config::modify()->set(SiteTree::class, 'hide_from_cms_tree', [RedirectorPage::class, VirtualPage::class]);
+        Config::modify()->set(PageTypeRulesExtension::class, 'dropped_classes', [RedirectorPage::class]);
+        $parent = SiteTree::create();
+
+        $children = (new GridFieldSiteTreeAddNewButton())->getAllowedChildren($parent);
+
+        $this->assertArrayNotHasKey(RedirectorPage::class, $children);
+        $this->assertArrayHasKey(VirtualPage::class, $children, 'Control: an undropped hidden class is still offered');
+    }
+
+    public function testPageTypeTheMemberCannotCreateIsNotOffered()
+    {
+        Config::modify()->set(SiteTree::class, 'hide_from_cms_tree', [RedirectorPage::class, VirtualPage::class]);
+        Config::modify()->set(PageTypeRulesExtension::class, 'denied_create', [RedirectorPage::class]);
+        $parent = SiteTree::create();
+
+        $children = (new GridFieldSiteTreeAddNewButton())->getAllowedChildren($parent);
+
+        $this->assertArrayNotHasKey(RedirectorPage::class, $children);
+        $this->assertArrayHasKey(VirtualPage::class, $children, 'Control: a creatable hidden class is still offered');
     }
 
     public function testParentWithoutHiddenClassesReturnsLumberjackDefault()

@@ -29,10 +29,12 @@ class GridFieldSiteTreeAddNewButton
 
 //        $nonHiddenPageTypes = SiteTree::page_type_classes();
         # SiteTree::page_type_classes() was removed in Silverstripe 6 (admintweaks#61). Its documented
-        # replacement, used the same way by Lumberjack's own button and by SiteTree::getClassDropdown():
-        # all SiteTree subclasses, minus the base class and anything in SiteTree.hide_pagetypes.
+        # replacement: all SiteTree subclasses, minus the base class and anything in
+        # SiteTree.hide_pagetypes. Through invokeWithExtensions(), as CMSMain::getAllowedSubClasses()
+        # does, so project extensions hooking updateAllowedSubClasses() drop their page types here
+        # too (Lumberjack's own button calls the method directly and misses them).
         $nonHiddenPageTypes = ClassInfo::getValidSubClasses(SiteTree::class);
-        SiteTree::singleton()->updateAllowedSubClasses($nonHiddenPageTypes);
+        SiteTree::singleton()->invokeWithExtensions('updateAllowedSubClasses', $nonHiddenPageTypes);
 //        $extraHiddenClasses = Config::inst()->get($parent->className, 'hide_from_cms_tree');
         # `?? []`: a parent without hide_from_cms_tree returns null, and foreach over null warns.
         $extraHiddenClasses = Config::inst()->get($parent->className, 'hide_from_cms_tree') ?? [];
