@@ -250,8 +250,10 @@ Enhanced Lumberjack extension that respects `hide_from_cms_tree` configuration.
 ### Problem Solved
 
 Standard Lumberjack hides all child pages in the tree. SelectiveLumberjack:
-- Respects `hide_from_cms_tree: true` config on page types
+- Also hides the child page types listed in the **holder's** `hide_from_cms_tree` config
 - Does NOT filter the listview (shows all children in grid)
+- Filters the tree of the Pages section only (`treeview`, `getsubtree`); the tree beside a page
+  being edited (`admin/pages/edit`) is not filtered
 - Works with existing Lumberjack configuration
 
 ### Usage
@@ -264,9 +266,11 @@ MyNamespace\Pages\BlogHolder:
 ```
 
 ```php
-// On child pages you want hidden from tree
-class BlogPost extends Page
+// On the HOLDER: the child page types to hide from its tree
+class BlogHolder extends Page
 {
-    private static $hide_from_cms_tree = true;
+    private static $hide_from_cms_tree = [
+        BlogPost::class,
+    ];
 }
 ```
