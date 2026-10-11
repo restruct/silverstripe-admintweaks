@@ -61,6 +61,7 @@ jobs:
         #
         # queuedjobs is installed because QueuedJobContextExtension hooks its descriptor, and
         # reports because the #54 menu tests need a real ReportAdmin to hide.
+        # lumberjack because the SelectiveLumberjack / AddNew tests (#61, #62) skip without it.
         run: |
           mkdir -p app-host
           cd app-host
@@ -71,6 +72,7 @@ jobs:
               "silverstripe/recipe-cms": "${{ matrix.recipe }}",
               "silverstripe/recipe-testing": "${{ matrix.testing }}",
               "symbiote/silverstripe-queuedjobs": "^6",
+              "silverstripe/lumberjack": "^4",
               "restruct/silverstripe-admintweaks": "*"
             },
             "repositories": [
