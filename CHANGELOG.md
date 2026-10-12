@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.1.3 (2026-10-12)
+
+- Added `restruct/silverstripe-favicons` to `suggest`: it generates the favicon, touch icons and web
+  manifest from one PNG and adds the tags to the login pages, the CMS and the site.
+
 ## 4.1.2 (2026-10-08)
 
 ### Fixed
