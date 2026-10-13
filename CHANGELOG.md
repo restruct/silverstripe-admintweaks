@@ -1,5 +1,35 @@
 # Changelog
 
+## 4.2.0 (Unreleased)
+
+### Added
+
+- **CMS system switcher** (admintweaks#71). For organisations running several CMSes side by side:
+  configure `Restruct\Silverstripe\AdminTweaks\SystemSwitcher.systems` (key => `display`, `url`)
+  and `current`, and the admin menu header names the CMS you are in, with an environment suffix
+  (` (TEST)` / ` (DEV)`, configurable, nothing on live), and opens a dropdown with links to the
+  other CMSes. Per-environment URLs go in an `Only: environment:` fragment that overrides only
+  `url`. The same label becomes the admin `<title>` (`Example SITE (TEST) - Pages`). Keyboard
+  accessible, collapsed menu shows initials, configured strings escaped, non-http(s) URLs left
+  out. See the README. Same feature as 3.21.0 on the 3.x line.
+
+  Nothing changes until `systems` is configured: the module now overrides core's
+  `LeftAndMain_MenuLogo.ss` include, but with the switcher off it renders core's own template
+  file, so the header stays exactly what the installed admin ships (covered by a unit test that
+  compares the two, and a browser spec).
+
+  The title: core `LeftAndMain::getApplicationName()` has no extension hook, so
+  `SystemSwitcherExtension::onBeforeInit()` sets `application_name` for the handling
+  controller's class for that request. That reaches the `<title>`, the `X-Title` header the CMS
+  retitles the tab from after pjax navigation, and `$ApplicationName` in the menu, without a
+  LeftAndMain subclass or a copy of `LeftAndMain.ss`. It is computed from the configured name
+  each time, so the suffix is never doubled. `LeftAndMain`'s own config is left alone.
+
+### Changed
+
+- `client/dist` rebuilt with the current lockfile's toolchain: besides the switcher, the minified
+  JS differs only in minifier output (eg method shorthand), no behaviour change.
+
 ## 4.1.3 (2026-10-12)
 
 - Added `restruct/silverstripe-favicons` to `suggest`: it generates the favicon, touch icons and web
