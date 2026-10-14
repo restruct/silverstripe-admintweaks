@@ -201,6 +201,88 @@
 
     });
 
+    /**
+     * CMS system switcher (admintweaks#71) - disclosure button in the menu header that shows the
+     * links to the related CMSes. Markup: templates/Restruct/Silverstripe/AdminTweaks/Includes/
+     * SystemSwitcher.ss (only rendered when SystemSwitcher.systems is configured).
+     * Closes on Escape (focus back on the button), on a click outside, and when focus leaves it.
+     */
+    $('.at-system-switcher').entwine({
+      isSwitcherOpen: function () {
+        return this.find('.at-system-switcher__toggle').attr('aria-expanded') === 'true';
+      },
+
+      openSwitcher: function () {
+        var self = this;
+        var toggle = this.find('.at-system-switcher__toggle');
+        var list = this.find('.at-system-switcher__list');
+        // position:fixed from the button's box: .cms-menu (and .cms-sitename) have overflow:hidden,
+        // which would clip the list, worst in the 60px collapsed menu. A fixed box escapes that.
+        var rect = toggle[0].getBoundingClientRect();
+        list.css({ top: rect.bottom + 'px', left: rect.left + 'px', minWidth: Math.max(rect.width, 192) + 'px' });
+        list.prop('hidden', false);
+        toggle.attr('aria-expanded', 'true');
+        this.addClass('at-system-switcher--open');
+        // Close on a click anywhere outside (namespaced, so closeSwitcher removes only this one)
+        $(document).off('mousedown.atSystemSwitcher').on('mousedown.atSystemSwitcher', function (e) {
+          if (!$.contains(self[0], e.target)) {
+            self.closeSwitcher(false);
+          }
+        });
+        $(window).off('resize.atSystemSwitcher').on('resize.atSystemSwitcher', function () {
+          self.closeSwitcher(false);
+        });
+      },
+
+      closeSwitcher: function (focusToggle) {
+        var toggle = this.find('.at-system-switcher__toggle');
+        this.find('.at-system-switcher__list').prop('hidden', true);
+        toggle.attr('aria-expanded', 'false');
+        this.removeClass('at-system-switcher--open');
+        $(document).off('mousedown.atSystemSwitcher');
+        $(window).off('resize.atSystemSwitcher');
+        if (focusToggle) {
+          toggle.trigger('focus');
+        }
+      },
+
+      onkeydown: function (e) {
+        if (e.key === 'Escape' && this.isSwitcherOpen()) {
+          e.preventDefault();
+          e.stopPropagation();
+          this.closeSwitcher(true);
+          return;
+        }
+        this._super(e);
+      },
+
+      onfocusout: function (e) {
+        // relatedTarget = where focus goes; null (eg clicking a non-focusable area) is left to the
+        // outside-click handler, so a click on the list's own padding does not close it
+        if (this.isSwitcherOpen() && e.relatedTarget && !$.contains(this[0], e.relatedTarget)) {
+          this.closeSwitcher(false);
+        }
+      },
+
+      onremove: function () {
+        $(document).off('mousedown.atSystemSwitcher');
+        $(window).off('resize.atSystemSwitcher');
+        this._super();
+      }
+    });
+
+    $('.at-system-switcher__toggle').entwine({
+      onclick: function (e) {
+        e.preventDefault();
+        var switcher = this.closest('.at-system-switcher');
+        if (switcher.isSwitcherOpen()) {
+          switcher.closeSwitcher(false);
+        } else {
+          switcher.openSwitcher();
+        }
+      }
+    });
+
   });
 
   // Auto-expand the GridField search bar on load (opt-in PER ModelAdmin subclass:
