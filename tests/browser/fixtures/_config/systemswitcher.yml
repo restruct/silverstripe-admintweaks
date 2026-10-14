@@ -1,0 +1,25 @@
+# BROWSER-TEST FIXTURE ONLY - the CMS system switcher (admintweaks#71) switched on for the scratch host,
+# copied to app/_config/browser-fixtures/ by the runner. The host runs in dev mode, so the dev fragment
+# below is the per-environment override the README describes: it changes only docs' url, and the
+# recursive config merge must keep docs' display from the base block.
+# 'tricky' checks escaping, 'bad' checks that a non-http(s) url is left out.
+---
+Name: atb-systemswitcher
+---
+Restruct\Silverstripe\AdminTweaks\SystemSwitcher:
+  current: site
+  systems:
+    site: { display: 'Example SITE', url: 'https://www.example.org/admin' }
+    docs: { display: 'Example DOCS', url: 'https://docs.example.org/admin' }
+    lms: { display: 'Example LMS', url: 'https://learn.example.org/admin' }
+    tricky: { display: '<img src=x onerror=alert(1)> "Tricky" & co', url: 'https://tricky.example.org/admin?a=1&b="2"' }
+    bad: { display: 'Bad link', url: 'javascript:alert(1)' }
+---
+Name: atb-systemswitcher-dev
+After: '#atb-systemswitcher'
+Only:
+  environment: dev
+---
+Restruct\Silverstripe\AdminTweaks\SystemSwitcher:
+  systems:
+    docs: { url: 'https://docs-dev.example.org/admin' }
