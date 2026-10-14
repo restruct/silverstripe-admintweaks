@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Security
+
+- Build toolchain (dev dependencies only, nothing shipped changes): lockfile refreshed to
+  shell-quote 1.12.0, source-map-js 1.2.2 and postcss-selector-parser 7.1.6. The last one has no
+  patched 6.x release, so a `resolutions` entry lifts cssnano's `^6` users to 7.1.6. `client/dist`
+  rebuilt: byte-identical.
+
 ## 4.2.0 (2026-10-14)
 
 ### Added
