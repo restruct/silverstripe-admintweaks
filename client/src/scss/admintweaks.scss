@@ -509,6 +509,35 @@ a.action[class^="bi-"]:before {
     min-width: 0;
     // core gives .cms-sitename__title 1rem margins all round; keep the left, leave room for the caret
     margin: 0 .5rem 0 1rem;
+    // Only the name truncates, never the environment badge after it (admintweaks#79). Up to two lines fit
+    // the 53px header bar, then an ellipsis; a single long word breaks instead of being clipped. Without
+    // line-clamp support core's single-line ellipsis (nowrap) stays.
+    @supports (-webkit-line-clamp: 2) {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.25;
+    }
+  }
+  // Environment badge (" (TEST)" -> TEST, see SystemSwitcher::getEnvironmentBadge()): flex 0 0 auto, so the
+  // name gives way and the badge is always shown whole. max-width only guards an absurdly long suffix.
+  .at-system-switcher__env {
+    flex: 0 0 auto;
+    max-width: 50%;
+    margin-right: .5rem;
+    padding: .2em .45em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: .6875rem;
+    line-height: 1.1;
+    letter-spacing: .03em;
+    color: #fff;
+    background: rgba(255, 255, 255, .18);
+    border: 1px solid rgba(255, 255, 255, .55);
+    border-radius: .25rem;
   }
   .at-system-switcher__caret {
     flex: 0 0 auto;
@@ -564,6 +593,18 @@ a.action[class^="bi-"]:before {
     display: block;
     font-size: 1.1rem;
     letter-spacing: .02em;
+  }
+  // The environment badge stays, smaller, under the initials (admintweaks#79), so a collapsed TEST menu
+  // still tells the environments apart
+  .at-system-switcher__toggle,
+  .at-system-switcher__name {
+    flex-direction: column;
+  }
+  .at-system-switcher__env {
+    max-width: 52px;
+    margin: 2px 0 0;
+    padding: .1em .3em;
+    font-size: .5625rem;
   }
   .at-system-switcher__caret {
     display: none;

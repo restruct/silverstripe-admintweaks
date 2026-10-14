@@ -113,3 +113,92 @@ test('without systems configured, the core header and title are unchanged', asyn
     // No suffix on the tab title: core's application_name
     await expect(page).toHaveTitle('Silverstripe - AdminTweaks no switcher');
 });
+
+// admintweaks#79: the environment suffix was part of the ellipsised header text, so a long name cut off exactly
+// the part that tells environments apart. /admin/atb-longname (AtBLongNameAdmin) has a name too long for the
+// header and the TEST suffix.
+const LONG_NAME = 'Example SITE with a rather long display name that cannot fit the menu header';
+const envBadge = (page: Page) => page.locator('.at-system-switcher__env');
+
+/** Element and header rects plus overflow metrics, measured in the page. */
+async function measure(page: Page, selector: string) {
+    return page.evaluate((sel) => {
+        const el = document.querySelector(sel) as HTMLElement;
+        const box = document.querySelector('.cms-menu__header .cms-sitename') as HTMLElement;
+        const r = el.getBoundingClientRect();
+        const c = box.getBoundingClientRect();
+        return {
+            el: { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: r.width },
+            header: { left: c.left, right: c.right, top: c.top, bottom: c.bottom },
+            scrollWidth: el.scrollWidth,
+            clientWidth: el.clientWidth,
+            scrollHeight: el.scrollHeight,
+            clientHeight: el.clientHeight,
+            lineHeight: parseFloat(getComputedStyle(el).lineHeight),
+        };
+    }, selector);
+}
+
+function expectInsideHeader(m: Awaited<ReturnType<typeof measure>>, what: string) {
+    expect(m.el.width, `${what} has a width`).toBeGreaterThan(0);
+    expect(m.el.left, `${what} left edge inside the header`).toBeGreaterThanOrEqual(m.header.left);
+    expect(m.el.right, `${what} right edge inside the header`).toBeLessThanOrEqual(m.header.right);
+    expect(m.el.top, `${what} top edge inside the header`).toBeGreaterThanOrEqual(m.header.top);
+    expect(m.el.bottom, `${what} bottom edge inside the header`).toBeLessThanOrEqual(m.header.bottom);
+}
+
+test('a long name keeps the environment badge whole, only the name is truncated', async ({ page }, testInfo) => {
+    await page.goto('/admin/atb-longname');
+    await expect(page.locator('#Form_EditForm_longname')).toBeVisible();
+
+    await expect(envBadge(page)).toBeVisible();
+    await expect(envBadge(page)).toHaveText('TEST');
+    await expect(page.locator('.at-system-switcher__label')).toHaveText(LONG_NAME);
+    await page.locator('.cms-menu__header').screenshot({ path: testInfo.outputPath('header-expanded-long-name.png') });
+
+    // The badge: inside the header, nothing of it clipped
+    const env = await measure(page, '.at-system-switcher__env');
+    expectInsideHeader(env, 'the badge');
+    expect(env.scrollWidth, 'the badge text is not truncated').toBeLessThanOrEqual(env.clientWidth);
+
+    // The name: inside the header, left of the badge, wrapped to two lines and truncated after them
+    const label = await measure(page, '.at-system-switcher__label');
+    expectInsideHeader(label, 'the name');
+    expect(label.el.right, 'the name ends before the badge').toBeLessThanOrEqual(env.el.left);
+    expect(Math.round(label.clientHeight / label.lineHeight), 'the name wraps to two lines').toBe(2);
+    expect(label.scrollHeight, 'the name is truncated').toBeGreaterThan(label.clientHeight);
+
+    // The caret still shows, and the full label stays in the accessible name and the tab title
+    expectInsideHeader(await measure(page, '.at-system-switcher__caret'), 'the caret');
+    await expect(toggle(page)).toHaveAccessibleName(`${LONG_NAME} (TEST)`);
+    await expect(toggle(page)).toHaveAttribute('title', `${LONG_NAME} (TEST)`);
+    await expect(page).toHaveTitle(`${LONG_NAME} (TEST) - AdminTweaks long name`);
+});
+
+test('the collapsed menu shows the environment badge under the initials', async ({ page }, testInfo) => {
+    await page.goto('/admin/atb-longname');
+    await expect(page.locator('#Form_EditForm_longname')).toBeVisible();
+    await page.locator('.cms-panel-toggle__button, .cms-panel-toggle a.toggle-collapse').first().click();
+    await expect(page.locator('.cms-menu')).toHaveClass(/(^|\s)collapsed(\s|$)/);
+
+    await expect(page.locator('.at-system-switcher__initials')).toBeVisible();
+    await expect(page.locator('.at-system-switcher__label')).toBeHidden();
+    await expect(envBadge(page)).toBeVisible();
+    await expect(envBadge(page)).toHaveText('TEST');
+    // The collapse animates the menu width: measure once it has settled at the collapsed width
+    await expect
+        .poll(async () => {
+            const { header } = await measure(page, '.at-system-switcher__env');
+            return header.right - header.left;
+        })
+        .toBeLessThanOrEqual(60);
+    await page.locator('.cms-menu__header').screenshot({ path: testInfo.outputPath('header-collapsed-long-name.png') });
+
+    const env = await measure(page, '.at-system-switcher__env');
+    expectInsideHeader(env, 'the badge');
+    expect(env.scrollWidth, 'the badge text is not truncated').toBeLessThanOrEqual(env.clientWidth);
+    const initials = await measure(page, '.at-system-switcher__initials');
+    expectInsideHeader(initials, 'the initials');
+    expect(env.el.top, 'the badge sits under the initials').toBeGreaterThanOrEqual(initials.el.bottom);
+    await expect(toggle(page)).toHaveAccessibleName(`${LONG_NAME} (TEST)`);
+});

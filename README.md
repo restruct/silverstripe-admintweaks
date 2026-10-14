@@ -103,7 +103,11 @@ Restruct\Silverstripe\AdminTweaks\SystemSwitcher:
 - **Header** = the current system's `display` plus an environment suffix: ` (TEST)` on `test`,
   ` (DEV)` on `dev`, nothing on `live`. Without a `display` for `current` (or without `current`)
   the name is `LeftAndMain.application_name`. It replaces `$SiteConfig.Title` in the header, so a
-  public site's name does not show there.
+  public site's name does not show there. The suffix shows as a small badge after the name, without
+  its surrounding spaces and one enclosing pair of brackets (` (TEST)` -> `TEST`, ` [acceptance]` ->
+  `acceptance`); a name too long for the header wraps to two lines and is then cut off with an
+  ellipsis, the badge never is. No suffix (live): no badge. The button's tooltip and accessible name
+  keep the full label (`Example SITE (TEST)`).
 - **Admin title**: while the switcher is on, that same label becomes `LeftAndMain.application_name`
   for the request, so the browser tab reads `Example SITE (TEST) - Pages` (also after pjax
   navigation). The suffix is never doubled, also not when `application_name` already ends with it.
@@ -111,9 +115,11 @@ Restruct\Silverstripe\AdminTweaks\SystemSwitcher:
   CMS; ctrl/cmd-click opens a new tab as usual). Entries without a `display`, or with a `url` that
   is not an absolute `http(s)://` URL, are left out. Keyboard: the header is a button
   (`aria-expanded`), Escape closes. All configured strings are HTML-escaped.
-- **Collapsed menu** shows the initials of the name ("Example SITE" -> `ES`); set `initials` on a
-  system to choose them yourself, eg `site: { display: 'Example SITE', initials: 'SI', url: ... }`.
-- **Suffix strings** are configurable per environment type:
+- **Collapsed menu** shows the initials of the name ("Example SITE" -> `ES`), with the environment
+  badge under them; set `initials` on a system to choose them yourself, eg
+  `site: { display: 'Example SITE', initials: 'SI', url: ... }`.
+- **Suffix strings** are configurable per environment type (the admin title uses them as written,
+  the header badge as described above):
 
 ```yaml
 Restruct\Silverstripe\AdminTweaks\SystemSwitcher:

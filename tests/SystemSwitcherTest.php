@@ -253,6 +253,60 @@ class SystemSwitcherTest extends SapphireTest
         $this->assertStringContainsString('href="https://tricky.example.org/?a=1&amp;b=&quot;2&quot;"', $html);
     }
 
+    public function testEnvironmentBadgeIsTheSuffixWithoutSpacesAndBrackets(): void
+    {
+        # admintweaks#79: the header shows the suffix as a badge after the name
+        $this->assertSame('TEST', $this->switcher()->getEnvironmentBadge());
+        $this->setEnvironment('dev');
+        $this->assertSame('DEV', $this->switcher()->getEnvironmentBadge());
+        $this->setEnvironment('live');
+        $this->assertSame('', $this->switcher()->getEnvironmentBadge());
+
+        $this->setEnvironment('test');
+        Config::modify()->set(SystemSwitcher::class, 'environment_suffixes', ['test' => ' [acceptance]']);
+        $this->assertSame('acceptance', $this->switcher()->getEnvironmentBadge());
+        # Only one enclosing pair is removed; anything else is shown as configured
+        Config::modify()->set(SystemSwitcher::class, 'environment_suffixes', ['test' => ' - staging (B)']);
+        $this->assertSame('- staging (B)', $this->switcher()->getEnvironmentBadge());
+    }
+
+    public function testHeaderShowsTheEnvironmentAsABadgeAfterTheName(): void
+    {
+        # admintweaks#79: the suffix is its own element, so core's ellipsis on the name never cuts it off
+        $this->configure('site');
+        $html = $this->renderMenuLogo(SecurityAdmin::create());
+
+        $this->assertMatchesRegularExpression('#<span class="cms-sitename__title at-system-switcher__label">Example SITE</span>#', $html);
+        $this->assertStringContainsString('<span class="at-system-switcher__env" aria-hidden="true">TEST</span>', $html);
+        # The accessible name and tooltip keep the full label
+        $this->assertStringContainsString('aria-label="Example SITE (TEST)"', $html);
+        $this->assertStringContainsString('title="Example SITE (TEST)"', $html);
+    }
+
+    # One render per test: the switcher is an Injector singleton and ViewableData caches the values a
+    # template read from it, so a second render in the same test would show the first one's badge
+
+    public function testEnvironmentBadgeIsEscaped(): void
+    {
+        $this->configure('site');
+        Config::modify()->set(SystemSwitcher::class, 'environment_suffixes', ['test' => ' (<b>T</b>)']);
+        $html = $this->renderMenuLogo(SecurityAdmin::create());
+
+        $this->assertStringNotContainsString('<b>', $html);
+        $this->assertStringContainsString('>&lt;b&gt;T&lt;/b&gt;</span>', $html);
+    }
+
+    public function testNoBadgeElementWithoutASuffix(): void
+    {
+        # live has no suffix by default
+        $this->setEnvironment('live');
+        $this->configure('site');
+        $html = $this->renderMenuLogo(SecurityAdmin::create());
+
+        $this->assertStringContainsString('at-system-switcher__label', $html);
+        $this->assertStringNotContainsString('at-system-switcher__env', $html);
+    }
+
     public function testExtensionIsApplied(): void
     {
         $this->assertTrue(LeftAndMain::has_extension(SystemSwitcherExtension::class));

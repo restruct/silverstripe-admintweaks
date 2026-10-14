@@ -63,6 +63,7 @@ class SystemSwitcher extends ViewableData
         'CurrentLabel' => 'Text',
         'CurrentInitials' => 'Text',
         'EnvironmentSuffix' => 'Text',
+        'EnvironmentBadge' => 'Text',
     ];
 
     /**
@@ -99,6 +100,23 @@ class SystemSwitcher extends ViewableData
         $suffixes = (array) static::config()->get('environment_suffixes');
         $suffix = $suffixes[Director::get_environment_type()] ?? '';
         return is_string($suffix) ? $suffix : '';
+    }
+
+    /**
+     * The text of the environment badge shown after the name in the menu header (admintweaks#79):
+     * the configured suffix without its surrounding spaces and one enclosing pair of brackets, so
+     * ' (TEST)' shows as "TEST" and ' [acceptance]' as "acceptance". '' (no badge) when the
+     * environment has no suffix. The admin title keeps the suffix as configured (getCurrentLabel()).
+     */
+    public function getEnvironmentBadge(): string
+    {
+        $badge = trim($this->getEnvironmentSuffix());
+        # One enclosing pair only: '(TEST)' -> 'TEST', but 'A (B)' stays as it is
+        if (preg_match('/^(?:\(([^()]*)\)|\[([^\[\]]*)\]|\{([^{}]*)\})$/u', $badge, $m)) {
+            $badge = trim(implode('', array_slice($m, 1)));
+        }
+
+        return $badge;
     }
 
     /**
