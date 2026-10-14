@@ -1,6 +1,15 @@
 # Changelog
 
-## Unreleased
+## 3.21.1 (2026-10-14)
+
+### Fixed
+
+- **System switcher: the environment suffix is no longer cut off** (admintweaks#79). With a long
+  system name, core's single-line ellipsis on the menu header hid exactly the ` (TEST)` part. The
+  suffix is now its own badge after the name (`TEST`: the configured suffix without its spaces and
+  one enclosing pair of brackets), which never shrinks; only the name truncates, after wrapping to
+  two lines. The collapsed menu shows the badge under the initials. No badge on live (no suffix).
+  The admin `<title>`/X-Title, the button's tooltip and its accessible name keep the full label.
 
 ### Security
 
