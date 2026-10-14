@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.21.0 (Unreleased)
+## 3.21.0 (2026-10-14)
 
 ### Added
 
