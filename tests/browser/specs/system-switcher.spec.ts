@@ -12,7 +12,11 @@ const list = (page: Page) => page.locator('.at-system-switcher__list');
 test('the header names the current system with the environment suffix, and so does the tab title', async ({ page }) => {
     await openAdmin(page, 'plain');
     await expect(toggle(page)).toBeVisible();
-    await expect(page.locator('.at-system-switcher__label')).toHaveText('Example SITE (DEV)');
+    // The suffix is its own badge after the name since admintweaks#79 (so the name's ellipsis cannot cut it
+    // off); this assertion pinned the earlier single-string label "Example SITE (DEV)"
+    await expect(page.locator('.at-system-switcher__label')).toHaveText('Example SITE');
+    await expect(page.locator('.at-system-switcher__env')).toHaveText('DEV');
+    await expect(toggle(page)).toHaveAccessibleName('Example SITE (DEV)');
     // The system name, not SiteConfig.Title (a public site's name), which core would show here
     const siteTitle = await page.evaluate(() => document.querySelector('.at-system-switcher__label')?.textContent);
     expect(siteTitle).not.toContain('Your Site Name');
