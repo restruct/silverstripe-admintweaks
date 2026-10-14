@@ -28,7 +28,8 @@
   },
   "resolutions": {
     "webpack": "~5.104.1",
-    "webpack-dev-middleware": "^7.4.6"
+    "webpack-dev-middleware": "^7.4.6",
+    "postcss-selector-parser": "^7.1.6"
   },
   "version": "1.0.0",
   "main": "webpack.mix.js",
