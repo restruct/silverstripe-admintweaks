@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Deprecated
+
+- **`QueuedJobContextExtension` and `QueuedJobProfileTask` moved to
+  restruct/silverstripe-queuedjobs-enhancements 1.7.0** (`Restruct\QueuedJobsEnhancements\Extensions\
+  QueuedJobContextExtension`, `Restruct\QueuedJobsEnhancements\Tasks\QueuedJobProfileTask`). When
+  those classes exist, this module no longer registers its extension on `QueuedJobDescriptor`
+  (`Except: classexists` in `_config/queuedjobs.yml`) and its task disables itself (`isEnabled()`),
+  so the job context is recorded once and `dev/tasks/qjob-profile` resolves to the queuedjobs-enhancements
+  task. Without queuedjobs-enhancements, or with one older than 1.7.0, both keep working as before.
+  `EnhancedErrorFormatter` is unchanged: both extensions set the same `QUEUED_JOB` /
+  `QUEUED_JOB_MEMORY` keys in the same format. The copies here will be removed in a future major.
+
 ## 3.21.1 (2026-10-14)
 
 ### Fixed
