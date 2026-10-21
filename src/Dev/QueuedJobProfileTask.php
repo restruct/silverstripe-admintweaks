@@ -44,6 +44,11 @@ use Symbiote\QueuedJobs\Services\AbstractQueuedJob;
  * makes a leaking job look flat — which is exactly the false negative this task exists to prevent.
  *
  * Dev-only: it EXECUTES the job, so it writes whatever the job writes.
+ *
+ * @deprecated Moved to restruct/silverstripe-queuedjobs-enhancements 1.7.0 as
+ *             Restruct\QueuedJobsEnhancements\Tasks\QueuedJobProfileTask, under the same name
+ *             (qjob-profile). This copy disables itself while that class exists (see isEnabled()),
+ *             and will be removed in a future major.
  */
 class QueuedJobProfileTask extends BuildTask
 {
@@ -54,6 +59,17 @@ class QueuedJobProfileTask extends BuildTask
     protected static string $description = 'Runs a job in-process and reports per-call memory/step/jobData/message stats, to find what a job accumulates. Dev-only (it really runs the job).';
 
     private PolyOutput $output;
+
+    /**
+     * The task moved to restruct/silverstripe-queuedjobs-enhancements 1.7.0, under the same name.
+     * Step aside when that class exists, so `qjob-profile` resolves to one task; stays enabled with
+     * an older queuedjobs-enhancements or none.
+     */
+    public function isEnabled(): bool
+    {
+        return parent::isEnabled()
+            && !class_exists('Restruct\\QueuedJobsEnhancements\\Tasks\\QueuedJobProfileTask');
+    }
 
     protected function execute(InputInterface $input, PolyOutput $output): int
     {
