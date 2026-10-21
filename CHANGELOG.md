@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.22.0 (2026-10-21)
 
 ### Deprecated
 
