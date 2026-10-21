@@ -2,7 +2,14 @@
 Name: admintweaks_queuedjobs
 Only:
   moduleexists: 'symbiote/silverstripe-queuedjobs'
+Except:
+  classexists: 'Restruct\QueuedJobsEnhancements\Extensions\QueuedJobContextExtension'
 ---
+# Deprecated: the extension moved to restruct/silverstripe-queuedjobs-enhancements 1.7.0
+# (Restruct\QueuedJobsEnhancements\Extensions\QueuedJobContextExtension), which registers it
+# itself. This block only applies while that class is missing (no queuedjobs-enhancements, or one
+# older than 1.7.0), so the job context is recorded once either way.
+#
 # Record the queued job currently being processed (+ its memory usage) into $_SERVER, so that a
 # fatal inside the queue runner can be attributed to a job and step. Without this an OOM alert says
 # only "GET dev/tasks/ProcessJobQueueTask" — the runner, not the job.

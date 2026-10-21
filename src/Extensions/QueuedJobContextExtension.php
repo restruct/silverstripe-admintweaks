@@ -28,6 +28,12 @@ use Symbiote\QueuedJobs\Services\QueuedJob;
  * descriptor after EVERY processed step, so onAfterWrite() here is called exactly as often as the
  * job makes progress, for every job (including jobs shipped by other modules), using only a
  * supported API.
+ *
+ * @deprecated Moved to restruct/silverstripe-queuedjobs-enhancements 1.7.0 as
+ *             Restruct\QueuedJobsEnhancements\Extensions\QueuedJobContextExtension (same $_SERVER
+ *             keys and value format, so EnhancedErrorFormatter keeps rendering them). This copy is
+ *             only registered while that class does not exist (`Except: classexists` in
+ *             _config/queuedjobs.yml), and will be removed in a future major.
  */
 class QueuedJobContextExtension extends Extension
 {

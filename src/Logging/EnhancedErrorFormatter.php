@@ -45,6 +45,8 @@ class EnhancedErrorFormatter extends DetailedErrorFormatter
         # Set by QueuedJobContextExtension while a queued job is running, so a fatal inside the queue
         # runner names the job/step/memory instead of only "GET dev/tasks/ProcessJobQueueTask".
         # Listed first so they lead the Details section. Skipped silently when not set (web requests).
+        # The extension lives in restruct/silverstripe-queuedjobs-enhancements since 1.7.0; the copy in
+        # this module is deprecated and only registered without it. Same keys and format either way.
         'QUEUED_JOB',
         'QUEUED_JOB_MEMORY',
         'HTTP_ACCEPT',
