@@ -17,6 +17,12 @@
   is a ModelAdmin too, loses its member/group CSV import as well. Keep it with
   `hide_scaffolded_csv_buttons: false` on `SilverStripe\Admin\SecurityAdmin` (README).
 
+### Removed
+
+- `_config/email.yml`: the `SilverStripe\Control\Email\Mailer.default_message_encoding` key is
+  commented out (#90). It was an SS3 `Mailer` config; SS4's `Mailer` is an interface without it and
+  SS5/SS6 have no such class, so it never had an effect here.
+
 ## 3.22.1 (2026-10-22)
 
 ### Security

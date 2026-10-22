@@ -1,8 +1,13 @@
 # Fix long strings in e-mails being split over multiple lines with default encoding 'quoted-printable'
 # (alternative 'base64' works OK as well, 'plain' equals no special encoding/quoting, eg plaintext which seems to work just fine)
 # NOTE: 'plain' is not valid, the only valid type are: Content-Transfer-Encoding := "BASE64" / "QUOTED-PRINTABLE" / "8BIT"   / "7BIT" / "BINARY"
-SilverStripe\Control\Email\Mailer:
-  default_message_encoding: 'base64'
+# 2026-10-22, old: dead config, kept as a record (admintweaks#90). default_message_encoding was a
+# config of the SS3 Mailer class. In SS4 Mailer became an interface without it (SwiftMailer has no
+# encoding config either) and SS5/SS6 have no Mailer class at all (Symfony Mailer), so this key has
+# had no effect on any line this module supports. There is no SS4-only class to gate it on that
+# would make it do anything.
+#SilverStripe\Control\Email\Mailer:
+#  default_message_encoding: 'base64'
 
 
 # Email config: system email sender
