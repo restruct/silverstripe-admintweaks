@@ -16,6 +16,15 @@
 - With the setting on project-wide (YAML on `SilverStripe\Admin\ModelAdmin`), SecurityAdmin, which
   is a ModelAdmin too, loses its member/group CSV import as well. Keep it with
   `hide_scaffolded_csv_buttons: false` on `SilverStripe\Admin\SecurityAdmin` (README).
+- README and docs corrected against the code (#90): `ScheduledMethodCall` and the
+  cleanup-broken-jobs task now point to restruct/silverstripe-queuedjobs-enhancements (they left
+  this module); "throttled broken job notifications" replaced by the `queued_job_admin_email` env
+  fill that actually exists; "Default Behaviors" lists the real defaults (image quality 90, `&` to
+  `-et-`, password policy, cache lifetimes, GoogleSitemap, `GridFieldPageCount` removal, env fills)
+  instead of PNG compression and umlaut replacements; SMTP: `APP_SMTP_*` replaced by `MAILER_DSN`
+  (the SwiftMailer fragment is off on this line);
+  `EnforceCMSPermission` documented as checking `CMS_ACCESS_CMSMain` for the current user, ignoring
+  `$member`.
 
 ### Fixed
 
