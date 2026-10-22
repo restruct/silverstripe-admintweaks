@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.22.1 (2026-10-22)
+
+### Security
+
+- Build toolchain (dev dependencies only, nothing shipped changes): lockfile refreshed to
+  launch-editor 2.14.2 (from 2.11.1; GHSA-587h-7wmj-h5pm, GHSA-r825-w8mm-5pxw, GHSA-698v-4r3x-3vcv) and shell-quote 1.12.0 (its new minimum is ^1.10.0).
+  `client/dist` rebuilt: the JS and CSS are byte-identical.
+
 ## 3.22.0 (2026-10-21)
 
 ### Deprecated
