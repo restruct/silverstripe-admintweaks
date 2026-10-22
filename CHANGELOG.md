@@ -28,6 +28,8 @@
 
 ### Fixed
 
+- `_editorconfig-sample.php`: TinyMCE 6 button names (`blocks` / `styles` instead of `formatselect` /
+  `styleselect`) and current doc links (#40). The sample is not loaded by the module.
 - **`FormFieldTweaksExtension` fataled on Silverstripe 6** for any field carrying a message: it
   imported `SilverStripe\ORM\ValidationResult`, which SS6 moved to
   `SilverStripe\Core\Validation\ValidationResult` (#90). New `FormFieldTweaksExtensionTest` covers
