@@ -7,7 +7,10 @@ use SilverStripe\Dev\Debug;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormField;
 use SilverStripe\ORM\FieldType\DBHTMLVarchar;
-use SilverStripe\ORM\ValidationResult;
+# SS6 moved ValidationResult out of the ORM; the SS5 path below is absent in framework 6 and
+# fatals onBeforeRender() on any field that carries a message (admintweaks#90)
+//use SilverStripe\ORM\ValidationResult;
+use SilverStripe\Core\Validation\ValidationResult;
 
 class FormFieldTweaksExtension extends \SilverStripe\Core\Extension
 {

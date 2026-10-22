@@ -17,6 +17,14 @@
   is a ModelAdmin too, loses its member/group CSV import as well. Keep it with
   `hide_scaffolded_csv_buttons: false` on `SilverStripe\Admin\SecurityAdmin` (README).
 
+### Fixed
+
+- **`FormFieldTweaksExtension` fataled on Silverstripe 6** for any field carrying a message: it
+  imported `SilverStripe\ORM\ValidationResult`, which SS6 moved to
+  `SilverStripe\Core\Validation\ValidationResult` (#90). New `FormFieldTweaksExtensionTest` covers
+  the is-valid / is-invalid class. The docblock-only `SS_List` import in
+  `GridFieldConfig_VersionedOrderable` also points at its SS6 path (`SilverStripe\Model\List`) now.
+
 ## 4.3.2 (2026-10-22)
 
 ### Security

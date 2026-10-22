@@ -12,7 +12,10 @@ use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\ManyManyList;
 use SilverStripe\ORM\ManyManyThroughList;
-use SilverStripe\ORM\SS_List;
+# SS6 moved SS_List to SilverStripe\Model\List (only used in a docblock here, so no fatal, but
+# the SS5 path pointed IDEs/static analysis at a class that no longer exists)
+//use SilverStripe\ORM\SS_List;
+use SilverStripe\Model\List\SS_List;
 use SilverStripe\Versioned\Versioned;
 use Symbiote\GridFieldExtensions\GridFieldOrderableRows;
 
