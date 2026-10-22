@@ -17,6 +17,15 @@
   is a ModelAdmin too, loses its member/group CSV import as well. Keep it with
   `hide_scaffolded_csv_buttons: false` on `SilverStripe\Admin\SecurityAdmin` (README).
 
+### Fixed
+
+- **WebP fragment never activated for the suggested package** (#90). `_config/assets.yml` gated on
+  `moduleexists: webmen/silverstripe-webp-images`, the abandoned old name of the suggested
+  `wedevelopnl/silverstripe-webp-images`, and configured the v0.x class only. It now gates on
+  `classexists` per generator class: `TheWebmen\WebpImages\Assets\WebpGenerator` (v0.x, SS4) and
+  `WeDevelop\WebpImages\WebpGenerator` (1.0 and 2.x, SS5) in a new `admintweaks-assets-webp-wedevelop`
+  fragment, whichever package name installed it.
+
 ### Removed
 
 - `_config/email.yml`: the `SilverStripe\Control\Email\Mailer.default_message_encoding` key is
