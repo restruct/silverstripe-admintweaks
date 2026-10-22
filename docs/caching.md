@@ -204,57 +204,10 @@ $cache->delete('my-key');
 
 ## ScheduledMethodCall
 
-Schedule asynchronous method calls using QueuedJobs.
-
-### Requirements
-
-```bash
-composer require symbiote/silverstripe-queuedjobs
-```
-
-### Basic Usage
-
-```php
-use Restruct\Silverstripe\AdminTweaks\Jobs\ScheduledMethodCall;
-
-// Schedule a static method call
-ScheduledMethodCall::schedule(
-    MyClass::class,
-    'processData',
-    ['arg1', 'arg2'],
-    '+5 minutes'
-);
-
-// Schedule for specific time
-ScheduledMethodCall::schedule(
-    EmailService::class,
-    'sendNewsletter',
-    [$newsletterId],
-    '2024-12-25 09:00:00'
-);
-
-// Schedule with no delay (ASAP)
-ScheduledMethodCall::schedule(
-    CacheService::class,
-    'warmCache',
-    []
-);
-```
-
-### Scheduling Format
-
-The timing parameter accepts:
-- Relative times: `'+1 hour'`, `'+30 minutes'`, `'+1 day'`
-- Absolute times: `'2024-12-25 09:00:00'`
-- `null` or omitted: Run as soon as possible
-
-### Use Cases
-
-- Sending emails after a delay
-- Processing uploads in the background
-- Cache warming
-- Cleanup tasks
-- Any operation that shouldn't block the request
+Moved to [restruct/silverstripe-queuedjobs-enhancements](https://github.com/restruct/silverstripe-queuedjobs-enhancements)
+(`Restruct\QueuedJobsEnhancements\Jobs\ScheduledMethodCall`, Silverstripe 5.4+); this module no
+longer ships it. See that module's README for the current `schedule()` / `scheduleImmediate()`
+signatures.
 
 ---
 

@@ -26,6 +26,22 @@ test('the header names the current system with the environment suffix, and so do
     await expect(header(page).locator('a.cms-sitename__title')).toHaveCount(0);
 });
 
+// admintweaks#82: the reset of core's `.cms-menu__header span { padding-left: 26px }` also matched the badge and,
+// being more specific, took its left padding (computed 0px left against 4px right).
+test('the environment badge keeps its padding on both sides, the name has none on the left', async ({ page }) => {
+    await openAdmin(page, 'plain');
+    await expect(page.locator('.at-system-switcher__env')).toBeVisible();
+    const pad = await page.evaluate(() => {
+        const env = getComputedStyle(document.querySelector('.at-system-switcher__env') as HTMLElement);
+        const label = getComputedStyle(document.querySelector('.at-system-switcher__label') as HTMLElement);
+        return { envLeft: parseFloat(env.paddingLeft), envRight: parseFloat(env.paddingRight), labelLeft: parseFloat(label.paddingLeft) };
+    });
+    expect(pad.envLeft, 'the badge has left padding').toBeGreaterThan(0);
+    expect(pad.envLeft, 'the badge padding is symmetric').toBeCloseTo(pad.envRight, 1);
+    // core's 26px stays reset on the name
+    expect(pad.labelLeft, 'the name has no left padding').toBe(0);
+});
+
 test('the tab title keeps a single suffix across pjax navigation', async ({ page }) => {
     await openAdmin(page, 'plain');
     // The CMS retitles the tab from the X-Title header of each pjax response

@@ -1,5 +1,57 @@
 # Changelog
 
+## 4.4.0 (2026-10-22)
+
+### Security
+
+- **`hide_scaffolded_csv_buttons` now switches the CSV import off, not only its button.** ModelAdmin
+  keeps its `ImportForm` / `import` actions routable and only checks the public `$showImportForm`
+  property; with `model_importers` unset core registers a generic `CsvBulkLoader` per model. So
+  with the setting on, a hand-built POST to `<admin>/<Model>/ImportForm` still imported (the
+  bulk loader does check per-record permissions). The extension now also sets
+  `$showImportForm = false` before any action runs.
+
+### Changed
+
+- With the setting on project-wide (YAML on `SilverStripe\Admin\ModelAdmin`), SecurityAdmin, which
+  is a ModelAdmin too, loses its member/group CSV import as well. Keep it with
+  `hide_scaffolded_csv_buttons: false` on `SilverStripe\Admin\SecurityAdmin` (README).
+- README and docs corrected against the code (#90): `ScheduledMethodCall` and the
+  cleanup-broken-jobs task now point to restruct/silverstripe-queuedjobs-enhancements (they left
+  this module); "throttled broken job notifications" replaced by the `queued_job_admin_email` env
+  fill that actually exists; "Default Behaviors" lists the real defaults (image quality 90, `&` to
+  `-et-`, password policy, cache lifetimes, GoogleSitemap, `GridFieldPageCount` removal, env fills)
+  instead of PNG compression and umlaut replacements; SMTP: `APP_SMTP_*` replaced by `MAILER_DSN`
+  (the SwiftMailer fragment is off on this line);
+  `EnforceCMSPermission` documented as checking `CMS_ACCESS_CMSMain` for the current user, ignoring
+  `$member`.
+
+### Fixed
+
+- `_editorconfig-sample.php`: TinyMCE 6 button names (`blocks` / `styles` instead of `formatselect` /
+  `styleselect`) and current doc links (#40). The sample is not loaded by the module.
+- **`FormFieldTweaksExtension` fataled on Silverstripe 6** for any field carrying a message: it
+  imported `SilverStripe\ORM\ValidationResult`, which SS6 moved to
+  `SilverStripe\Core\Validation\ValidationResult` (#90). New `FormFieldTweaksExtensionTest` covers
+  the is-valid / is-invalid class. The docblock-only `SS_List` import in
+  `GridFieldConfig_VersionedOrderable` also points at its SS6 path (`SilverStripe\Model\List`) now.
+- **WebP fragment never activated for the suggested package** (#90). `_config/assets.yml` gated on
+  `moduleexists: webmen/silverstripe-webp-images`, the abandoned old name of the suggested
+  `wedevelopnl/silverstripe-webp-images`, and configured the SS4-only v0.x class. It now gates on
+  `classexists: WeDevelop\WebpImages\WebpGenerator`, the class of the current releases. No release
+  installs on Silverstripe 6 yet (2.0.1 requires `silverstripe/cms ^5`); the fragment activates once
+  one does, and the composer suggest says so.
+- **SystemSwitcher: the environment badge lost its left padding in the expanded menu** (#82). The
+  reset of core's `.cms-menu__header span { padding-left: 26px }` also matched the badge and, being
+  more specific, overrode its own padding. The reset now excludes `.at-system-switcher__env`; a
+  browser test asserts the badge padding is symmetric and the name keeps none on the left.
+
+### Removed
+
+- `_config/email.yml`: the `SilverStripe\Control\Email\Mailer.default_message_encoding` key is
+  commented out (#90). It was an SS3 `Mailer` config; SS4's `Mailer` is an interface without it and
+  SS5/SS6 have no such class, so it never had an effect here.
+
 ## 4.3.2 (2026-10-22)
 
 ### Security

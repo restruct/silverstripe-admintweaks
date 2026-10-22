@@ -27,7 +27,7 @@
     "restruct/silverstripe-login-branding": "Reduce Silverstripe branding of the admin login and make it easily configurable",
     "restruct/silverstripe-favicons": "Generates favicon, touch icon and web manifest variants from one PNG (falls back to the admintweaks FavIcon)",
     "symbiote/silverstripe-grouped-cms-menu": "Group CMS menu items into nested lists",
-    "wedevelopnl/silverstripe-webp-images": "WEBP image support (output resized jpeg/png images as webp, GD with WEBP required)",
+    "wedevelopnl/silverstripe-webp-images": "WEBP image support (output resized jpeg/png images as webp, GD with WEBP required; no Silverstripe 6 release yet as of 2026-10)",
     "axllent/silverstripe-cms-tweaks": "Some complemental tweaks by Axllent"
   },
   "autoload": {

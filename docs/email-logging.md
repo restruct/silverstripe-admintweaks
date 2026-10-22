@@ -26,29 +26,28 @@ $email = Email::create()
 
 ### SMTP Configuration
 
+Silverstripe 6 sends through Symfony Mailer, configured with `MAILER_DSN` in `.env`. The `APP_SMTP_*`
+variables of the 3.x line configured SwiftMailer (Silverstripe 4 only); that fragment is commented out
+in `_config/email.yml` on this line and the variables do nothing.
+
 ```ini
-# SMTP server settings
-APP_SMTP_HOST="smtp.mailgun.org"
-APP_SMTP_PORT="587"
-APP_SMTP_ENCRYPTION="tls"
-APP_SMTP_USERNAME="postmaster@mg.example.com"
-APP_SMTP_PASSWORD="your-secret-password"
+# SMTP server settings (URL-encode special characters in user and password, e.g. @ as %40)
+MAILER_DSN="smtp://postmaster%40mg.example.com:your-secret-password@smtp.mailgun.org:587"
 ```
 
-**Encryption options:**
-- `tls` - STARTTLS (port 587, recommended)
-- `ssl` - SMTP over SSL/TLS (port 465)
-- Empty - No encryption (port 25, not recommended)
+**Ports:**
+- `587` - STARTTLS (recommended)
+- `465` - SMTP over SSL/TLS
 
 **Common SMTP providers:**
 
-| Provider | Host | Port | Encryption |
-|----------|------|------|------------|
-| Mailgun | smtp.mailgun.org | 587 | tls |
-| SendGrid | smtp.sendgrid.net | 587 | tls |
-| Amazon SES | email-smtp.{region}.amazonaws.com | 587 | tls |
-| Gmail | smtp.gmail.com | 587 | tls |
-| Office 365 | smtp.office365.com | 587 | tls |
+| Provider | Host | Port |
+|----------|------|------|
+| Mailgun | smtp.mailgun.org | 587 |
+| SendGrid | smtp.sendgrid.net | 587 |
+| Amazon SES | email-smtp.{region}.amazonaws.com | 587 |
+| Gmail | smtp.gmail.com | 587 |
+| Office 365 | smtp.office365.com | 587 |
 
 ---
 
@@ -144,11 +143,7 @@ APP_SYSTEM_EMAIL_SENDER="My Application"
 APP_SYSTEM_EMAIL_ADDRESS="noreply@myapp.com"
 
 # SMTP server (Mailgun example)
-APP_SMTP_HOST="smtp.mailgun.org"
-APP_SMTP_PORT="587"
-APP_SMTP_ENCRYPTION="tls"
-APP_SMTP_USERNAME="postmaster@mg.myapp.com"
-APP_SMTP_PASSWORD="secret-api-key"
+MAILER_DSN="smtp://postmaster%40mg.myapp.com:secret-api-key@smtp.mailgun.org:587"
 
 # ===========================================
 # Error Logging (LIVE only)
@@ -166,7 +161,7 @@ APP_LOG_MAIL_LEVEL="error"
 
 ### Emails not sending
 
-1. Check SMTP credentials are correct
+1. Check the `MAILER_DSN` credentials are correct
 2. Verify port is not blocked by firewall
 3. Check `APP_SYSTEM_EMAIL_ADDRESS` is set
 4. Review SilverStripe logs for mailer errors
