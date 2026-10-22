@@ -26,8 +26,13 @@ $email = Email::create()
 
 ### SMTP Configuration
 
+**Silverstripe 4 only.** The `APP_SMTP_*` variables configure SwiftMailer's `Swift_SmtpTransport`
+(the fragment in `_config/email.yml` is gated on that class), so they do nothing on Silverstripe 5.
+On Silverstripe 5, Symfony Mailer reads `MAILER_DSN` instead, e.g.
+`MAILER_DSN="smtp://user:pass@smtp.example.com:587"`.
+
 ```ini
-# SMTP server settings
+# SMTP server settings (Silverstripe 4 only)
 APP_SMTP_HOST="smtp.mailgun.org"
 APP_SMTP_PORT="587"
 APP_SMTP_ENCRYPTION="tls"
@@ -143,7 +148,7 @@ Restruct\Silverstripe\AdminTweaks\Logging\DedupSymfonyMailerHandler:
 APP_SYSTEM_EMAIL_SENDER="My Application"
 APP_SYSTEM_EMAIL_ADDRESS="noreply@myapp.com"
 
-# SMTP server (Mailgun example)
+# SMTP server (Mailgun example), Silverstripe 4 only; on Silverstripe 5 use MAILER_DSN
 APP_SMTP_HOST="smtp.mailgun.org"
 APP_SMTP_PORT="587"
 APP_SMTP_ENCRYPTION="tls"
@@ -166,7 +171,7 @@ APP_LOG_MAIL_LEVEL="error"
 
 ### Emails not sending
 
-1. Check SMTP credentials are correct
+1. Check SMTP credentials are correct (`MAILER_DSN` on Silverstripe 5, `APP_SMTP_*` on Silverstripe 4)
 2. Verify port is not blocked by firewall
 3. Check `APP_SYSTEM_EMAIL_ADDRESS` is set
 4. Review SilverStripe logs for mailer errors

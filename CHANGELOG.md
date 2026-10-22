@@ -1,5 +1,57 @@
 # Changelog
 
+## 3.23.0 (2026-10-22)
+
+### Security
+
+- Build toolchain (dev dependencies only): the 3.x lockfile catches up with the bumps `main` already
+  had (Dependabot only scans the default branch): follow-redirects 1.16.1, lodash 4.18.1, node-forge
+  1.4.0, picomatch 2.3.2, svgo 2.8.4, immutable 5.1.9, and webpack pinned to `~5.104.1` as on `main`
+  (newer webpack breaks laravel-mix 6, #64). `client/dist`: CSS byte-identical; the JS differs only
+  in webpack's module wrapper syntax (`228(){` instead of `228:()=>{`), same as `main`.
+- **`hide_scaffolded_csv_buttons` now switches the CSV import off, not only its button.** ModelAdmin
+  keeps its `ImportForm` / `import` actions routable and only checks the public `$showImportForm`
+  property; with `model_importers` unset core registers a generic `CsvBulkLoader` per model. So
+  with the setting on, a hand-built POST to `<admin>/<Model>/ImportForm` still imported (the
+  bulk loader does check per-record permissions). The extension now also sets
+  `$showImportForm = false` before any action runs.
+
+### Changed
+
+- With the setting on project-wide (YAML on `SilverStripe\Admin\ModelAdmin`), SecurityAdmin, which
+  is a ModelAdmin too, loses its member/group CSV import as well. Keep it with
+  `hide_scaffolded_csv_buttons: false` on `SilverStripe\Admin\SecurityAdmin` (README).
+- README and docs corrected against the code (#90): `ScheduledMethodCall` and the
+  cleanup-broken-jobs task now point to restruct/silverstripe-queuedjobs-enhancements (they left
+  this module); "throttled broken job notifications" replaced by the `queued_job_admin_email` env
+  fill that actually exists; "Default Behaviors" lists the real defaults (image quality 90, `&` to
+  `-et-`, password policy, cache lifetimes, GoogleSitemap, `GridFieldPageCount` removal, env fills)
+  instead of PNG compression and umlaut replacements; SMTP: `APP_SMTP_*` marked Silverstripe 4
+  only (use `MAILER_DSN` on 5);
+  `EnforceCMSPermission` documented as checking `CMS_ACCESS_CMSMain` for the current user, ignoring
+  `$member`.
+
+### Fixed
+
+- `_editorconfig-sample.php`: TinyMCE 6 button names (`blocks` / `styles` instead of `formatselect` /
+  `styleselect`) and current doc links (#40). The sample is not loaded by the module.
+- **WebP fragment never activated for the suggested package** (#90). `_config/assets.yml` gated on
+  `moduleexists: webmen/silverstripe-webp-images`, the abandoned old name of the suggested
+  `wedevelopnl/silverstripe-webp-images`, and configured the v0.x class only. It now gates on
+  `classexists` per generator class: `TheWebmen\WebpImages\Assets\WebpGenerator` (v0.x, SS4) and
+  `WeDevelop\WebpImages\WebpGenerator` (1.0 and 2.x, SS5) in a new `admintweaks-assets-webp-wedevelop`
+  fragment, whichever package name installed it.
+- **SystemSwitcher: the environment badge lost its left padding in the expanded menu** (#82). The
+  reset of core's `.cms-menu__header span { padding-left: 26px }` also matched the badge and, being
+  more specific, overrode its own padding. The reset now excludes `.at-system-switcher__env`; a
+  browser test asserts the badge padding is symmetric and the name keeps none on the left.
+
+### Removed
+
+- `_config/email.yml`: the `SilverStripe\Control\Email\Mailer.default_message_encoding` key is
+  commented out (#90). It was an SS3 `Mailer` config; SS4's `Mailer` is an interface without it and
+  SS5/SS6 have no such class, so it never had an effect here.
+
 ## 3.22.1 (2026-10-22)
 
 ### Security

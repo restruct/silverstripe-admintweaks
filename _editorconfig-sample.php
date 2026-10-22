@@ -3,6 +3,9 @@
 //
 // HTMLEDITOR CONFIG
 //
+// see: https://docs.silverstripe.org/en/5/developer_guides/forms/field_types/htmleditorfield/
+// and: https://www.tiny.cloud/docs/tinymce/6/content-formatting/
+// Older references (Silverstripe 3/4, TinyMCE 4), kept for context:
 // see: https://docs.silverstripe.org/en/3.2/developer_guides/forms/field_types/htmleditorfield/
 // and: https://docs.silverstripe.org/en/4/developer_guides/customising_the_admin_interface/typography/#custom-style-dropdown
 // and: https://www.tiny.cloud/docs/configure/content-formatting/
@@ -25,9 +28,11 @@ $editor->disablePlugins('importcss');
 //$editor->addButtonsToLine(1, '| anchor');
 //$editor->addButtonsToLine(1, 'blockquote');
 $editor->insertButtonsAfter('indent', 'blockquote');
-$editor->insertButtonsAfter('formatselect', 'styleselect');
+# old (TinyMCE 4 button names; on Silverstripe 5+ / TinyMCE 6 there is no 'formatselect', so this did nothing):
+//$editor->insertButtonsAfter('formatselect', 'styleselect');
+$editor->insertButtonsAfter('blocks', 'styles');
 //$editor->setButtonsForLine(1, 'image', 'media', 'shortcodable','bold, italic, removeformat, bullist, numlist, outdent, indent, blockquote, hr, visualchars');
-//$editor->removeButtons('styleselect');
+//$editor->removeButtons('styles'); // TinyMCE 4: 'styleselect'
 
 //$fontreset = ['font-weight' => 'normal', 'font-family' => '"Helvetica Neue",Helvetica,Arial,sans-serif', 'font-size' => '14px'];
 $fontreset = [];
