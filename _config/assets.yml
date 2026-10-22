@@ -15,13 +15,35 @@ SilverStripe\Core\Injector\Injector:
 
 
 # Enable WEBP images if module is installed
+# 2026-10-22 (admintweaks#90): gated on the generator CLASS instead of a package name.
+# webmen/silverstripe-webp-images is the abandoned old name of wedevelopnl/silverstripe-webp-images
+# (Packagist marks it abandoned in favour of the latter); both names ship the same repo, so the old
+# moduleexists gate never matched a site that installed the suggested package. The namespace moved
+# with the 1.0 release: TheWebmen\WebpImages\Assets\WebpGenerator up to v0.8 (SS4),
+# WeDevelop\WebpImages\WebpGenerator from 1.0 (SS4) and 2.x (SS5). Gating on the class works for
+# either package name and only sets the properties on the class that is actually installed.
+# old:
+#---
+#Name: admintweaks-assets-webp
+#Only:
+#  moduleexists: 'webmen/silverstripe-webp-images'
+#---
+# The v0.x (TheWebmen namespace) releases require silverstripe/cms ^4, so they cannot be installed on
+# this Silverstripe 6 line; kept commented as the record of what the fragment used to target.
+#SilverStripe\Core\Injector\Injector:
+#  TheWebmen\WebpImages\Assets\WebpGenerator:
+#    properties:
+#      enabled: true
+#      quality: 80
+# As of 2026-10 the newest release (2.0.1) requires silverstripe/cms ^5, so there is no SS6 version
+# yet; this fragment activates once a release with this class installs on SS6.
 ---
 Name: admintweaks-assets-webp
 Only:
-  moduleexists: 'webmen/silverstripe-webp-images'
+  classexists: 'WeDevelop\WebpImages\WebpGenerator'
 ---
 SilverStripe\Core\Injector\Injector:
-  TheWebmen\WebpImages\Assets\WebpGenerator:
+  WeDevelop\WebpImages\WebpGenerator:
     properties:
       enabled: true
       quality: 80

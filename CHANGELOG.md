@@ -24,6 +24,12 @@
   `SilverStripe\Core\Validation\ValidationResult` (#90). New `FormFieldTweaksExtensionTest` covers
   the is-valid / is-invalid class. The docblock-only `SS_List` import in
   `GridFieldConfig_VersionedOrderable` also points at its SS6 path (`SilverStripe\Model\List`) now.
+- **WebP fragment never activated for the suggested package** (#90). `_config/assets.yml` gated on
+  `moduleexists: webmen/silverstripe-webp-images`, the abandoned old name of the suggested
+  `wedevelopnl/silverstripe-webp-images`, and configured the SS4-only v0.x class. It now gates on
+  `classexists: WeDevelop\WebpImages\WebpGenerator`, the class of the current releases. No release
+  installs on Silverstripe 6 yet (2.0.1 requires `silverstripe/cms ^5`); the fragment activates once
+  one does, and the composer suggest says so.
 
 ### Removed
 
