@@ -64,6 +64,19 @@ class ProductAdmin extends ModelAdmin
 }
 ```
 
+`hide_scaffolded_csv_buttons` also switches the CSV import itself off (`$showImportForm = false`),
+not only its button: without that, ModelAdmin keeps accepting a hand-built import POST. To apply
+it to every ModelAdmin:
+
+```yaml
+SilverStripe\Admin\ModelAdmin:
+  hide_scaffolded_csv_buttons: true
+
+# SecurityAdmin is a ModelAdmin too; keep its member/group CSV import if you use it
+SilverStripe\Admin\SecurityAdmin:
+  hide_scaffolded_csv_buttons: false
+```
+
 ```php
 // Add Bootstrap icon to a button
 FormAction::create('add', 'Add Item')->addExtraClass('bi bi-plus-circle');
