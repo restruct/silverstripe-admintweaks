@@ -4,6 +4,11 @@
 
 ### Security
 
+- Build toolchain (dev dependencies only): the 3.x lockfile catches up with the bumps `main` already
+  had (Dependabot only scans the default branch): follow-redirects 1.16.1, lodash 4.18.1, node-forge
+  1.4.0, picomatch 2.3.2, svgo 2.8.4, immutable 5.1.9, and webpack pinned to `~5.104.1` as on `main`
+  (newer webpack breaks laravel-mix 6, #64). `client/dist`: CSS byte-identical; the JS differs only
+  in webpack's module wrapper syntax (`228(){` instead of `228:()=>{`), same as `main`.
 - **`hide_scaffolded_csv_buttons` now switches the CSV import off, not only its button.** ModelAdmin
   keeps its `ImportForm` / `import` actions routable and only checks the public `$showImportForm`
   property; with `model_importers` unset core registers a generic `CsvBulkLoader` per model. So
