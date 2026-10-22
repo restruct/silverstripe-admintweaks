@@ -1,5 +1,14 @@
 # Changelog
 
+## 4.3.1 (2026-10-22)
+
+### Security
+
+- Build toolchain (dev dependencies only, nothing shipped changes): lockfile refreshed to
+  follow-redirects 1.16.1 (GHSA-q3jh-wrc6-jgq8, GHSA-8r9p-f939-6h3c). `client/dist` rebuilt: the
+  JS and CSS are byte-identical. The 3.x line locks 1.15.11, outside the affected range, and needs
+  no release.
+
 ## 4.3.0 (2026-10-21)
 
 ### Deprecated
