@@ -34,6 +34,10 @@
   `classexists` per generator class: `TheWebmen\WebpImages\Assets\WebpGenerator` (v0.x, SS4) and
   `WeDevelop\WebpImages\WebpGenerator` (1.0 and 2.x, SS5) in a new `admintweaks-assets-webp-wedevelop`
   fragment, whichever package name installed it.
+- **SystemSwitcher: the environment badge lost its left padding in the expanded menu** (#82). The
+  reset of core's `.cms-menu__header span { padding-left: 26px }` also matched the badge and, being
+  more specific, overrode its own padding. The reset now excludes `.at-system-switcher__env`; a
+  browser test asserts the badge padding is symmetric and the name keeps none on the left.
 
 ### Removed
 
