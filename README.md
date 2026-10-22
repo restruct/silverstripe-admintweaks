@@ -29,8 +29,8 @@ Most features are opt-in via configuration. The module provides sensible default
 | **Templates** | 30+ helper methods, iterators, image placeholders | [Template Helpers](docs/template-helpers.md) |
 | **SiteConfig** | Contact info, social media, theme settings, raw HTML | [SiteConfig](docs/siteconfig.md) |
 | **Caching** | HTTP request caching, JSON/JSON-LD parsing | [Caching & Helpers](docs/caching.md) |
-| **Email & Logging** | SMTP config, error email reports | [Email & Logging](docs/email-logging.md) |
-| **QueuedJobs** | Throttled broken job notifications, scheduled method calls | [QueuedJobs](#queuedjobs-enhancements) |
+| **Email & Logging** | System sender from env, error email reports (SMTP via `APP_SMTP_*` on Silverstripe 4 only) | [Email & Logging](docs/email-logging.md) |
+| **QueuedJobs** | Queue report recipient filled from env; `ScheduledMethodCall` and `cleanup-broken-jobs` moved to [queuedjobs-enhancements](https://github.com/restruct/silverstripe-queuedjobs-enhancements) | [QueuedJobs](#queuedjobs) |
 
 ## Feature Highlights
 
@@ -200,38 +200,37 @@ $data = CacheHelpers::cached_json_request('https://api.example.com/data', 'GET',
 $jsonLd = CacheHelpers::cached_jsonLD_request('https://example.com/product');
 ```
 
-### QueuedJobs Enhancements
+### QueuedJobs
 
-#### Scheduled Method Calls
+`ScheduledMethodCall` and the cleanup-broken-jobs task are no longer part of this module. Both live
+in [restruct/silverstripe-queuedjobs-enhancements](https://github.com/restruct/silverstripe-queuedjobs-enhancements)
+(namespace `Restruct\QueuedJobsEnhancements`, requires Silverstripe 5.4+), as
+`Restruct\QueuedJobsEnhancements\Jobs\ScheduledMethodCall` and `sake dev/tasks/cleanup-broken-jobs`
+(Silverstripe 5) / `sake tasks:cleanup-broken-jobs` (Silverstripe 6). See that module's README for usage.
 
-```php
-use Restruct\Silverstripe\AdminTweaks\Jobs\ScheduledMethodCall;
+What this module still does for queuedjobs:
 
-// Schedule a method call
-ScheduledMethodCall::schedule(
-    MyClass::class,
-    'myMethod',
-    ['arg1', 'arg2'],
-    '+1 hour'
-);
-```
-
-#### Cleanup Broken Jobs Task
-
-Quickly delete all broken queued jobs:
-
-```bash
-vendor/bin/sake dev/tasks/cleanup-broken-jobs
-```
+- Fills `Email.queued_job_admin_email` (the recipient of queuedjobs' broken/stalled job reports)
+  from `APP_LOG_MAIL_RECIPIENT`, only when the project has not set it (`_config.php`). Set it to
+  `false` to opt out of those mails.
+- Records the running job and its memory use in `$_SERVER`, so error mails from the queue runner
+  name the job (`QueuedJobContextExtension`, deprecated: queuedjobs-enhancements 1.7.0+ registers
+  its own copy and this one then stays off).
 
 ## Configuration
 
 ### Email & SMTP (via .env)
 
+`APP_SYSTEM_EMAIL_*` fills `Email.admin_email` when the project has not set it. The `APP_SMTP_*`
+variables only configure SwiftMailer, so they apply on **Silverstripe 4 only** (the fragment is gated
+on `Swift_SmtpTransport`). On Silverstripe 5, set `MAILER_DSN` instead, e.g.
+`MAILER_DSN="smtp://user:pass@smtp.example.com:587"`.
+
 ```ini
 APP_SYSTEM_EMAIL_SENDER="My App"
 APP_SYSTEM_EMAIL_ADDRESS="noreply@example.com"
 
+# Silverstripe 4 only (SwiftMailer); on Silverstripe 5 use MAILER_DSN
 APP_SMTP_HOST="smtp.mailgun.org"
 APP_SMTP_PORT="587"
 APP_SMTP_ENCRYPTION="tls"
@@ -271,7 +270,7 @@ The module enhances functionality when these modules are installed:
 | Module | Enhancement |
 |--------|-------------|
 | `symbiote/silverstripe-grouped-cms-menu` | Groups admin sections under "Advanced" |
-| `symbiote/silverstripe-queuedjobs` | Enables ScheduledMethodCall |
+| `symbiote/silverstripe-queuedjobs` | Job context in error mails; report recipient from env (see [QueuedJobs](#queuedjobs)) |
 | `wilr/silverstripe-googlesitemaps` | Auto-activates sitemap generation |
 | `silverstripe/mimevalidator` | Auto-activates MIME upload validation |
 | `wedevelopnl/silverstripe-webp-images` | Activates WEBP format support |
@@ -281,7 +280,12 @@ The module enhances functionality when these modules are installed:
 
 ### EnforceCMSPermission
 
-Require CMS access for DataObject CRUD operations:
+Ties a DataObject's `canView` / `canEdit` / `canDelete` / `canCreate` to **Pages section access**:
+each returns `Permission::check('CMS_ACCESS_CMSMain')` for the **current user**. The `$member`
+argument is ignored, so `canEdit($someOtherMember)` still answers for whoever is logged in. Holders
+of `CMS_ACCESS_LeftAndMain` (all CMS sections) and `ADMIN` pass as well, as `Permission::check()`
+treats those as implying `CMS_ACCESS_CMSMain`.
+
 
 ```php
 use Restruct\Silverstripe\AdminTweaks\Traits\EnforceCMSPermission;
@@ -298,8 +302,18 @@ These are applied automatically:
 
 - `Session.cookie_secure: true` - Secure session cookies
 - UserDefinedForm submissions disabled by default (GDPR)
-- Higher image quality (90% JPEG, 8 PNG compression)
-- URL segment character replacements (umlauts, special chars)
+- Image backend quality 90 (`Image_Backend.Quality`)
+- URL segments: `&` becomes `-et-` instead of core's `-and-` (no other replacement changed)
+- Password policy (`_config/passwords.yml`): `PasswordValidator` with minimum length 12, history 6
+  and minimum test score 3 on live; minimum length 5 and no history check on dev/test
+- Cache lifetimes: `cacheblock` (template `<% cached %>`) 24 hours; `appcache` and `adminCache` 1 hour
+- GoogleSitemap enabled when `wilr/silverstripe-googlesitemaps` is installed (1000 objects per
+  sitemap, Google/Bing notification on, honours `ShowInSearch`)
+- `GridFieldPageCount` removed from the GridField configs that fire `updateConfig`
+  (`GridFieldConfig_Base`, `_RecordEditor`, `_RecordViewer`, `_RelationEditor` and their subclasses)
+- From env, only when the project has not set them: `Email.admin_email` from
+  `APP_SYSTEM_EMAIL_ADDRESS` + `APP_SYSTEM_EMAIL_SENDER`, `Email.queued_job_admin_email` from
+  `APP_LOG_MAIL_RECIPIENT`
 - Hides CampaignAdmin and ReportAdmin from navigation
 
 ## SS3/SS4 → SS5 migration repair tasks
