@@ -497,8 +497,13 @@ a.action[class^="bi-"]:before {
   }
   // core styles every span in the menu header (.cms-menu__header span: block, padding-left 26px), meant for
   // the login status; ours lay out by flex instead
-  .at-system-switcher__toggle span,
-  .at-system-switcher__name span {
+  // The badge is excluded (admintweaks#82): `.at-system-switcher .at-system-switcher__toggle span` is (0,2,1)
+  // and beat the badge's own `.at-system-switcher .at-system-switcher__env` padding (0,2,0), leaving it flush
+  // against its left border in the expanded menu. old:
+  //.at-system-switcher__toggle span,
+  //.at-system-switcher__name span {
+  .at-system-switcher__toggle span:not(.at-system-switcher__env),
+  .at-system-switcher__name span:not(.at-system-switcher__env) {
     padding-left: 0;
   }
   .at-system-switcher__toggle {

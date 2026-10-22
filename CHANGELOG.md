@@ -39,6 +39,10 @@
   `classexists: WeDevelop\WebpImages\WebpGenerator`, the class of the current releases. No release
   installs on Silverstripe 6 yet (2.0.1 requires `silverstripe/cms ^5`); the fragment activates once
   one does, and the composer suggest says so.
+- **SystemSwitcher: the environment badge lost its left padding in the expanded menu** (#82). The
+  reset of core's `.cms-menu__header span { padding-left: 26px }` also matched the badge and, being
+  more specific, overrode its own padding. The reset now excludes `.at-system-switcher__env`; a
+  browser test asserts the badge padding is symmetric and the name keeps none on the left.
 
 ### Removed
 
