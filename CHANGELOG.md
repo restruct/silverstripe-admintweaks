@@ -1,5 +1,22 @@
 # Changelog
 
+## 3.23.0 (2026-10-22)
+
+### Security
+
+- **`hide_scaffolded_csv_buttons` now switches the CSV import off, not only its button.** ModelAdmin
+  keeps its `ImportForm` / `import` actions routable and only checks the public `$showImportForm`
+  property; with `model_importers` unset core registers a generic `CsvBulkLoader` per model. So
+  with the setting on, a hand-built POST to `<admin>/<Model>/ImportForm` still imported (the
+  bulk loader does check per-record permissions). The extension now also sets
+  `$showImportForm = false` before any action runs.
+
+### Changed
+
+- With the setting on project-wide (YAML on `SilverStripe\Admin\ModelAdmin`), SecurityAdmin, which
+  is a ModelAdmin too, loses its member/group CSV import as well. Keep it with
+  `hide_scaffolded_csv_buttons: false` on `SilverStripe\Admin\SecurityAdmin` (README).
+
 ## 3.22.1 (2026-10-22)
 
 ### Security
