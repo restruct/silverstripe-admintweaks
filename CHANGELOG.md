@@ -25,6 +25,12 @@
   the is-valid / is-invalid class. The docblock-only `SS_List` import in
   `GridFieldConfig_VersionedOrderable` also points at its SS6 path (`SilverStripe\Model\List`) now.
 
+### Removed
+
+- `_config/email.yml`: the `SilverStripe\Control\Email\Mailer.default_message_encoding` key is
+  commented out (#90). It was an SS3 `Mailer` config; SS4's `Mailer` is an interface without it and
+  SS5/SS6 have no such class, so it never had an effect here.
+
 ## 4.3.2 (2026-10-22)
 
 ### Security
