@@ -34,8 +34,30 @@ class ModelAdminExtension extends Extension
      * Enable project-wide via yml on SilverStripe\Admin\ModelAdmin, opt back OUT per subclass:
      *   private static bool $hide_scaffolded_csv_buttons = false;
      * (or re-add specific components in that admin's getGridFieldConfig()).
+     *
+     * Also switches the CSV IMPORT itself off, not just its button: ModelAdmin's ImportForm and
+     * import actions stay routable (ImportForm is in its allowed_actions) and only check the
+     * public $showImportForm property, and with model_importers unset core registers a generic
+     * CsvBulkLoader per model. So without this a hand-built POST to <admin>/<Model>/ImportForm
+     * still imported, with the button gone. See onBeforeInit().
+     * SecurityAdmin is a ModelAdmin too (Silverstripe 5 and 6), so enabling this project-wide also
+     * removes its member CSV import; opt it back in with `hide_scaffolded_csv_buttons: false`
+     * on SilverStripe\Admin\SecurityAdmin.
      */
     private static bool $hide_scaffolded_csv_buttons = false;
+
+    /**
+     * $showImportForm is a public instance property, not config, so it is set on the controller
+     * here: before init() and before any action is handled (including the import form's own
+     * submission). Core then neither adds the Import button nor builds or accepts the form.
+     * Only ever switches it OFF; an admin that left the setting off keeps its own value.
+     */
+    public function onBeforeInit(): void
+    {
+        if ($this->getOwner()->config()->get('hide_scaffolded_csv_buttons')) {
+            $this->getOwner()->showImportForm = false;
+        }
+    }
 
     public function updateGridField(GridField $field): void
     {
@@ -47,6 +69,8 @@ class ModelAdminExtension extends Extension
     public function updateGridFieldConfig(GridFieldConfig $config): void
     {
         if ($this->getOwner()->config()->get('hide_scaffolded_csv_buttons')) {
+            # The Import button would already be absent (onBeforeInit() switched showImportForm
+            # off); removing it here as well covers an admin that adds it back by hand.
             $config->removeComponentsByType([
                 GridFieldExportButton::class,
                 GridFieldPrintButton::class,
