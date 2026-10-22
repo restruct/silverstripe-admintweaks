@@ -28,6 +28,8 @@
 
 ### Fixed
 
+- `_editorconfig-sample.php`: TinyMCE 6 button names (`blocks` / `styles` instead of `formatselect` /
+  `styleselect`) and current doc links (#40). The sample is not loaded by the module.
 - **WebP fragment never activated for the suggested package** (#90). `_config/assets.yml` gated on
   `moduleexists: webmen/silverstripe-webp-images`, the abandoned old name of the suggested
   `wedevelopnl/silverstripe-webp-images`, and configured the v0.x class only. It now gates on
