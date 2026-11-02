@@ -104,12 +104,19 @@ class SelectiveLumberjackTest extends SapphireTest
         # controller. Reading a SelectiveLumberjack holder's children there (e.g. deleting or
         # unpublishing it in requireDefaultRecords) went through get_class(null), a TypeError.
         # Found by the #105 browser fixture's re-seed.
-        if (Controller::has_curr()) {
-            $this->markTestSkipped('a controller is current in this test run');
+        # The test run itself has a controller on the stack: empty it as CLI has it, and put it back.
+        $stack = new ReflectionProperty(Controller::class, 'controller_stack');
+        $stack->setAccessible(true);
+        $saved = $stack->getValue();
+        $stack->setValue(null, []);
+        try {
+            $this->assertNull(Controller::curr(), 'precondition: no current controller');
+            $method = new ReflectionMethod(SelectiveLumberjack::class, 'shouldFilter');
+            $method->setAccessible(true);
+            $this->assertFalse($method->invoke(new SelectiveLumberjack()));
+        } finally {
+            $stack->setValue(null, $saved);
         }
-        $method = new ReflectionMethod(SelectiveLumberjack::class, 'shouldFilter');
-        $method->setAccessible(true);
-        $this->assertFalse($method->invoke(new SelectiveLumberjack()));
     }
 
     public function testDoesNotFilterOutsideThePagesSection()
