@@ -60,7 +60,9 @@ instead of copying code around:
   long option lists scroll within the popover (CSS only).
 - **One record count**: `GridFieldPageCount` is removed from the GridField configs that fire
   `updateConfig` (`GridFieldConfig_Base`, `_RecordEditor`, `_RecordViewer`, `_RelationEditor` and
-  their subclasses), so "View 1-3 of 3" shows once, in the footer.
+  their subclasses), so "View 1-3 of 3" shows once, in the footer. The GridField title row that
+  held it is hidden while it stays empty (no title, nothing in either header fragment), so no blank
+  band is left above the column headers (CSS only).
 
 ### Defaults
 
