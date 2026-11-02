@@ -350,7 +350,7 @@ Error-mail handler: fix a fatal on malformed request hosts, and cap the flood ri
   resolves `setFrom($from ?: getDefaultFrom())` itself — so the `calls` override arrived
   too late and `getDefaultFrom()` had already run. `getDefaultFrom()` falls back to
   `no-reply@<Director::host()>`; on a request with a trailing-dot FQDN Host (scanner
-  traffic, e.g. `www.goflex.nl.`) while `admin_email` is momentarily empty (it can be,
+  traffic, e.g. `www.example.com.`) while `admin_email` is momentarily empty (it can be,
   during early-bootstrap error logging) that yields an RFC-2822-invalid address and a
   **fatal** — turning any logged error into an HTTP 500. `from` is now passed as the
   first **constructor** argument, so `getDefaultFrom()` is never reached. (admintweaks#56)
