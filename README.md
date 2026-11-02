@@ -358,4 +358,4 @@ npm run watch      # Watch mode
 
 ## License
 
-BSD-3-Clause
+MIT, see [LICENSE](LICENSE).
