@@ -1,5 +1,24 @@
 # Changelog
 
+## 3.23.2 (2026-11-02)
+
+### Fixed
+
+- **`SelectiveLumberjack` children no longer show in the site tree once a page is open in the
+  editor** (#105). The edit screen loads the tree again from `admin/pages/edit/treeview` and
+  `getsubtree`, served by `CMSPageEditController`, and `shouldFilter()` matched only
+  `CMSPagesController`, so that tree was not filtered. Core's own `hide_from_cms_tree` handling
+  still hid the children listed there, but a child hidden only by Lumberjack's
+  `show_in_sitetree: false` showed up. The filter now applies to any `CMSMain` for the tree
+  actions only; the edit form and the listview stay unfiltered.
+- New browser spec `site-tree.spec.ts` with a SelectiveLumberjack holder fixture opens the holder
+  from the Pages screen and from its own edit URL; the SS5 browser host now installs lumberjack.
+
+### Changed
+
+- Added the MIT `LICENSE` file `composer.json` already declared. The README's licence line said
+  BSD-3-Clause, which `composer.json` never did; it now says MIT and points at the file.
+
 ## 3.23.1 (2026-11-02)
 
 ### Fixed
