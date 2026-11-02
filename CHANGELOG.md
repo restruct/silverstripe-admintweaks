@@ -1,5 +1,27 @@
 # Changelog
 
+## 4.4.2 (2026-11-02)
+
+### Fixed
+
+- **`SelectiveLumberjack` children no longer show in the site tree once a page is open in the
+  editor** (#105). The edit screen loads the tree again from `admin/pages/edit/treeview` and
+  `getsubtree`, served by `CMSPageEditController`, and `shouldFilter()` matched only the exact
+  Pages controller class, so on Silverstripe 6 that tree listed every hidden child. Core does not
+  cover for it there: `Hierarchy::getChildrenForTree()` reads `hide_from_cms_tree` off the node the
+  tree starts from, not off each holder. The filter now applies to any `CMSMain` for the tree
+  actions only; the edit form and the listview stay unfiltered.
+- **`SelectiveLumberjack` no longer throws without a current controller.** On Silverstripe 6 CLI
+  (`sake db:build`, tasks, queued jobs) `shouldFilter()` called `get_class(null)`, a TypeError, as
+  soon as a holder's children were read (for example when unpublishing or deleting a holder).
+- New browser spec `site-tree.spec.ts` with a SelectiveLumberjack holder fixture opens the holder
+  from the Pages screen and from its own edit URL; the SS6 browser host now installs lumberjack.
+
+### Changed
+
+- Added the MIT `LICENSE` file `composer.json` already declared; the README's licence line points
+  at it.
+
 ## 4.4.1 (2026-11-02)
 
 ### Fixed

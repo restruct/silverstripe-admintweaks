@@ -467,4 +467,4 @@ regenerate them.
 
 ### License
 
-MIT, see `composer.json`.
+MIT, see [LICENSE](LICENSE).
