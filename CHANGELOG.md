@@ -1,5 +1,23 @@
 # Changelog
 
+## 3.23.1 (2026-11-02)
+
+### Fixed
+
+- **Empty GridField title row no longer leaves a blank band** (#96). admintweaks removes core's
+  `GridFieldPageCount` from every GridFieldConfig, and that count was the only content of
+  `GridFieldToolbarHeader`'s title row in ModelAdmin and in relation grids without a title. The
+  row kept rendering as an empty `th` with its padding: a ~24px gap between the "Add new" button
+  row and the column headers. `admintweaks.css` now hides that row only while it is empty (both
+  fragment divs present and empty, no title or other element in the `th`), so a title or any
+  component output keeps it. New browser spec `gridfield-title-row.spec.ts` covers both cases.
+
+### Changed
+
+- Neutral wording in an older CHANGELOG entry and in test data (an `example.com` hostname in a
+  dedup test message, #98); the stale `client/dist/js/admintweaks.js.map` regenerated from the current
+  source.
+
 ## 3.23.0 (2026-10-22)
 
 ### Security
