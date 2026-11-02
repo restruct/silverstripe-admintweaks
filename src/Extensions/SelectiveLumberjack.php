@@ -2,6 +2,7 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
+use SilverStripe\CMS\Controllers\CMSMain;
 use SilverStripe\CMS\Controllers\CMSPagesController;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
@@ -32,7 +33,14 @@ class SelectiveLumberjack extends Lumberjack
     {
         $controller = Controller::curr();
 
-        return get_class($controller) === CMSPagesController::class
+        # Any CMSMain (admintweaks#105): once a page is open in the editor the tree is loaded again
+        # from admin/pages/edit/treeview and getsubtree, served by CMSPageEditController, and the
+        # exact CMSPagesController match left that tree unfiltered. Core's own hide_from_cms_tree
+        # handling still hid the children listed there, but a child hidden only by Lumberjack's
+        # show_in_sitetree: false showed up. CMSPagesController and CMSPageEditController are both
+        # CMSMain subclasses; the action list below keeps the edit form and listview unfiltered.
+//        return get_class($controller) === CMSPagesController::class
+        return $controller instanceof CMSMain
             // DON'T filter listview, after all, that's what its for (to show large sets of pages)
             // Original list: 'index', 'show', 'treeview', 'listview', 'getsubtree'
             && in_array($controller->getAction(), [ "treeview", "getsubtree" ]);
