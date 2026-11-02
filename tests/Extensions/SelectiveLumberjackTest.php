@@ -79,6 +79,38 @@ class SelectiveLumberjackTest extends SapphireTest
         $this->assertFalse($this->shouldFilterOn(self::pagesControllerClass(), 'listview'));
     }
 
+    public function testFiltersTheTreeOnThePageEditScreen()
+    {
+        # admintweaks#105: once a page is open in the editor the CMS loads the site tree again,
+        # from admin/pages/edit/treeview and getsubtree, served by CMSPageEditController. On SS6
+        # that tree listed the hidden children. Its tree actions must be filtered like the Pages
+        # section's.
+        $this->assertTrue($this->shouldFilterOn(CMSPageEditController::class, 'treeview'), 'edit treeview');
+        $this->assertTrue($this->shouldFilterOn(CMSPageEditController::class, 'getsubtree'), 'edit getsubtree');
+    }
+
+    public function testDoesNotFilterTheEditFormItself()
+    {
+        # Only the tree actions: the edit form (show / EditForm) and the listview stay unfiltered.
+        $this->assertFalse($this->shouldFilterOn(CMSPageEditController::class, 'show'));
+        $this->assertFalse($this->shouldFilterOn(CMSPageEditController::class, 'EditForm'));
+        $this->assertFalse($this->shouldFilterOn(CMSPageEditController::class, 'listview'));
+    }
+
+    public function testDoesNotFilterWithoutACurrentController()
+    {
+        # CLI on Silverstripe 6 (sake db:build, tasks, queued jobs) runs without a current
+        # controller. Reading a SelectiveLumberjack holder's children there (e.g. deleting or
+        # unpublishing it in requireDefaultRecords) went through get_class(null), a TypeError.
+        # Found by the #105 browser fixture's re-seed.
+        if (Controller::has_curr()) {
+            $this->markTestSkipped('a controller is current in this test run');
+        }
+        $method = new ReflectionMethod(SelectiveLumberjack::class, 'shouldFilter');
+        $method->setAccessible(true);
+        $this->assertFalse($method->invoke(new SelectiveLumberjack()));
+    }
+
     public function testDoesNotFilterOutsideThePagesSection()
     {
         # Parity with the 3.x behaviour: the page edit controller (a CMSMain subclass on every
