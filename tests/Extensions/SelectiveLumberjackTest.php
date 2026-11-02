@@ -17,6 +17,7 @@ use SilverStripe\Lumberjack\Model\Lumberjack;
 /**
  * SelectiveLumberjack filters the CMS site TREE (treeview, getsubtree) of the main Pages section,
  * and nothing else - the listview is what Lumberjack children are meant to be found in.
+ * The Pages section includes the page edit screen, which loads the same tree (admintweaks#105).
  *
  * admintweaks#62: on Silverstripe 6 there is no CMSPagesController, so the filter never applied.
  * CMSMain itself serves admin/pages there.
@@ -115,7 +116,10 @@ class SelectiveLumberjackTest extends SapphireTest
     {
         # Parity with the 3.x behaviour: the page edit controller (a CMSMain subclass on every
         # major) was never filtered, and a non-CMS controller must not be either.
-        $this->assertFalse($this->shouldFilterOn(CMSPageEditController::class, 'treeview'));
+        # admintweaks#105 changed the first half on purpose: the edit controller's TREE actions are
+        # filtered now (testFiltersTheTreeOnThePageEditScreen), its form actions still are not
+        # (testDoesNotFilterTheEditFormItself). A non-CMS controller stays unfiltered.
+//        $this->assertFalse($this->shouldFilterOn(CMSPageEditController::class, 'treeview'));
         $this->assertFalse($this->shouldFilterOn(Controller::class, 'treeview'));
     }
 }
