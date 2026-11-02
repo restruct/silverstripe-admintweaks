@@ -674,7 +674,7 @@ div.displaylogicwrapper:last-child > .field {
 // was only ever added by the (also disabled) #Form_SearchForm_q_Advanced entwine in admintweaks.js,
 // which targeted the SS3 search form id. Kept as reference.
 //.ModelAdmin {
-//  //&.DocSys_DocAdmin, &.DocSys_DocCollAdmin, &.Notes_Admin, &.CourseAdmin {
+//  //&.SomeDocAdmin, &.SomeCollectionAdmin, &.NotesAdmin, &.CourseAdmin {
 //  &.HasAdvancedSearch {
 //    #filters-button { display: none; }
 //    .cms-content-filters {
