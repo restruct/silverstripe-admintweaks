@@ -73,7 +73,7 @@ class DedupSymfonyMailerHandlerTest extends SapphireTest
         // The flood vector: every message is unique, so content dedup never fires.
         $h = $this->makeHandler(max: 5);
         for ($i = 0; $i < 50; $i++) {
-            $this->fire($h, "unique error #$i host=www.goflex.nl.$i");
+            $this->fire($h, "unique error #$i host=www.example.com.$i");
         }
         $this->assertSame(5, $this->sent,
             'the global cap bounds total emails even when every message differs');
