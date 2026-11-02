@@ -20,6 +20,9 @@
   `bootstrap_icons_cdn_url`, the `orm-query`, `qjob-profile` and `focuspoint-invert-yaxis` tasks,
   and a branch / version / Silverstripe / PHP table. `composer.json`: `description` and
   `keywords` only.
+- Neutral wording in an older CHANGELOG entry and in test data (an `example.com` hostname in a
+  dedup test message, #97); the stale `client/dist/js/admintweaks.js.map` regenerated from the current
+  source.
 
 ## 4.4.0 (2026-10-22)
 
