@@ -1,4 +1,4 @@
-# Fix FileLocalPathExtension::getLocalPath() — Use Framework Resolution
+# Fix FileLocalPathExtension::getLocalPath() - Use Framework Resolution
 
 ## Problem
 
@@ -36,19 +36,19 @@ FlysystemAssetStore (AssetStore singleton)
 
 ### What was removed
 
-- `resolveProtectedAssetsPath()` — no longer needed; the framework knows where its own filesystems are rooted
-- `$has_warned_relative_path` static — the relative path warning is no longer our concern
+- `resolveProtectedAssetsPath()` - no longer needed; the framework knows where its own filesystems are rooted
+- `$has_warned_relative_path` static - the relative path warning is no longer our concern
 - All manual candidate path construction
 
 ### What was added
 
-- `resolveOnFilesystem()` private helper — delegates to `FileResolutionStrategy::searchForTuple()` and `LocalFilesystemAdapter::prefixPath()`
+- `resolveOnFilesystem()` private helper - delegates to `FileResolutionStrategy::searchForTuple()` and `LocalFilesystemAdapter::prefixPath()`
 - Checks protected filesystem first, then public (protected is more common for CLI tool use cases)
 - Graceful null return for non-Flysystem stores (e.g. mocks in tests) and non-local adapters (e.g. S3)
 
 ## Related Issue: signed-asset-urls
 
-`computeOnDiskPath()` in `restruct/silverstripe-signed-asset-urls` has the same hardcoded path construction issue. It builds `{dirname}/{hashPrefix}/{basename}` for web server handoff (X-Sendfile/X-Accel-Redirect). The PHP streaming fallback uses `$store->getAsStream()` which goes through framework resolution and works correctly — only the web server handoff path is affected.
+`computeOnDiskPath()` in `restruct/silverstripe-signed-asset-urls` has the same hardcoded path construction issue. It builds `{dirname}/{hashPrefix}/{basename}` for web server handoff (X-Sendfile/X-Accel-Redirect). The PHP streaming fallback uses `$store->getAsStream()` which goes through framework resolution and works correctly - only the web server handoff path is affected.
 
 The fix would mirror this approach: use framework resolution to get the resolved fileID, then `prefixPath()` for the absolute path.
 

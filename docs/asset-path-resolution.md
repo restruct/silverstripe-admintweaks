@@ -79,7 +79,7 @@ $resolved = $strategy->searchForTuple($parsedFileID, $filesystem);
 $path = $adapter->prefixPath($resolved->getFileID());
 ```
 
-This handles all storage layouts automatically — hash paths, natural paths, and any future FileIDHelper implementations.
+This handles all storage layouts automatically - hash paths, natural paths, and any future FileIDHelper implementations.
 
 ## When to Use What
 
@@ -99,18 +99,18 @@ The framework's `AssetStore` interface provides `getString()` and `getStream()` 
 - **File operations** that need direct filesystem access (e.g. `filesize()`, `filemtime()`)
 - **Web server handoff** (X-Sendfile, X-Accel-Redirect) where the web server reads the file directly
 
-For all other cases, prefer `getString()` or `getStream()` — they work with any AssetStore backend (local, S3, etc.).
+For all other cases, prefer `getString()` or `getStream()` - they work with any AssetStore backend (local, S3, etc.).
 
 ## Testing getLocalPath()
 
-There are no PHPUnit tests for `getLocalPath()` — it requires a fully bootstrapped SilverStripe environment with actual filesystem adapters. Use the manual checklist below after making changes.
+There are no PHPUnit tests for `getLocalPath()` - it requires a fully bootstrapped SilverStripe environment with actual filesystem adapters. Use the manual checklist below after making changes.
 
 ### Manual Testing Checklist
 
 #### 1. Build verification
 
 ```bash
-vendor/bin/sake dev/build flush=1
+vendor/bin/sake db:build --flush
 ```
 
 Should complete without errors.
@@ -119,7 +119,7 @@ Should complete without errors.
 
 ```bash
 # Find files with known hashes
-vendor/bin/sake dev/tasks/orm-query class=File "filter[FileHash:not]=" limit=5 fields=ID,FileFilename,FileHash
+vendor/bin/sake tasks:orm-query --class=File --filter='FileHash:not=' --limit=5 --fields=ID,FileFilename,FileHash
 
 # Check which storage layout is used on disk
 ls {protected_folder}/{dirname}/{hash10}/{basename}   # hash path
@@ -145,9 +145,9 @@ $path = $file->getLocalPath();
 
 `getLocalPath()` tries protected first, then public. To verify both paths work:
 
-- Find a protected file (in `restricted_assets/` or `.protected/`) — should resolve
-- Find a published file (in `public/assets/`) — should also resolve
-- A file that exists in neither store — should return `null`
+- Find a protected file (in `restricted_assets/` or `.protected/`) - should resolve
+- Find a published file (in `public/assets/`) - should also resolve
+- A file that exists in neither store - should return `null`
 
 ### What is NOT covered by automated tests
 

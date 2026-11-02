@@ -91,12 +91,12 @@ APP_SYSTEM_EMAIL_ADDRESS="dev@example.com"
 
 ## EnhancedErrorFormatter
 
-Extends `DetailedErrorFormatter` — inherits record parsing and context extraction,
+Extends `DetailedErrorFormatter` - inherits record parsing and context extraction,
 overrides `output()` to produce email-friendly HTML.
 
 Solves: `DetailedErrorFormatter::output()` calls `Debug::create_debug_view()` which
 falls back to `CliDebugView` (plain text) when there's no HTTP request context during
-error handling — producing unreadable "wall of text" emails.
+error handling - producing unreadable "wall of text" emails.
 
 ### Features
 
@@ -119,7 +119,7 @@ Restruct\Silverstripe\AdminTweaks\Logging\EnhancedErrorFormatter:
 Extends `SymfonyMailerHandler` with PSR-16 cache-based deduplication.
 Prevents email bombing when the same error repeats (e.g. DB down).
 
-- No buffering — sends immediately (unlike Monolog's DeduplicationHandler/BufferHandler)
+- No buffering - sends immediately (unlike Monolog's DeduplicationHandler/BufferHandler)
 - PSR-16 cache handles TTL expiry (uses existing `adminCache` pool)
 - Configurable dedup window (default: 300 seconds / 5 minutes)
 
@@ -221,6 +221,6 @@ SilverStripe\Core\Injector\Injector:
   HTML from leaking into web responses via SilverStripe's HTTPOutputHandler. Previously, the
   formatted email HTML was set on `$record->formatted` and propagated to downstream handlers,
   corrupting AJAX/JSON responses with HTML error email content.
-- **Removed:** ThrottledQueuedJobService — the parent QueuedJobService now handles broken job
+- **Removed:** ThrottledQueuedJobService - the parent QueuedJobService now handles broken job
   notification dedup natively via the `NotifiedBroken` DB flag (queuedjobs 4.x+). The reimplemented
   `checkJobHealth()` had also become stale, missing upstream fixes.
