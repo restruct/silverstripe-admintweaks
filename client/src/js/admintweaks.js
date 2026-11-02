@@ -140,7 +140,7 @@
 
   });
 
-  // @TODO: check/fix this based on FUSE/DocSys?
+  // @TODO: check/fix this against the project that relies on it?
   // Advanced search toggle for modeladmins
   $('#Form_SearchForm_q_Advanced').entwine({
     onmatch: function () {

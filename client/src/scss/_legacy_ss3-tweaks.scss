@@ -707,7 +707,7 @@ div.displaylogicwrapper:last-child > .field {
 
 // ModelAdmin advanced_search tweaks
 .ModelAdmin {
-  //&.DocSys_DocAdmin, &.DocSys_DocCollAdmin, &.Notes_Admin, &.CourseAdmin {
+  //&.SomeDocAdmin, &.SomeCollectionAdmin, &.NotesAdmin, &.CourseAdmin {
   &.HasAdvancedSearch {
     #filters-button { display: none; }
     .cms-content-filters {
