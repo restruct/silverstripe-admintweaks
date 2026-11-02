@@ -209,6 +209,21 @@ label,
   margin-bottom: 0;
 }
 
+// Collapse the GridField title row (GridFieldToolbarHeader) when it holds nothing. Its only
+// content in a ModelAdmin or a relation grid without a title is the "View x-y of z" count that
+// GridFieldPageCount puts in toolbar-header-right, and GridFieldConfigExtension removes that
+// component from every GridFieldConfig (the footer shows the same count). What is left is
+// `<th><div class="pull-xs-right"></div><div class="pull-xs-left"></div></th>`: a ~24px empty
+// band (the th's padding) between the "Add new" button row and the column headers.
+// Done in CSS, not server side, because which components fill the header's two fragments is
+// only known once GridField has rendered them all, and core offers no hook after that.
+// Only an EMPTY row of core's markup matches: both fragment divs present and empty, and no other
+// element in the th (the title h2, or whatever a custom template adds), so a title, text or any
+// component output in either fragment keeps the row.
+.grid-field__title-row:has(> th > .pull-xs-right:empty):has(> th > .pull-xs-left:empty):not(:has(> th > :not(.pull-xs-right, .pull-xs-left))) {
+  display: none;
+}
+
 
 // Remove (faux) 'stacked' layout on Elemental blocks (:first-child -> just for 'Main' tab/content)
 .elementalarea .element-editor-editform .tab-pane:first-child > div > .form-group {
