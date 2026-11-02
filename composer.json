@@ -1,9 +1,17 @@
 {
   "name": "restruct/silverstripe-admintweaks",
-  "description": "Various admin tweaks & enhancements",
+  "description": "Small CMS and developer improvements for Silverstripe 6: a system switcher with environment badge, page-type icons, permission codes, ModelAdmin and form-field opt-ins, template helpers, deduplicated error mails and asset repair tasks",
   "type": "silverstripe-vendormodule",
   "keywords": [
-    "silverstripe"
+    "silverstripe",
+    "silverstripe-module",
+    "silverstripe-cms",
+    "cms-admin",
+    "admin",
+    "modeladmin",
+    "gridfield",
+    "form-fields",
+    "developer-tools"
   ],
   "license": "MIT",
   "authors": [
