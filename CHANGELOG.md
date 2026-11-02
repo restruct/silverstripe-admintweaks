@@ -12,6 +12,12 @@
   fragment divs present and empty, no title or other element in the `th`), so a title or any
   component output keeps it. New browser spec `gridfield-title-row.spec.ts` covers both cases.
 
+### Changed
+
+- Neutral wording in an older CHANGELOG entry and in test data (an `example.com` hostname in a
+  dedup test message, #98); the stale `client/dist/js/admintweaks.js.map` regenerated from the current
+  source.
+
 ## 3.23.0 (2026-10-22)
 
 ### Security
