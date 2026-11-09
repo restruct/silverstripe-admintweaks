@@ -1,5 +1,28 @@
 # Changelog
 
+## 3.24.0 (unreleased)
+
+### Added
+
+- **A page type can pick its own site-tree icon from Bootstrap Icons** (#108):
+  `icon_class: 'bi-briefcase'`. The glyph shows in the site tree and in the "Add page" type
+  picker, sized and coloured like the SVG page icons, and takes precedence over the class-name
+  icons (no default page SVG behind it). Before, admintweaks' `:before { content: none }` removed
+  the glyph and the page type showed no icon. See
+  [Icons](docs/icons.md#choosing-an-icon-per-page-type).
+- **`include_bootstrap_icons` now has three states.** Left unset (the new default, `null`), the
+  Bootstrap Icons stylesheet loads by itself as soon as a page type uses a `bi-*` icon class;
+  `true` always loads it and `false` never does. The module's own YAML no longer sets it to
+  `false`, which would have decided it for every project.
+
+### Fixed
+
+- **Every page type gets an icon.** The default page icon was only drawn for class names containing
+  "Page" or "SiteTree", so a type such as `FooHolder` rendered blank. It is now the fallback for
+  every page type.
+- New browser spec `page-icons.spec.ts` with a fixture page type using `icon_class:
+  'bi-briefcase'`, and unit tests for when the stylesheet loads (`BootstrapIconsLoadingTest`).
+
 ## 3.23.2 (2026-11-02)
 
 ### Fixed
