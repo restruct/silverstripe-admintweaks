@@ -37,10 +37,17 @@ async function iconStyle(icon: Locator): Promise<IconStyle> {
     });
 }
 
-/** The icon span of a site-tree node, found by the node's own link. */
+/**
+ * The icon span of a site-tree node, found by the node's own link.
+ *
+ * By the link's text content rather than its accessible name: a glyph drawn by :before is part of
+ * the accessible name (on Silverstripe 5 the bi-* node's name reads "<glyph> Browser Icon Page"),
+ * while text content leaves pseudo-elements out. Anchored, so the root node, whose text contains
+ * every title, cannot match.
+ */
 async function treeIcon(page: Page, title: string): Promise<Locator> {
     const tree = page.locator('.cms-tree');
-    const link = tree.getByRole('link', { name: title, exact: true });
+    const link = tree.locator('a').filter({ hasText: new RegExp(`^\\s*${title}\\s*$`) });
     await expect(link).toBeVisible();
     return link.locator(ICON).first();
 }
