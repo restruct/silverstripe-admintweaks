@@ -8,7 +8,10 @@ SilverStripe\Admin\LeftAndMain:
     - Restruct\Silverstripe\AdminTweaks\Extensions\SystemSwitcherExtension
   # Load full Bootstrap Icons CSS from CDN for .bi-* button classes
   # Set to true if using Bootstrap Icon classes in the admin
-  include_bootstrap_icons: false
+  #include_bootstrap_icons: false
+  # Not set here since #108: left unset (null, the PHP default) it loads automatically when a page
+  # type uses a bi-* icon class, which only works while this module's own config does not decide it.
+  # Set true to always load it, false to never load it (LeftAndMainExtension::$include_bootstrap_icons).
   extra_requirements_css:
     - 'restruct/silverstripe-admintweaks:client/dist/css/admintweaks.css'
   extra_requirements_javascript:
