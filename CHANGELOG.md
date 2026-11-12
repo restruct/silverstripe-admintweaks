@@ -12,6 +12,13 @@
   Bootstrap Icons stylesheet loads by itself as soon as a page type uses a `bi-*` icon class;
   `true` always loads it and `false` never does. The module's own YAML no longer sets it to
   `false`, which would have decided it for every project.
+- **`page_icons: false` opts out of admintweaks' page icons** (`SilverStripe\Admin\LeftAndMain`,
+  default `true`). The SVG icon per page type and the default page icon now sit in a stylesheet of
+  their own, `admintweaks-page-icons.css`, which `LeftAndMainExtension` only loads while the setting
+  is on; switched off, core's page icons show as core renders them. A page type's own `bi-*` icon
+  class still shows its glyph either way. Mostly for Silverstripe 6 sites, which see admintweaks'
+  icons for the first time with this release (see Fixed). New `PageIconsLoadingTest` and browser
+  spec `page-icons-off.spec.ts`. See [Icons](docs/icons.md#switching-the-page-icons-off).
 
 ### Fixed
 
@@ -20,6 +27,7 @@
   `.page-icon` / `.jstree-pageicon`, so the site tree and the "Add page" picker showed core's own
   font icons. The rules now cover both names. A project with its own SCSS for custom page icons
   should add `.record-icon` to its selectors ([Icons](docs/icons.md#adding-custom-page-icons)).
+  To keep core's icons instead, set `page_icons: false` (see Added).
 - **Every page type gets an icon.** The default page icon was only drawn for class names containing
   "Page" or "SiteTree", so a type such as `FooHolder` rendered blank. It is now the fallback for
   every page type.

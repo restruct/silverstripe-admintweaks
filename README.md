@@ -47,7 +47,8 @@ instead of copying code around:
 - **Page icons**: icons for common page types in the site tree (Bootstrap Icons as inline SVG, no
   font files; FontAwesome optional), and a default page icon for every other type. A page type can
   also pick any Bootstrap Icon itself with `cms_icon_class: 'bi-briefcase'`. See
-  [Icons](docs/icons.md) for the list and for choosing an icon per page type.
+  [Icons](docs/icons.md) for the list and for choosing an icon per page type. On by default;
+  `LeftAndMain.page_icons: false` keeps core's page icons instead.
 - **Permission badges**: in the Security admin, every permission checkbox on a group shows its
   permission code, so similarly named permissions can be told apart.
 
