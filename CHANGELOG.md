@@ -14,6 +14,13 @@
   Bootstrap Icons stylesheet loads by itself as soon as a page type uses a `bi-*` icon class;
   `true` always loads it and `false` never does. The module's own YAML no longer sets it to
   `false`, which would have decided it for every project.
+- **`page_icons: false` opts out of admintweaks' page icons** (`SilverStripe\Admin\LeftAndMain`,
+  default `true`, so nothing changes unless a project sets it). The SVG icon per page type and the
+  default page icon now sit in a stylesheet of their own, `admintweaks-page-icons.css`, which
+  `LeftAndMainExtension` only loads while the setting is on; switched off, core's page icons show
+  as core renders them. A page type's own `bi-*` icon class still shows its glyph either way. New
+  `PageIconsLoadingTest` and browser spec `page-icons-off.spec.ts`. See
+  [Icons](docs/icons.md#switching-the-page-icons-off).
 
 ### Fixed
 

@@ -36,7 +36,7 @@ Most features are opt-in via configuration. The module provides sensible default
 
 ### Admin UI Enhancements
 
-- **Page Icons** - Stylish icons for common page types using Bootstrap Icons (FA optional), a default page icon for every other type, and any Bootstrap Icon per page type via `icon_class: 'bi-briefcase'` ([Icons](docs/icons.md#choosing-an-icon-per-page-type))
+- **Page Icons** - Stylish icons for common page types using Bootstrap Icons (FA optional), a default page icon for every other type, and any Bootstrap Icon per page type via `icon_class: 'bi-briefcase'` ([Icons](docs/icons.md#choosing-an-icon-per-page-type)). On by default; `LeftAndMain.page_icons: false` keeps core's page icons instead ([Icons](docs/icons.md#switching-the-page-icons-off))
 - **Bootstrap Icon Classes** - Standard `bi bi-*` classes mirroring `.font-icon-*` pattern (CDN-compatible)
 - **Menu Grouping** - Groups admin sections under "Advanced" (requires `symbiote/silverstripe-grouped-cms-menu`)
 - **Permission Badges** - Shows permission codes in Security admin

@@ -50,6 +50,25 @@ Stylish SVG icons appear next to page types in the CMS page tree. These are self
 Every other page type gets the default page icon (the one `Page` has), so a type such as
 `FooHolder`, with neither "Page" nor "SiteTree" in its class name, no longer renders without one.
 
+### Switching the page icons off
+
+The page icons are on by default. To keep core's own page icons instead:
+
+```yaml
+# app/_config/admintweaks.yml
+SilverStripe\Admin\LeftAndMain:
+  page_icons: false
+```
+
+This leaves out admintweaks' page icon stylesheet (`client/dist/css/admintweaks-page-icons.css`)
+altogether, so everything in the list above goes: the icon per page type, the default page icon for
+every other type, and the replacement of core's `font-icon-*` icons. Core's icons, and any `icon`
+image a page type sets, then show exactly as core renders them.
+
+A page type's own Bootstrap Icons class ([below](#choosing-an-icon-per-page-type)) keeps working with
+`page_icons: false`: that is the page type's choice, not admintweaks' icon styling, and its sizing
+lives in `admintweaks.css`, which always loads.
+
 ### Choosing an icon per page type
 
 A page type can pick its own icon with core's icon class config, using any
@@ -70,7 +89,9 @@ or in the class itself: `private static $icon_class = 'bi-briefcase';`
   (see [Configuration](#configuration) below). With `include_bootstrap_icons: false` it does not,
   and such a page type shows no icon unless the site loads the font itself.
 - Silverstripe 6 renamed the setting to `cms_icon_class` (admintweaks 4.x reads that name).
-- Other icon classes, such as core's `font-icon-*`, are still replaced by the SVG icons.
+- Other icon classes, such as core's `font-icon-*`, are still replaced by the SVG icons (unless
+  [`page_icons: false`](#switching-the-page-icons-off)).
+- A `bi-*` icon class shows its glyph with `page_icons: false` too.
 - A module page type that declares an `$icon` image (core turns it into a `background: url(...)`
   rule) shows that image instead of the SVG icon. Set `icon: ''` on the type in YAML to get the
   admintweaks icon back.
