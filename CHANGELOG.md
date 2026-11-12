@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.24.0 (unreleased)
+## 3.24.0 (2026-11-12)
 
 ### Added
 
