@@ -31,6 +31,22 @@ class LeftAndMainExtension extends Extension
     # CDN URL for the full Bootstrap Icons CSS (font + all icon classes)
     private static string $bootstrap_icons_cdn_url = 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css';
 
+    /**
+     * @config
+     * Whether admintweaks draws its own page icons in the CMS: an SVG icon per page type, picked by
+     * class name, and the default page icon for every other type, in place of core's page icons
+     * (site tree, "Add page" type picker).
+     *
+     * Default on. Set false to keep core's page icons (and any `icon` image a page type sets)
+     * exactly as core renders them. A page type that picks a Bootstrap Icons class itself
+     * (`icon_class: 'bi-briefcase'`) still shows that glyph either way: that styling sits in
+     * admintweaks.css, which always loads, and only the SVG icons sit in the file this switches.
+     */
+    private static bool $page_icons = true;
+
+    # The stylesheet `page_icons` switches (client/src/scss/admintweaks-page-icons.scss)
+    public const PAGE_ICONS_CSS = 'restruct/silverstripe-admintweaks:client/dist/css/admintweaks-page-icons.css';
+
     public function init(): void
     {
         $includeBootstrapIcons = $this->getOwner()->config()->get('include_bootstrap_icons');
@@ -42,6 +58,14 @@ class LeftAndMainExtension extends Extension
         if ($includeBootstrapIcons) {
             $cdnUrl = $this->getOwner()->config()->get('bootstrap_icons_cdn_url');
             Requirements::css($cdnUrl);
+        }
+
+        # admintweaks' SVG page icons, a stylesheet of their own so a project can opt out. Required
+        # here rather than in extra_requirements_css, which has no off switch per entry; this hook
+        # runs after LeftAndMain has required extra_requirements_css, so it still comes after
+        # admintweaks.css, as it did while these rules sat inside that file.
+        if ($this->getOwner()->config()->get('page_icons')) {
+            Requirements::css(self::PAGE_ICONS_CSS);
         }
     }
 

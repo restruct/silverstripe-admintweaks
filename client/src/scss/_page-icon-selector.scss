@@ -1,0 +1,6 @@
+// The elements core renders a page-type icon on, shared by admintweaks.scss (the bi-* glyph
+// styling) and admintweaks-page-icons.scss (the SVG page icons, opt-out via `page_icons`).
+
+// Every element core renders a page-type icon on: the site tree's span (SiteTree::getTreeTitle())
+// and the "Add page" type picker (CMSPageAddController::AddForm()), #108.
+$page-icon-selector: 'li.jstree-leaf > a .jstree-pageicon, .page-icon';
