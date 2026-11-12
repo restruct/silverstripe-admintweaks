@@ -32,10 +32,12 @@ class BreachedPasswordMemberExtension extends Extension
 
         # The hook carries no login data, so the password is read from the login form submission.
         # Only a form login posts one; other authenticators (eg. SSO) are skipped.
-        if (!Controller::has_curr()) {
+        # SS6 removed Controller::has_curr(); curr() returns null when no controller is current.
+        $controller = Controller::curr();
+        if (!$controller) {
             return;
         }
-        $password = Controller::curr()->getRequest()->postVar('Password');
+        $password = $controller->getRequest()->postVar('Password');
         if (!is_string($password) || !$breachedPasswords->isBreached($password)) {
             return;
         }
