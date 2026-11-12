@@ -1,0 +1,8 @@
+# BROWSER-TEST FIXTURE ONLY - the page_icons opt-out, switchable per request by a cookie
+# (AtBPageIconsSwitch, page-icons-off.spec.ts). Copied to app/_config/browser-fixtures/ by the runner.
+---
+Name: atb-pageicons
+---
+SilverStripe\Admin\LeftAndMain:
+  extensions:
+    - Restruct\AtBrowser\AtBPageIconsSwitch
