@@ -23,3 +23,5 @@ en:
     ExtraHTML_BodyHeader: 'Insert extra html tags in (html) body'
     ExtraHTML_BodyStart: 'After <body> (open-tag)'
     ExtraHTML_BodyEnd: 'Before </body> (close-tag)'
+  Restruct\Silverstripe\AdminTweaks\Extensions\BreachedPasswordValidatorExtension:
+    BREACHED: 'This password appears in a list of passwords exposed in data breaches. Please choose a different password.'
