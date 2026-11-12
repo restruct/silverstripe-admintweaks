@@ -37,6 +37,22 @@ class LeftAndMainExtension extends Extension
 
     /**
      * @config
+     * Whether admintweaks draws its own page icons in the CMS: an SVG icon per page type, picked by
+     * class name, and the default page icon for every other type, in place of core's page icons
+     * (site tree, "Add page" type picker).
+     *
+     * Default on. Set false to keep core's page icons (and any `cms_icon` image a page type sets)
+     * exactly as core renders them. A page type that picks a Bootstrap Icons class itself
+     * (`cms_icon_class: 'bi-briefcase'`) still shows that glyph either way: that styling sits in
+     * admintweaks.css, which always loads, and only the SVG icons sit in the file this switches.
+     */
+    private static bool $page_icons = true;
+
+    # The stylesheet `page_icons` switches (client/src/scss/admintweaks-page-icons.scss)
+    public const PAGE_ICONS_CSS = 'restruct/silverstripe-admintweaks:client/dist/css/admintweaks-page-icons.css';
+
+    /**
+     * @config
      * Hide the CMS sections most clients never use (Reports and Campaigns) from the left menu.
      *
      * OPT-IN since 4.1 (admintweaks#54). Up to 3.x this module hid both sections by hardcoding
@@ -86,6 +102,14 @@ class LeftAndMainExtension extends Extension
         if ($includeBootstrapIcons) {
             $cdnUrl = $this->getOwner()->config()->get('bootstrap_icons_cdn_url');
             Requirements::css($cdnUrl);
+        }
+
+        # admintweaks' SVG page icons, a stylesheet of their own so a project can opt out. Required
+        # here rather than in extra_requirements_css, which has no off switch per entry; this hook
+        # runs after LeftAndMain has required extra_requirements_css, so it still comes after
+        # admintweaks.css, as it did while these rules sat inside that file.
+        if ($this->getOwner()->config()->get('page_icons')) {
+            Requirements::css(self::PAGE_ICONS_CSS);
         }
     }
 

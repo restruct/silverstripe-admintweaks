@@ -1,0 +1,9 @@
+// The elements core renders a page-type icon on, shared by admintweaks.scss (the bi-* glyph
+// styling) and admintweaks-page-icons.scss (the SVG page icons, opt-out via `page_icons`).
+
+// Every element core renders a page-type icon on (#108). Silverstripe 6 renamed core's markup:
+// the site tree's span (CMSMain::getRecordTreeMarkup()) and the "Add page" type picker
+// (CMSMainAddForm) carry `.record-icon` / `.jstree-recordicon` instead of the SS4/5 `.page-icon` /
+// `.jstree-pageicon`, so rules on the old names alone never reached an SS6 page icon at all.
+// The old names stay listed for markup that still uses them.
+$page-icon-selector: 'li.jstree-leaf > a .jstree-pageicon, .page-icon, .record-icon';

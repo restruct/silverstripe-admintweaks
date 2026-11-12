@@ -26,7 +26,10 @@ mix.sourceMaps(null, 'source-map');
 mix.setPublicPath('client/dist');
 
 // Examples: https://laravel-mix.com/docs/6.0/examples
-mix.sass('client/src/scss/admintweaks.scss', 'css');      // Main styles (SVG page icons, no font dependency)
+//mix.sass('client/src/scss/admintweaks.scss', 'css');      // Main styles (SVG page icons, no font dependency)
+mix.sass('client/src/scss/admintweaks.scss', 'css');      // Main styles (always loaded, via extra_requirements_css)
+// SVG page icons, a file of their own so LeftAndMain.page_icons: false can leave them out (required by LeftAndMainExtension)
+mix.sass('client/src/scss/admintweaks-page-icons.scss', 'css');
 // Bootstrap Icons now loaded directly from CDN via LeftAndMainExtension (include_bootstrap_icons config)
 mix.sass('client/src/scss/multivaluesortfield.scss', 'css');
 

@@ -282,84 +282,20 @@ label,
 }
 
 // Page icons using inline SVG (no font required)
-@import "page-icons-svg";
-
-// Every element core renders a page-type icon on (#108). Silverstripe 6 renamed core's markup:
-// the site tree's span (CMSMain::getRecordTreeMarkup()) and the "Add page" type picker
-// (CMSMainAddForm) carry `.record-icon` / `.jstree-recordicon` instead of the SS4/5 `.page-icon` /
-// `.jstree-pageicon`, so rules on the old names alone never reached an SS6 page icon at all.
-// The old names stay listed for markup that still uses them.
-$page-icon-selector: 'li.jstree-leaf > a .jstree-pageicon, .page-icon, .record-icon';
-
-// Page icon container styles
-//li.jstree-leaf > a .jstree-pageicon, .page-icon {
-#{$page-icon-selector} {
-  line-height: 1.25rem;
-  height: 1.2rem !important;
-  width: 1.4rem !important;
-  margin-right: .4rem !important;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
-
-  // Default icon for every page type (#108). The [class*="Page"] rule below only reaches class
-  // names containing "Page" or "SiteTree", so a type such as FooHolder rendered no icon at all.
-  // Kept at this selector's low specificity on purpose: the type rules below, and the
-  // `.record-icon.class-X` rule core generates for a page type's own `cms_icon` image, still win.
-  @include page-icon-svg('page');
-
-  // Hide any :before content (legacy cleanup)
-  //&:before { content: none !important; }
-  // ...except a Bootstrap Icons glyph a page type picked itself via `cms_icon_class: 'bi-*'`
-  // (#108): the stylesheet's own `.bi-*:before` rule draws it, see the rule further down.
-  &:not([class*=" bi-"]):not([class^="bi-"]):before { content: none !important; }
-}
-
-// Page type icons - using SVG backgrounds
-//li.jstree-leaf > a .jstree-pageicon, .page-icon {
-#{$page-icon-selector} {
-  &[class*="Page"], &[class*="SiteTree"] { @include page-icon-svg('page'); }
-  &[class*="HomePage"], &.homepage { @include page-icon-svg('home'); }
-  &[class*="RedirectorPage"] { @include page-icon-svg('redirect'); }
-  &[class*="VirtualPage"] { @include page-icon-svg('virtual'); }
-  &[class*="SubsitesVirtualPage"], &[class*="CrossSubsiteVirtualPage"] { @include page-icon-svg('virtual'); }
-  &[class*="UserDefinedForm"] { @include page-icon-svg('form'); }
-  &[class*="ErrorPage"] { @include page-icon-svg('error'); }
-  &[class*="Profile"] { @include page-icon-svg('profile'); }
-  &[class*="Cart"] { @include page-icon-svg('cart'); }
-  &[class*="AlbumPage"] { @include page-icon-svg('images'); }
-  &[class*="Catalog"] { @include page-icon-svg('book'); }
-  &[class*="CatalogItem"] { @include page-icon-svg('file-text'); }
-  &[class*="Person"], &[class*="Specialist"] { @include page-icon-svg('person'); }
-  &[class*="PersonCatalog"], &[class*="SpecialistCatalog"],
-  &[class*="SpecialistFilteredCatalog"] { @include page-icon-svg('people-catalog'); }
-  &[class*="PublicationCatalog"] { @include page-icon-svg('book'); }
-  &[class*="SitemapPage"] { @include page-icon-svg('sitemap'); }
-  &[class*="SimpleCalendar"] { @include page-icon-svg('calendar'); }
-  &[class*="ArchivePage"] { @include page-icon-svg('archive'); }
-  &[class*="ContactPage"] { @include page-icon-svg('phone'); }
-  &[class*="InfoPage"] { @include page-icon-svg('info'); }
-  &[class*="BlocksPage"], &[class*="BlockPage"] { @include page-icon-svg('grid'); }
-  &[class*="VideoPage"] { @include page-icon-svg('video'); }
-  &[class*="Department"] { @include page-icon-svg('building'); }
-  &[class*="DepartmentHolder"] { @include page-icon-svg('signpost'); }
-  &[class*="ReservationPage"] { @include page-icon-svg('calendar-check'); }
-  &[class*="IFramePage"] { @include page-icon-svg('window'); }
-  &[class*="NewsGridHolder"] { @include page-icon-svg('globe'); }
-  &[class*="NewsGridPage"] { @include page-icon-svg('newspaper'); }
-  &[class*="ProtectedPage"] { @include page-icon-svg('lock'); }
-  &[class*="ImportedContent"] { @include page-icon-svg('import'); }
-  &[class*="SettingsPage"] { @include page-icon-svg('gear'); }
-  &[class*="DialogPage"] { @include page-icon-svg('chat'); }
-  &[class*="HelpPage"] { @include page-icon-svg('help'); }
-}
+// The SVG page icons moved to admintweaks-page-icons.scss, a stylesheet of its own that
+// LeftAndMainExtension only requires while `page_icons` is on (the opt-out). The bi-* glyph styling
+// below stays here: a page type that picks a Bootstrap Icons class keeps its glyph either way.
+//@import "page-icons-svg";
+@import "page-icon-selector";
 
 // A page type's own Bootstrap Icons class (#108), eg `cms_icon_class: 'bi-briefcase'`, beats the
-// class-name rules above: an explicit choice wins over a guess from the class name, so no SVG is
-// drawn behind the glyph (a QuizPage would otherwise also match [class*="Page"]). The glyph itself
-// comes from the Bootstrap Icons stylesheet (LeftAndMainExtension::$include_bootstrap_icons, loaded
-// automatically when a page type uses a bi-* icon class); only colour, size and placement are set
-// here, to match the SVG icons.
+// class-name rules (admintweaks-page-icons.scss): an explicit choice wins over a guess from the
+// class name, so no SVG is drawn behind the glyph (a QuizPage would otherwise also match
+// [class*="Page"]). The glyph itself comes from the Bootstrap Icons stylesheet
+// (LeftAndMainExtension::$include_bootstrap_icons, loaded automatically when a page type uses a bi-*
+// icon class); only colour, size and placement are set here, to match the SVG icons. It applies
+// with `page_icons: false` too: that opts out of admintweaks' SVG icons, not of a page type's own
+// choice of glyph.
 #{$page-icon-selector} {
   &[class*=" bi-"], &[class^="bi-"] {
     background-image: none !important;
