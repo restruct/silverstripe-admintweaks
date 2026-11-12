@@ -75,6 +75,13 @@ instead of copying code around:
 - Password policy (`_config/passwords.yml`): swaps core's default `EntropyPasswordValidator` for
   `RulesPasswordValidator` with minimum length 12, history 6 and minimum test score 3 on live;
   minimum length 5 and no history check on dev/test
+- Breached passwords are refused on live (`_config/passwords.yml`): a new password that occurs in
+  the [Have I Been Pwned](https://haveibeenpwned.com/Passwords) breach data fails validation. Only
+  the first 5 characters of the password's SHA-1 hash are sent (k-anonymity); when the lookup fails
+  the password is accepted and a warning is logged. Settings on
+  `Restruct\Silverstripe\AdminTweaks\Security\BreachedPasswords`: `enabled` (off outside live),
+  `min_breach_count` (default 1), and the opt-in `expire_on_login: true`, which expires a breached
+  password a member logs in with, so core sends them to the change-password form (also behind MFA)
 - Cache lifetimes: `cacheblock` (template `<% cached %>`) 24 hours; `appcache` and `adminCache` 1 hour
 - GoogleSitemap enabled when `wilr/silverstripe-googlesitemaps` is installed (1000 objects per
   sitemap, Google/Bing notification on, honours `ShowInSearch`)

@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **Breached passwords are refused** (on live). `BreachedPasswordValidatorExtension` hooks core's
+  `updateValidatePassword` on every password validator (Rules or Entropy) and fails a password that
+  occurs in the Have I Been Pwned data. The lookup uses the range API with padding, so only the
+  first 5 characters of the SHA-1 hash leave the server; it times out after 4 seconds and fails
+  open with a logged warning. Uses the Guzzle client the module already requires, so no new
+  dependency. Switched off outside live, next to the permissive dev password policy.
+- **Opt-in: expire a breached password at login** (`BreachedPasswords.expire_on_login: true`).
+  Catches passwords set before the check existed: after a successful form login the password is
+  looked up, and when breached it is expired, so core's login handler (and MFA's, which defers to
+  it) sends the member to the change-password form. Logged as a notice with the member ID.
+- New `BreachedPasswordsTest` (HTTP stubbed with a Guzzle MockHandler, no request leaves the run).
+
 ## 4.5.0 (2026-11-12)
 
 ### Added
