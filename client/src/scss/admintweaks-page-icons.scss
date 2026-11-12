@@ -1,0 +1,74 @@
+// PAGE ICONS: admintweaks' SVG icon per page type, and the default page icon for every other type,
+// drawn over (and instead of) core's own page icons.
+//
+// A stylesheet of its own so it can be switched off: LeftAndMainExtension only requires it while
+// `SilverStripe\Admin\LeftAndMain.page_icons` is true (the default). Switched off, core's page
+// icons show unchanged; a page type's own bi-* icon class still shows its glyph, styled in
+// admintweaks.scss, which always loads.
+
+// Page icons using inline SVG (no font required)
+@import "page-icons-svg";
+@import "page-icon-selector";
+
+// Page icon container styles
+//li.jstree-leaf > a .jstree-pageicon, .page-icon {
+#{$page-icon-selector} {
+  line-height: 1.25rem;
+  height: 1.2rem !important;
+  width: 1.4rem !important;
+  margin-right: .4rem !important;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+
+  // Default icon for every page type (#108). The [class*="Page"] rule below only reaches class
+  // names containing "Page" or "SiteTree", so a type such as FooHolder rendered no icon at all.
+  // Kept at this selector's low specificity on purpose: the type rules below, and the
+  // `.record-icon.class-X` rule core generates for a page type's own `cms_icon` image, still win.
+  @include page-icon-svg('page');
+
+  // Hide any :before content (legacy cleanup)
+  //&:before { content: none !important; }
+  // ...except a Bootstrap Icons glyph a page type picked itself via `cms_icon_class: 'bi-*'`
+  // (#108): the stylesheet's own `.bi-*:before` rule draws it, see the bi-* rule in admintweaks.scss.
+  &:not([class*=" bi-"]):not([class^="bi-"]):before { content: none !important; }
+}
+
+// Page type icons - using SVG backgrounds
+//li.jstree-leaf > a .jstree-pageicon, .page-icon {
+#{$page-icon-selector} {
+  &[class*="Page"], &[class*="SiteTree"] { @include page-icon-svg('page'); }
+  &[class*="HomePage"], &.homepage { @include page-icon-svg('home'); }
+  &[class*="RedirectorPage"] { @include page-icon-svg('redirect'); }
+  &[class*="VirtualPage"] { @include page-icon-svg('virtual'); }
+  &[class*="SubsitesVirtualPage"], &[class*="CrossSubsiteVirtualPage"] { @include page-icon-svg('virtual'); }
+  &[class*="UserDefinedForm"] { @include page-icon-svg('form'); }
+  &[class*="ErrorPage"] { @include page-icon-svg('error'); }
+  &[class*="Profile"] { @include page-icon-svg('profile'); }
+  &[class*="Cart"] { @include page-icon-svg('cart'); }
+  &[class*="AlbumPage"] { @include page-icon-svg('images'); }
+  &[class*="Catalog"] { @include page-icon-svg('book'); }
+  &[class*="CatalogItem"] { @include page-icon-svg('file-text'); }
+  &[class*="Person"], &[class*="Specialist"] { @include page-icon-svg('person'); }
+  &[class*="PersonCatalog"], &[class*="SpecialistCatalog"],
+  &[class*="SpecialistFilteredCatalog"] { @include page-icon-svg('people-catalog'); }
+  &[class*="PublicationCatalog"] { @include page-icon-svg('book'); }
+  &[class*="SitemapPage"] { @include page-icon-svg('sitemap'); }
+  &[class*="SimpleCalendar"] { @include page-icon-svg('calendar'); }
+  &[class*="ArchivePage"] { @include page-icon-svg('archive'); }
+  &[class*="ContactPage"] { @include page-icon-svg('phone'); }
+  &[class*="InfoPage"] { @include page-icon-svg('info'); }
+  &[class*="BlocksPage"], &[class*="BlockPage"] { @include page-icon-svg('grid'); }
+  &[class*="VideoPage"] { @include page-icon-svg('video'); }
+  &[class*="Department"] { @include page-icon-svg('building'); }
+  &[class*="DepartmentHolder"] { @include page-icon-svg('signpost'); }
+  &[class*="ReservationPage"] { @include page-icon-svg('calendar-check'); }
+  &[class*="IFramePage"] { @include page-icon-svg('window'); }
+  &[class*="NewsGridHolder"] { @include page-icon-svg('globe'); }
+  &[class*="NewsGridPage"] { @include page-icon-svg('newspaper'); }
+  &[class*="ProtectedPage"] { @include page-icon-svg('lock'); }
+  &[class*="ImportedContent"] { @include page-icon-svg('import'); }
+  &[class*="SettingsPage"] { @include page-icon-svg('gear'); }
+  &[class*="DialogPage"] { @include page-icon-svg('chat'); }
+  &[class*="HelpPage"] { @include page-icon-svg('help'); }
+}

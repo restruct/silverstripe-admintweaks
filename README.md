@@ -45,8 +45,10 @@ instead of copying code around:
 ### In the CMS
 
 - **Page icons**: icons for common page types in the site tree (Bootstrap Icons as inline SVG, no
-  font files; FontAwesome optional). See [Icons](docs/icons.md) for the list and for adding your
-  own page types.
+  font files; FontAwesome optional), and a default page icon for every other type. A page type can
+  also pick any Bootstrap Icon itself with `cms_icon_class: 'bi-briefcase'`. See
+  [Icons](docs/icons.md) for the list and for choosing an icon per page type. On by default;
+  `LeftAndMain.page_icons: false` keeps core's page icons instead.
 - **Permission badges**: in the Security admin, every permission checkbox on a group shows its
   permission code, so similarly named permissions can be told apart.
 
@@ -219,6 +221,10 @@ SilverStripe\Admin\LeftAndMain:
   # optional, this is the default:
   # bootstrap_icons_cdn_url: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css'
 ```
+
+Left unset, the stylesheet loads by itself as soon as a page type uses a `bi-*` icon class
+([Icons](docs/icons.md#choosing-an-icon-per-page-type)); `false` never loads it, for a site that
+serves the font itself.
 
 ```php
 // Add Bootstrap icon to a button
