@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **Editable GridFields** (`GridFieldEditableColumns`, #114): the compact-row fix now covers every
+  editable field, not only text inputs, so selects, checkboxes and checkbox sets no longer make rows
+  tall; cells align on their first line; checkboxes stay inside their cell. A click on a row outside
+  its fields opens the detail form again, as in any other GridField.
+
 ## 3.25.0 (2026-11-12)
 
 ### Added
