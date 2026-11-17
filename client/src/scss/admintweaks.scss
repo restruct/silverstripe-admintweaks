@@ -176,9 +176,37 @@ label,
 
 
 // Fix editablecolumns enlarging GridField rows
-.grid-field.ss-gridfield-editable input.editable-column-field {
-  margin-top: -.6rem !important;
-  margin-bottom: -.6rem !important;
+// Was input-only; selects, checkboxes and option sets kept Bootstrap's form spacing (#114)
+//.grid-field.ss-gridfield-editable input.editable-column-field {
+//  margin-top: -.6rem !important;
+//  margin-bottom: -.6rem !important;
+//}
+.grid-field.ss-gridfield-editable {
+  // Align cells on their first line: a multi-line cell (option set, wrapped link) no longer pulls the
+  // single-line fields of its row down to its middle
+  .ss-gridfield-item > td {
+    vertical-align: baseline;
+  }
+  .editable-column-field {
+    margin-top: -.6rem !important;
+    margin-bottom: -.6rem !important;
+  }
+  .optionset {
+    margin-top: 0 !important;
+  }
+  .form-check {
+    padding-left: 0;
+    margin-bottom: 0;
+    min-height: 0;
+  }
+  // Bootstrap pulls the box left out of the cell and down; keep it in flow, slightly below the baseline
+  // like a browser draws a checkbox next to text
+  .form-check-input {
+    position: static;
+    margin-left: 0;
+    margin-top: 0;
+    vertical-align: -2px;
+  }
 }
 
 // CopyTextField inside GridField rows
