@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **A `minimal` HTML editor config** (#116) for short rich-text fields: one toolbar line with
+  bold, italic, bullet and numbered lists, the link menu and "clear formatting".
+  `HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME)`. It is a copy
+  of the `cms` config made the first time `minimal` is requested, so it keeps the link plugins
+  and dialogs that admin, cms and asset-admin add to `cms` in their `_config.php`, whatever order
+  those run in. Up to Silverstripe 5 `HTMLEditorConfig::get()` has no hook for this, so
+  `_config.php` swaps HTMLEditorConfig's registry for an ArrayObject that builds `minimal` on its
+  first lookup (`MinimalEditorConfigRegistry`). Toolbar and options are configurable in YAML
+  (`MinimalEditorConfig.minimal_buttons` / `minimal_options`). See
+  [Form fields](docs/form-fields.md#the-minimal-html-editor-config).
+- New `MinimalEditorConfigTest` and browser spec `minimal-editor.spec.ts` (one toolbar line; the
+  link menu opens and its external-link dialog inserts a link).
+
 ## 3.25.0 (2026-11-12)
 
 ### Added

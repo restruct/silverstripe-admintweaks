@@ -1,0 +1,10 @@
+---
+Name: admintweaks-minimal-editor
+---
+# The `minimal` editor config (admintweaks#116), created the first time it is requested: the
+# registry MinimalEditorConfig::installLazyRegistry() puts in place (_config.php) asks the
+# Injector for MinimalEditorConfig, which this factory answers with a copy of the `cms` config.
+# Toolbar and options: MinimalEditorConfig.minimal_buttons / minimal_options (see the class).
+SilverStripe\Core\Injector\Injector:
+  Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfig:
+    factory: 'Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfigFactory'

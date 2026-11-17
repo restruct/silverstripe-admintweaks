@@ -1,5 +1,6 @@
 <?php
 
+use Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfig;
 use SilverStripe\Core\Environment;
 use SilverStripe\Control\Email\Email;
 
@@ -37,3 +38,8 @@ $qjobs_email_unset = ($qjobs_email_config === null || $qjobs_email_config === ''
 if ($qjobs_email_to && $qjobs_email_unset) {
     Email::config()->set('queued_job_admin_email', $qjobs_email_to);
 }
+
+# The `minimal` HTML editor config (admintweaks#116) is built the first time it is requested,
+# as a copy of `cms`. Up to Silverstripe 5 the only place to catch "first requested" is
+# HTMLEditorConfig's registry, so swap in one that does; see MinimalEditorConfig.
+MinimalEditorConfig::installLazyRegistry();
