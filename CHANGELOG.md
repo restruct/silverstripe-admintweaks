@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **Editable GridFields: a click on a widget that replaces a field no longer opens the row** (#114
+  follow-up). A toggle switch, select2/chosen, or a date or colour picker hides the field and draws
+  its own markup next to it in the cell, so the click landed on that markup and opened the detail
+  form as well. A click anywhere in a cell that holds an editable field now belongs to the field;
+  a click in a cell without one still opens the row.
+
 ## 3.26.1 (2026-11-17)
 
 ### Fixed

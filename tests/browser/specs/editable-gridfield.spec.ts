@@ -128,6 +128,32 @@ test('a click on a checkbox toggles it and does not open the record', async ({ p
     expect(navigations()).toEqual([]);
 });
 
+test('a click on a widget that replaces a field in its cell does not open the record', async ({ page }) => {
+    const grid = await openGrid(page, EDITABLE);
+    const navigations = watchDocumentNavigations(page);
+    const r = row(grid, 'Alpha editable');
+
+    // Mimic a toggle-switch widget (e.g. Switchery): it hides the checkbox and draws its own
+    // markup next to it in the same cell, so the click lands on the widget, not on the field.
+    const cell = r.locator('td.col-Active');
+    await cell.evaluate((td) => {
+        const input = td.querySelector('input.editable-column-field') as HTMLElement;
+        input.style.display = 'none';
+        const widget = document.createElement('span');
+        widget.className = 'test-widget';
+        widget.innerHTML = '<small>toggle</small>';
+        widget.style.display = 'inline-block';
+        widget.style.padding = '4px 12px';
+        input.insertAdjacentElement('afterend', widget);
+    });
+    await cell.locator('.test-widget small').click();
+
+    await page.waitForTimeout(750);
+    await expect(page.locator('#Form_ItemEditForm')).toHaveCount(0);
+    expect(page.url()).toContain(EDITABLE.url);
+    expect(navigations()).toEqual([]);
+});
+
 test('a click on the select and the text input focuses them and does not open the record', async ({ page }) => {
     const grid = await openGrid(page, EDITABLE);
     const r = row(grid, 'Alpha editable');
