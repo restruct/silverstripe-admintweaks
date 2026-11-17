@@ -105,7 +105,8 @@
         var editLink = this.find('.edit-link').first();
         if (editLink.length) {
           e.preventDefault();
-          this.getGridField().showDetailView(editLink.prop('href'));
+          // Pass the event on: core's showDetailView() opens a new tab on Cmd/Ctrl/Shift-click
+          this.getGridField().showDetailView(editLink.prop('href'), e);
         }
       }
     });

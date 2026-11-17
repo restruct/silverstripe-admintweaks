@@ -71,7 +71,7 @@ async function firstLineCentres(r: Locator): Promise<Record<string, number>> {
 }
 
 /** Click a point of the row's Summary cell to the right of its text: row space, no field. */
-async function clickRowSpace(r: Locator, modifiers?: Array<'Meta' | 'Control'>): Promise<void> {
+async function clickRowSpace(r: Locator, modifiers?: Array<'Meta' | 'Control' | 'ControlOrMeta'>): Promise<void> {
     const cell = r.locator('td.col-Summary');
     const box = (await cell.boundingBox())!;
     const textRight = await cell.evaluate((td) => {
@@ -162,6 +162,21 @@ test('a click on empty row space opens the detail form', async ({ page }) => {
     // Loaded in the CMS panel (pjax), not by replacing the page.
     expect(navigations()).toEqual([]);
     expect(page.url()).toContain(href!.split('?')[0]);
+});
+
+test('a Cmd/Ctrl-click on empty row space opens the record in a new tab, as core does', async ({ page }) => {
+    const grid = await openGrid(page, EDITABLE);
+    const r = row(grid, 'Bravo editable');
+    const href = await r.locator('.edit-link').first().getAttribute('href');
+    expect(href).toBeTruthy();
+
+    const popup = page.context().waitForEvent('page');
+    await clickRowSpace(r, ['ControlOrMeta']);
+    const tab = await popup;
+    expect(tab.url()).toContain(href!.split('?')[0]);
+    // The grid itself stays where it was
+    await expect(page.locator('#Form_ItemEditForm')).toHaveCount(0);
+    await tab.close();
 });
 
 test('a row without an edit link does nothing on a click', async ({ page }) => {
