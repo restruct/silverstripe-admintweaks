@@ -1,5 +1,24 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **Editable GridFields** (`GridFieldEditableColumns`, #114), ported from 3.26.1 and 3.26.2: the
+  compact-row fix now covers every editable field, not only text inputs, so selects, checkboxes and
+  checkbox sets no longer make rows tall; cells align on their first line; checkboxes stay inside
+  their cell. On Silverstripe 6 this also undoes Bootstrap 5's float and label margin on checkbox-set
+  items and the extra top margin gridfieldextensions 5 puts on a single checkbox. A click on a row
+  outside its fields opens the detail form again, as in any other GridField; Cmd/Ctrl/Shift-click
+  opens it in a new tab, as core does. A click on a widget that replaces a field (a toggle switch,
+  select2/chosen, a date or colour picker) belongs to the field and does not open the row; a click on
+  the cell itself and in cells without a field still does.
+- New browser spec `editable-gridfield.spec.ts` (#114): compact rows, first lines aligned, a click on
+  a field or a widget keeps its behaviour, a click on row space or empty cell space opens the detail
+  form, a row without an edit link does nothing, a Cmd/Ctrl-click opens a new tab, a non-editable
+  GridField is unchanged. The SS6 browser host now also installs
+  `symbiote/silverstripe-gridfieldextensions` (`SS6_EXTRA_REQUIRE` in `tests/browser/targets.sh`).
+
 ## 4.7.1 (2026-11-17)
 
 ### Fixed

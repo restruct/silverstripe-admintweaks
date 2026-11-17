@@ -91,6 +91,32 @@
       }
     });
 
+    // Editable GridFields (GridFieldEditableColumns): a row click outside the fields opens the detail form, like
+    // in any other GridField. gridfieldextensions stops the click for the whole row as soon as the row contains
+    // an editable field, so the pointer cursor showed but a click did nothing (#114). Clicks on fields, labels,
+    // links and buttons keep their own behaviour; rows without an edit link do nothing.
+    $('.cms .grid-field.ss-gridfield-editable tbody .ss-gridfield-item').entwine({
+      onclick: function (e) {
+        var target = $(e.target);
+        // Markup inside a cell that holds an editable field belongs to that field, also where a widget (a toggle
+        // switch, select2/chosen, a date or colour picker) hides the field and draws its own markup next to it:
+        // the click then lands on the widget, which matches none of the selectors below (#114 follow-up).
+        // A click on the cell itself (its padding, empty space) still opens the row.
+        var cell = target.closest('td');
+        if (target.closest('input, select, textarea, label, a, button, .editable-column-field, .action-menu').length
+          || (cell.length && !target.is(cell) && cell.find('.editable-column-field').length)) {
+          e.stopPropagation();
+          return;
+        }
+        var editLink = this.find('.edit-link').first();
+        if (editLink.length) {
+          e.preventDefault();
+          // Pass the event on: core's showDetailView() opens a new tab on Cmd/Ctrl/Shift-click
+          this.getGridField().showDetailView(editLink.prop('href'), e);
+        }
+      }
+    });
+
     /**
      * CopyTextField - copy to clipboard with visual feedback
      * On click: copies input value, button turns green with checkmark for 2 seconds
