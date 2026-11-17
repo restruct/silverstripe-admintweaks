@@ -1,5 +1,7 @@
 # Restruct SilverStripe Admin Tweaks
 
+> **Legacy branch, unmaintained.** The Silverstripe 4/5 line continues on the `v3` branch (3.12.0 and later); install `^3` to get it. This branch ends at 3.11.1. See the version table in the `main` README.
+
 A portable toolkit of admin UI enhancements, form field utilities, template helpers, and development conveniences for SilverStripe 4/5 projects.
 
 **Namespace:** `Restruct\Silverstripe\AdminTweaks`
