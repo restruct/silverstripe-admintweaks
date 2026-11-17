@@ -13,6 +13,10 @@
   editable field, not only text inputs, so selects, checkboxes and checkbox sets no longer make rows
   tall; cells align on their first line; checkboxes stay inside their cell. A click on a row outside
   its fields opens the detail form again, as in any other GridField.
+- New browser spec `editable-gridfield.spec.ts` (#114): compact rows, first lines aligned, a click on
+  a field keeps its behaviour, a click on row space opens the detail form, a row without an edit link
+  does nothing, a non-editable GridField is unchanged. The SS5 browser host now also installs
+  `symbiote/silverstripe-gridfieldextensions` (`SS5_EXTRA_REQUIRE` in `tests/browser/targets.sh`).
 
 ## 3.26.0 (2026-11-17)
 

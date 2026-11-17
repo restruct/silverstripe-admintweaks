@@ -14,4 +14,5 @@ SS5_PHP="8.3"
 SS5_PORT="8861"
 SS5_SRC_REF=""
 # lumberjack: the SelectiveLumberjack fixture (fixtures/AtBHolder.php, site-tree.spec.ts, #105).
-SS5_EXTRA_REQUIRE="silverstripe/lumberjack:^3"
+# gridfieldextensions: GridFieldEditableColumns in fixtures/AtBEditableAdmin.php (editable-gridfield.spec.ts, #114).
+SS5_EXTRA_REQUIRE="silverstripe/lumberjack:^3 symbiote/silverstripe-gridfieldextensions:^4"
