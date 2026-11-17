@@ -154,6 +154,25 @@ test('a click on a widget that replaces a field in its cell does not open the re
     expect(navigations()).toEqual([]);
 });
 
+test('a click on the empty part of a cell that holds a field still opens the record', async ({ page }) => {
+    const grid = await openGrid(page, EDITABLE);
+    const r = row(grid, 'Bravo editable');
+    const cell = r.locator('td.col-Active');
+    const box = (await cell.boundingBox())!;
+    // Guard: the point must hit the cell itself, not the checkbox or the widget in it.
+    const point = { x: box.width - 3, y: box.height - 3 };
+    const hitsCell = await cell.evaluate((td, p) => {
+        const rect = td.getBoundingClientRect();
+        return document.elementFromPoint(rect.left + p.x, rect.top + p.y) === td;
+    }, point);
+    expect(hitsCell, 'the click point is empty cell space').toBe(true);
+
+    await cell.click({ position: point });
+    const form = page.locator('#Form_ItemEditForm');
+    await expect(form).toBeVisible();
+    await expect(form.locator('input[name=Title]')).toHaveValue('Bravo editable');
+});
+
 test('a click on the select and the text input focuses them and does not open the record', async ({ page }) => {
     const grid = await openGrid(page, EDITABLE);
     const r = row(grid, 'Alpha editable');
