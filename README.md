@@ -271,7 +271,7 @@ SilverStripe\Forms\FormField:
 ```
 
 ```php
-HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME); // 'minimal'
+HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get());
 ```
 
 GridField configurations:

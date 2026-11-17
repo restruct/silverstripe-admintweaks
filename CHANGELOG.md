@@ -6,7 +6,8 @@
 
 - **A `minimal` HTML editor config** (#116) for short rich-text fields: one toolbar line with
   bold, italic, bullet and numbered lists, the link menu and "clear formatting".
-  `HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME)`. It is a copy
+  `HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get())`; on this line
+  the name `minimal` works as well. It is a copy
   of the `cms` config made the first time `minimal` is requested (through
   `HTMLEditorConfig.default_config_definitions` and an Injector factory), so it keeps the link
   plugins and dialogs that a `_config.php` adds to `cms` even when that runs after this module's.

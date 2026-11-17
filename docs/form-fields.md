@@ -59,27 +59,28 @@ SilverStripe\Admin\LeftAndMain:
 
 An HTML editor config named `minimal` for short rich-text fields (FAQ answers, intro texts, card
 texts): one toolbar line with bold, italic, bullet and numbered lists, the link menu and "clear
-formatting". The full `cms` toolbar (alignment, indent, tables, headings, embeds) is more than such
-a field needs, and it keeps the content clean.
+formatting". Such fields need less than the full `cms` toolbar (alignment, indent, tables,
+headings, embeds), and the smaller toolbar keeps their content clean.
 
 ### Usage
 
 ```php
 use Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfig;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorConfig;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
-$field = HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME);
-
-// The config object itself
-$config = HTMLEditorConfig::get(MinimalEditorConfig::NAME);
+$field = HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get());
 ```
+
+`MinimalEditorConfig::get()` returns the config object, the same one on every call. On
+Silverstripe 6 the name works as well, also before the getter has been called:
+`setEditorConfig(MinimalEditorConfig::NAME)` or `HTMLEditorConfig::get('minimal')`. The getter is
+what the 3.x line (Silverstripe 4 and 5) needs, so code that uses it reads the same on both.
 
 Getting the config is what makes the copy (see below), so do not get it in a `_config.php`: the
 copy would then be made before every module has set up `cms`. Change the toolbar through YAML
 instead (see Configuration).
 
-On Silverstripe 6 TinyMCE is a separate module; the config is only registered when
+On Silverstripe 6 TinyMCE is a separate module; the class and the config only exist when
 `silverstripe/htmleditor-tinymce` is installed.
 
 ### How it is built

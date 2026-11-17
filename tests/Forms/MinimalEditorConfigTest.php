@@ -59,7 +59,10 @@ class MinimalEditorConfigTest extends SapphireTest
         $this->assertSame(MinimalEditorConfig::NAME, $minimal->getOption('editorIdentifier'));
         $this->assertSame('Simple', $minimal->getOption('friendly_name'));
         $this->assertSame('sslink', $minimal->getOption('contextmenu'));
-        # One instance per name, however it is asked for.
+        # One instance per name, however it is asked for (by name first here: on Silverstripe 6
+        # the name works without the getter having run).
+        $this->assertSame($minimal, MinimalEditorConfig::get());
+        $this->assertSame($minimal, MinimalEditorConfig::get(MinimalEditorConfig::NAME));
         $this->assertSame($minimal, HTMLEditorConfig::get(MinimalEditorConfig::NAME));
         $this->assertSame($minimal, TinyMCEConfig::get(MinimalEditorConfig::NAME));
     }
@@ -119,6 +122,25 @@ class MinimalEditorConfigTest extends SapphireTest
         $field = HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME);
 
         $this->assertSame(HTMLEditorConfig::get(MinimalEditorConfig::NAME), $field->getEditorConfig());
+    }
+
+    public function testFieldTakesTheGetterResult(): void
+    {
+        $field = HTMLEditorField::create('Intro')->setEditorConfig(MinimalEditorConfig::get());
+
+        $this->assertSame(HTMLEditorConfig::get(MinimalEditorConfig::NAME), $field->getEditorConfig());
+    }
+
+    public function testAnotherIdentifierIsPassedToHtmlEditorConfig(): void
+    {
+        $this->assertSame(HTMLEditorConfig::get('cms'), MinimalEditorConfig::get('cms'));
+
+        # An unknown name is created as by HTMLEditorConfig::get(), not as a minimal copy.
+        try {
+            $this->assertArrayNotHasKey('sslink', MinimalEditorConfig::get('atb-other')->getPlugins());
+        } finally {
+            HTMLEditorConfig::set_config('atb-other', null);
+        }
     }
 
     public static function provideButtonConfig(): array

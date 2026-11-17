@@ -2,6 +2,7 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Forms;
 
+use SilverStripe\Forms\HTMLEditor\HTMLEditorConfig;
 use SilverStripe\TinyMCE\TinyMCEConfig;
 
 # Silverstripe 6 ships TinyMCE in its own module (silverstripe/htmleditor-tinymce), which this
@@ -16,9 +17,13 @@ if (!class_exists(TinyMCEConfig::class)) {
  * and links, for short rich-text fields such as FAQ answers, intro and card texts.
  *
  * ```php
+ * HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get());
+ * // On Silverstripe 6 the name works as well, also before the getter has been called:
  * HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME);
- * HTMLEditorConfig::get(MinimalEditorConfig::NAME);
  * ```
+ *
+ * The getter is the usage the 3.x line (Silverstripe 4/5) needs, where the name only works once
+ * the getter has run; it is offered here too so code reads the same on both lines.
  *
  * The config is a copy of the `cms` config, made the first time `minimal` is requested, so it
  * keeps the link plugins and sslink menus that htmleditor-tinymce (and anything else) adds to
@@ -74,4 +79,21 @@ class MinimalEditorConfig extends TinyMCEConfig
         'friendly_name' => 'Simple',
         'contextmenu' => 'sslink',
     ];
+
+    /**
+     * The `minimal` config, the same instance on every call: the copy of `cms` is made through
+     * `default_config_definitions` on the first lookup. With an identifier other than `minimal`
+     * this is HTMLEditorConfig::get().
+     *
+     * Overrides the inherited HTMLEditorConfig::get() so that a call without an identifier means
+     * `minimal`, not the active config.
+     *
+     * @param string|null $identifier Leave out (or pass self::NAME) for the minimal config
+     */
+    public static function get($identifier = null): HTMLEditorConfig
+    {
+        # Explicitly HTMLEditorConfig::get(), not parent::get(): for a name without a definition
+        # that creates `static::create()`, which from here would be a minimal copy under that name.
+        return HTMLEditorConfig::get($identifier ?? self::NAME);
+    }
 }
