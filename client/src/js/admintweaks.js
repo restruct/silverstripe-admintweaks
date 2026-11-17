@@ -98,7 +98,13 @@
     $('.cms .grid-field.ss-gridfield-editable tbody .ss-gridfield-item').entwine({
       onclick: function (e) {
         var target = $(e.target);
-        if (target.closest('input, select, textarea, label, a, button, .editable-column-field, .action-menu').length) {
+        // Markup inside a cell that holds an editable field belongs to that field, also where a widget (a toggle
+        // switch, select2/chosen, a date or colour picker) hides the field and draws its own markup next to it:
+        // the click then lands on the widget, which matches none of the selectors below (#114 follow-up).
+        // A click on the cell itself (its padding, empty space) still opens the row.
+        var cell = target.closest('td');
+        if (target.closest('input, select, textarea, label, a, button, .editable-column-field, .action-menu').length
+          || (cell.length && !target.is(cell) && cell.find('.editable-column-field').length)) {
           e.stopPropagation();
           return;
         }
