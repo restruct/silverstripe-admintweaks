@@ -38,42 +38,17 @@ A field for managing sortable multi-value data. Allows users to add, remove, and
 ### Usage
 
 ```php
-use Restruct\Silverstripe\AdminTweaks\FormFields\MultivalueSortField;
-
-$field = MultivalueSortField::create('Tags', 'Tags');
-```
-
-### Styles
-
-Include the field's CSS in your admin:
-
-```yaml
-SilverStripe\Admin\LeftAndMain:
-  extra_requirements_css:
-    - 'restruct/silverstripe-admintweaks:client/dist/css/multivaluesortfield.css'
-```
-
----
-
-## The minimal HTML editor config
-
-An HTML editor config named `minimal` for short rich-text fields (FAQ answers, intro texts, card
-texts): one toolbar line with bold, italic, bullet and numbered lists, the link menu and "clear
-formatting". The full `cms` toolbar (alignment, indent, tables, headings, embeds) is more than such
-a field needs, and it keeps the content clean.
-
-### Usage
-
-```php
 use Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfig;
-use SilverStripe\Forms\HTMLEditor\HTMLEditorConfig;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 
-$field = HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME);
-
-// The config object itself
-$config = HTMLEditorConfig::get(MinimalEditorConfig::NAME);
+$field = HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get());
 ```
+
+`MinimalEditorConfig::get()` makes the config on its first call and returns the same object
+after that. Use the getter, not the name: up to Silverstripe 5, `HTMLEditorConfig::get()` has no
+hook for a named config, so `setEditorConfig('minimal')` or `HTMLEditorConfig::get('minimal')`
+only finds the copy once the getter has run. Before that, a lookup by name creates an empty
+config called `minimal`, and the getter then keeps it as if it were a project's own.
 
 Getting the config is what makes the copy (see below), so do not get it in a `_config.php`: the
 copy would then be made before every module has set up `cms`. Change the toolbar through YAML
@@ -81,20 +56,20 @@ instead (see Configuration).
 
 ### How it is built
 
-The config is a copy of the `cms` config, made the first time `minimal` is requested. It keeps
-what `cms` has at that moment: the link plugins and their menu (page, file, external URL, anchor,
-email), the skin, the content CSS, and whatever a project's own `_config.php` added to `cms`. A
-copy made in a `_config.php` could miss some of that, because the `_config.php` that sets up
-`cms` can run after it.
+The config is a copy of the `cms` config, made on the first `MinimalEditorConfig::get()`. It
+keeps what `cms` has at that moment: the link plugins and their menu (page, file, external URL,
+anchor, email), the skin, the content CSS, and whatever a project's own `_config.php` added to
+`cms`.
 
 The copy keeps the `cms` config's `valid_elements` and `extended_valid_elements` as well (the
 iframe, object and map rules admin adds). For other rules, register a project's own `minimal`
 (below).
 
-Up to Silverstripe 5, `HTMLEditorConfig::get()` has no hook for a named config, so the module's
-`_config.php` replaces HTMLEditorConfig's internal registry of configs with one that builds
-`minimal` when it is first looked up; every other name works as before. (The Silverstripe 6
-line uses core's `default_config_definitions` instead.)
+Why not make the copy in this module's `_config.php`: module `_config.php` files run in module
+priority order. admin and cms run first, but asset-admin (which adds the file link) and other
+modules are in the `$other_modules` group, where the order comes down to the alphabetical order
+of the package names, and a project's `_config.php` runs after every module. So a copy made there
+would depend on package names.
 
 A project that registers its own `minimal` (`HTMLEditorConfig::set_config('minimal', ...)`)
 keeps it; the copy is only made when there is no `minimal` yet.

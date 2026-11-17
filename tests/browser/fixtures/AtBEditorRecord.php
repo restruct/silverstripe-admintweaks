@@ -46,10 +46,10 @@ class AtBEditorRecord extends DataObject
     {
         $fields = parent::getCMSFields();
         # The scaffolded HTMLEditorFields use the active (cms) config; Intro is switched to
-        # `minimal` by its public name constant, as a project would.
+        # `minimal` through the module's getter, as the docs tell a project to.
         $fields->replaceField(
             'Intro',
-            HTMLEditorField::create('Intro', 'Intro')->setEditorConfig(MinimalEditorConfig::NAME)->setRows(4)
+            HTMLEditorField::create('Intro', 'Intro')->setEditorConfig(MinimalEditorConfig::get())->setRows(4)
         );
         return $fields;
     }

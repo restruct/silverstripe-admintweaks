@@ -11,11 +11,9 @@ use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
 use SilverStripe\Forms\HTMLEditor\TinyMCEConfig;
 
 /**
- * The `minimal` HTML editor config (admintweaks#116): a copy of `cms`, made when it is first
- * requested, with a one-line toolbar from YAML.
- *
- * Up to Silverstripe 5 "first requested" is caught by MinimalEditorConfigRegistry, which
- * MinimalEditorConfig::installLazyRegistry() swaps in for HTMLEditorConfig's registry.
+ * The `minimal` HTML editor config (admintweaks#116): a copy of `cms`, made on the first
+ * MinimalEditorConfig::get(), with a one-line toolbar from YAML. Up to Silverstripe 5 the getter
+ * is what makes it; the name works once it has been called.
  *
  * Compatibility: must run on PHPUnit 9 (SS5) and 11 (SS6). No doc-comment metadata, static
  * data providers only.
@@ -46,7 +44,7 @@ class MinimalEditorConfigTest extends SapphireTest
 
     public function testIsCreatedOnRequestAsSeparateTinyMceConfig(): void
     {
-        $minimal = HTMLEditorConfig::get(MinimalEditorConfig::NAME);
+        $minimal = MinimalEditorConfig::get();
         $cms = HTMLEditorConfig::get('cms');
 
         $this->assertInstanceOf(TinyMCEConfig::class, $minimal);
@@ -54,14 +52,16 @@ class MinimalEditorConfigTest extends SapphireTest
         $this->assertSame(MinimalEditorConfig::NAME, $minimal->getOption('editorIdentifier'));
         $this->assertSame('Simple', $minimal->getOption('friendly_name'));
         $this->assertSame('sslink', $minimal->getOption('contextmenu'));
-        # One instance per name, however it is asked for.
+        # One instance, however it is asked for once the getter made it.
+        $this->assertSame($minimal, MinimalEditorConfig::get());
+        $this->assertSame($minimal, MinimalEditorConfig::get(MinimalEditorConfig::NAME));
         $this->assertSame($minimal, HTMLEditorConfig::get(MinimalEditorConfig::NAME));
         $this->assertSame($minimal, TinyMCEConfig::get(MinimalEditorConfig::NAME));
     }
 
     public function testHasTheConfiguredButtonsOnOneLine(): void
     {
-        $minimal = HTMLEditorConfig::get(MinimalEditorConfig::NAME);
+        $minimal = MinimalEditorConfig::get();
 
         # getButtons() filters out empty lines, so this also says lines 2 and 3 are empty.
         $this->assertSame(self::DEFAULT_BUTTONS, $minimal->getButtons());
@@ -69,7 +69,7 @@ class MinimalEditorConfigTest extends SapphireTest
 
     public function testKeepsTheCmsLinkPlugins(): void
     {
-        $plugins = HTMLEditorConfig::get(MinimalEditorConfig::NAME)->getPlugins();
+        $plugins = MinimalEditorConfig::get()->getPlugins();
 
         # Registered on `cms` by admin's and cms's _config.php;
         # a fresh TinyMCEConfig has none of them.
@@ -90,7 +90,7 @@ class MinimalEditorConfigTest extends SapphireTest
         # _config.php runs after this module's would be, from the copy's point of view.
         $cms->enablePlugins(['atbprobe' => null]);
         try {
-            $this->assertArrayHasKey('atbprobe', HTMLEditorConfig::get(MinimalEditorConfig::NAME)->getPlugins());
+            $this->assertArrayHasKey('atbprobe', MinimalEditorConfig::get()->getPlugins());
         } finally {
             $cms->disablePlugins('atbprobe');
         }
@@ -102,18 +102,19 @@ class MinimalEditorConfigTest extends SapphireTest
         $buttonsBefore = $cms->getButtons();
         $nameBefore = $cms->getOption('friendly_name');
 
-        HTMLEditorConfig::get(MinimalEditorConfig::NAME);
+        MinimalEditorConfig::get();
 
         $this->assertSame($buttonsBefore, $cms->getButtons());
         $this->assertSame($nameBefore, $cms->getOption('friendly_name'));
         $this->assertSame('cms', $cms->getOption('editorIdentifier'));
     }
 
-    public function testFieldResolvesTheName(): void
+    public function testFieldTakesTheConfigAndItsNameOnceTheGetterRan(): void
     {
-        $field = HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME);
+        $minimal = MinimalEditorConfig::get();
 
-        $this->assertSame(HTMLEditorConfig::get(MinimalEditorConfig::NAME), $field->getEditorConfig());
+        $this->assertSame($minimal, HTMLEditorField::create('Intro')->setEditorConfig($minimal)->getEditorConfig());
+        $this->assertSame($minimal, HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME)->getEditorConfig());
     }
 
     public static function provideButtonConfig(): array
@@ -142,7 +143,7 @@ class MinimalEditorConfigTest extends SapphireTest
             Config::modify()->set(MinimalEditorConfig::class, 'minimal_buttons', $buttonConfig);
             HTMLEditorConfig::set_config(MinimalEditorConfig::NAME, null);
 
-            $this->assertSame($expected, HTMLEditorConfig::get(MinimalEditorConfig::NAME)->getButtons(), $case);
+            $this->assertSame($expected, MinimalEditorConfig::get()->getButtons(), $case);
         }
     }
 
@@ -151,31 +152,18 @@ class MinimalEditorConfigTest extends SapphireTest
         $own = TinyMCEConfig::create();
         HTMLEditorConfig::set_config(MinimalEditorConfig::NAME, $own);
 
-        $this->assertSame($own, HTMLEditorConfig::get(MinimalEditorConfig::NAME));
+        $this->assertSame($own, MinimalEditorConfig::get());
     }
 
-    public function testTheRegistryKeepsWorkingForOtherNames(): void
+    public function testAnotherIdentifierIsPassedToHtmlEditorConfig(): void
     {
-        HTMLEditorConfig::get(MinimalEditorConfig::NAME);
-        $other = HTMLEditorConfig::get('atb-other');
+        $this->assertSame(HTMLEditorConfig::get('cms'), MinimalEditorConfig::get('cms'));
+
+        # An unknown name is created blank, as by HTMLEditorConfig::get(), not as a minimal copy.
         try {
-            # Unknown names are still created blank, not as a copy of cms.
-            $this->assertArrayNotHasKey('sslink', $other->getPlugins());
-            $map = HTMLEditorConfig::get_available_configs_map();
-            $this->assertArrayHasKey('cms', $map);
-            $this->assertArrayHasKey('atb-other', $map);
-            $this->assertSame('Simple', $map[MinimalEditorConfig::NAME]);
+            $this->assertArrayNotHasKey('sslink', MinimalEditorConfig::get('atb-other')->getPlugins());
         } finally {
             HTMLEditorConfig::set_config('atb-other', null);
         }
-        $this->assertArrayNotHasKey('atb-other', HTMLEditorConfig::get_available_configs_map());
-    }
-
-    public function testInstallingTheRegistryTwiceKeepsTheConfigs(): void
-    {
-        $cms = HTMLEditorConfig::get('cms');
-        MinimalEditorConfig::installLazyRegistry();
-
-        $this->assertSame($cms, HTMLEditorConfig::get('cms'));
     }
 }

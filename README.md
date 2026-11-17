@@ -162,7 +162,7 @@ CopyTextField::create('ApiKey', 'API Key', $apiKey)
     ->setButtonLabel('Copy')
     ->setShowAlert(true);
 
-HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME); // 'minimal'
+HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get());
 ```
 
 ### GridField Configurations

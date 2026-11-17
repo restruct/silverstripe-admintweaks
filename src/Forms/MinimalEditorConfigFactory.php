@@ -8,9 +8,9 @@ use SilverStripe\Forms\HTMLEditor\TinyMCEConfig;
 
 /**
  * Builds the `minimal` HTML editor config: a copy of the `cms` config, taken at the moment
- * `minimal` is first requested, with the toolbar and options from MinimalEditorConfig's YAML
- * (admintweaks#116). Registered as the Injector factory of MinimalEditorConfig
- * (_config/htmleditor.yml); MinimalEditorConfigRegistry calls it.
+ * MinimalEditorConfig::get() is first called, with the toolbar and options from
+ * MinimalEditorConfig's YAML (admintweaks#116). Registered as the Injector factory of
+ * MinimalEditorConfig (_config/htmleditor.yml); MinimalEditorConfig::get() calls it.
  */
 class MinimalEditorConfigFactory implements Factory
 {

@@ -2,6 +2,7 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Forms;
 
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Forms\HTMLEditor\HTMLEditorConfig;
 use SilverStripe\Forms\HTMLEditor\TinyMCEConfig;
 
@@ -10,30 +11,29 @@ use SilverStripe\Forms\HTMLEditor\TinyMCEConfig;
  * and links, for short rich-text fields such as FAQ answers, intro and card texts.
  *
  * ```php
- * HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME);
- * HTMLEditorConfig::get(MinimalEditorConfig::NAME);
+ * HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get());
  * ```
  *
- * The config is a copy of the `cms` config, made the first time `minimal` is requested, so it
- * keeps the link plugins and sslink menus that admin, cms and asset-admin add to `cms` in their
- * _config.php. A copy made in this module's own _config.php could run before some of those and
- * miss them: module _config.php files run in module priority order, and this module and
- * asset-admin both sit in the `$other_modules` group, which no rule orders among itself (a
- * project's _config.php, which may also change `cms`, runs after all of them).
+ * The config is a copy of the `cms` config, made the first time MinimalEditorConfig::get() is
+ * called, so it keeps the link plugins and sslink menus that admin, cms and asset-admin add to
+ * `cms` in their _config.php, and what a project's _config.php adds. A copy made in this
+ * module's own _config.php would depend on load order: module _config.php files run in module
+ * priority order, which within the `$other_modules` group comes down to the alphabetical order
+ * of the package names, and a project's _config.php runs after every module.
  *
- * How it is wired: up to Silverstripe 5, HTMLEditorConfig::get() has no hook for a named config
- * (Silverstripe 6 added `default_config_definitions`). It only asks its registry, the protected
- * static HTMLEditorConfig::$configs, whether the name is set (`isset()`), and creates a blank
- * config when it is not. installLazyRegistry() (called from _config.php) swaps that array for a
- * MinimalEditorConfigRegistry, an ArrayObject that answers the `isset()` for `minimal` by building
- * the copy first. Every other name behaves as in the plain array. The copy itself is built by the
- * Injector factory of this class (MinimalEditorConfigFactory, _config/htmleditor.yml), as on the
- * Silverstripe 6 line, so the object returned is a TinyMCEConfig (the copy), not an instance of
- * this class; this class carries the name and the YAML settings, and reaches the protected
- * registry by being an HTMLEditorConfig subclass.
+ * Up to Silverstripe 5, HTMLEditorConfig::get() has no hook for a named config (Silverstripe 6
+ * added `default_config_definitions`), so the copy is made by this getter, not by a lookup by
+ * name: get() registers it with HTMLEditorConfig::set_config() when there is no `minimal` yet.
+ * After that the name works everywhere (`setEditorConfig('minimal')`,
+ * `HTMLEditorConfig::get('minimal')`). Before it, a lookup by name creates a blank config under
+ * that name, which get() then keeps as a project's own; so use the getter.
  *
- * A project that registers its own `minimal` (HTMLEditorConfig::set_config()) keeps it: the copy
- * is only made for a name that has no config yet.
+ * The copy itself is built by the Injector factory of this class (MinimalEditorConfigFactory,
+ * _config/htmleditor.yml), as on the Silverstripe 6 line, so the object returned is a
+ * TinyMCEConfig (the copy), not an instance of this class; this class carries the name, the
+ * getter and the YAML settings.
+ *
+ * A project that registers its own `minimal` (HTMLEditorConfig::set_config()) keeps it.
  */
 class MinimalEditorConfig extends TinyMCEConfig
 {
@@ -76,16 +76,24 @@ class MinimalEditorConfig extends TinyMCEConfig
     ];
 
     /**
-     * Swap HTMLEditorConfig's registry for one that builds `minimal` when it is first asked for.
-     * Called once from this module's _config.php; idempotent. The configs already registered
-     * (`cms`, set up by admin's _config.php) are carried over, and a `minimal` that is already
-     * there (a project's own) is left as it is.
+     * The `minimal` config: registered as a copy of `cms` on the first call, the same instance
+     * after that. With an identifier other than `minimal` this is HTMLEditorConfig::get().
+     *
+     * @param string|null $identifier Leave out (or pass self::NAME) for the minimal config
+     * @return HTMLEditorConfig
      */
-    public static function installLazyRegistry(): void
+    public static function get($identifier = null)
     {
-        if (HTMLEditorConfig::$configs instanceof MinimalEditorConfigRegistry) {
-            return;
+        # Explicitly HTMLEditorConfig::get(), not parent::get(): for an unknown name that creates
+        # `static::create()`, which from here would be a minimal copy under the other name.
+        if ($identifier !== null && $identifier !== self::NAME) {
+            return HTMLEditorConfig::get($identifier);
         }
-        HTMLEditorConfig::$configs = new MinimalEditorConfigRegistry((array) HTMLEditorConfig::$configs);
+        # Checked on the registry directly (accessible from this subclass): a lookup through
+        # HTMLEditorConfig::get() would create a blank `minimal` first.
+        if (!isset(HTMLEditorConfig::$configs[self::NAME])) {
+            HTMLEditorConfig::set_config(self::NAME, Injector::inst()->create(self::class));
+        }
+        return HTMLEditorConfig::get(self::NAME);
     }
 }
