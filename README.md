@@ -31,7 +31,7 @@ instead of copying code around:
 |------|--------------|---------|
 | **Admin UI** | Page-type icons, permission badges, Bootstrap Icon classes, menu grouping, [CMS system switcher](#tell-your-cmses-apart-the-system-switcher), GridField and checkbox fixes | [Icons](docs/icons.md) |
 | **ModelAdmin** | [Search bar open on load, scaffolded CSV buttons and import off](#modeladmin-search-open-csv-buttons-off) | |
-| **Form fields** | CopyTextField, MultivalueSortField, IpAddressField, Bootstrap classes | [Form fields](docs/form-fields.md) |
+| **Form fields** | CopyTextField, MultivalueSortField, IpAddressField, toggle switch, Bootstrap classes | [Form fields](docs/form-fields.md) |
 | **GridField** | Editable and orderable configs, versioned ordering | [GridField](docs/gridfield.md) |
 | **Templates** | 30+ helper methods, extra iterators, image placeholders | [Template helpers](docs/template-helpers.md) |
 | **SiteConfig** | Contact details, social media, theme settings, raw HTML in head/body | [SiteConfig](docs/siteconfig.md) |
@@ -252,6 +252,10 @@ that are installed) are grouped under "Advanced Config" in the menu. Nothing to 
 - **IpAddressField**: a text field with IP address validation (marked untested in its docs).
 - **Bootstrap classes**: adds Bootstrap's `form-control` / `form-select` classes to text, date,
   email, password, numeric and dropdown fields (opt-in).
+- **Toggle switch**: opt-in, CSS only. `CheckboxField::create('Active')->setToggleSwitch()` (or
+  `->addExtraClass('toggle-switch')`) draws the checkbox as a switch like the admin's own; also for
+  every option of a CheckboxSetField and in editable GridField columns
+  ([details](docs/form-fields.md#toggle-switch)).
 - **A `minimal` HTML editor config**: one toolbar line with bold, italic, lists and links, for
   short rich-text fields. A copy of the `cms` config, so the link dialogs work. On Silverstripe 6
   it needs `silverstripe/htmleditor-tinymce`.
