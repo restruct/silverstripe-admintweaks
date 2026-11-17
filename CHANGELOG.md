@@ -4,10 +4,31 @@
 
 ### Fixed
 
+- **A long GridField with plain icon actions no longer gives the page a second scrollbar** (#124).
+  The screen-reader label inside each icon action (e.g. the edit pencil when the grid has no action
+  menu) is absolutely positioned, and nothing between it and the CMS content area was positioned,
+  so the labels escaped the scrolling panel and stretched the page. `.grid-field__icon-action` is
+  now `position: relative`, as core's action-menu toggle already is.
 - **Editable GridFields** (`GridFieldEditableColumns`, #114): the compact-row fix now covers every
   editable field, not only text inputs, so selects, checkboxes and checkbox sets no longer make rows
   tall; cells align on their first line; checkboxes stay inside their cell. A click on a row outside
   its fields opens the detail form again, as in any other GridField.
+
+## 3.26.0 (2026-11-17)
+
+### Added
+
+- **A `minimal` HTML editor config** (#116) for short rich-text fields: one toolbar line with
+  bold, italic, bullet and numbered lists, the link menu and "clear formatting".
+  `HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get())`. The getter
+  makes a copy of the `cms` config on its first call, so it keeps the link plugins and dialogs
+  that admin, cms and asset-admin add to `cms` in their `_config.php`, whatever order those run
+  in. Use the getter: up to Silverstripe 5 `HTMLEditorConfig::get()` has no hook for a named
+  config, so the name `minimal` only works once the getter has run. Toolbar and options are
+  configurable in YAML (`MinimalEditorConfig.minimal_buttons` / `minimal_options`). See
+  [Form fields](docs/form-fields.md#the-minimal-html-editor-config).
+- New `MinimalEditorConfigTest` and browser spec `minimal-editor.spec.ts` (one toolbar line; the
+  link menu opens and its external-link dialog inserts a link).
 
 ## 3.25.0 (2026-11-12)
 
