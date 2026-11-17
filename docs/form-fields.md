@@ -103,6 +103,97 @@ it the button is left out and the toolbar shows the other five buttons.
 
 ---
 
+## Toggle switch
+
+Show a checkbox as a toggle switch: opt in per field with the `toggle-switch` class. It is CSS
+only, in the module's admin stylesheet: the native `<input type="checkbox">` itself is drawn as
+the switch (`appearance: none`, the knob is its `::before`). No JavaScript, no extra markup and
+no third-party library, so:
+
+- the click target is still the checkbox: in an editable GridField a click on the switch toggles
+  it and does not open the row, and the hidden input that makes an unchecked box in a GridField
+  row submit `0` keeps working;
+- the keyboard (Tab, Space) and screen readers see a plain checkbox, with its own label;
+- it works in forms loaded later (pjax, a new GridField row), as there is nothing to initialise.
+
+On Silverstripe 5 it looks like the admin's own Bootstrap 4 switch (`.custom-switch`): 1.75rem by 1rem, the same border,
+knob and checked colour, and Bootstrap 4's focus ring. Disabled switches are faded and do not react to the pointer.
+
+### CheckboxField
+
+```php
+CheckboxField::create('Active')->setToggleSwitch();
+// the same, by hand:
+CheckboxField::create('Active')->addExtraClass('toggle-switch');
+```
+
+On Silverstripe 5 (checked; Silverstripe 4 was not tested) the extra class lands on the `<input>` and on the field's holder `<div>`. The switch
+lines up with plain checkboxes in the same form; its label text starts after it.
+
+### CheckboxSetField
+
+```php
+CheckboxSetField::create('Channels', 'Channels', $options)->setToggleSwitch();
+```
+
+A CheckboxSetField's extra class lands on the element that wraps its options, not on each option's
+`<input>` (the options are rendered from the template's loop and take no class of their own). The
+CSS therefore also matches every checkbox *inside* an element with the class
+(`.toggle-switch input[type=checkbox]`), so all options become switches. The same holds for any
+container: a class on a CompositeField or FieldGroup turns every checkbox in it into a switch.
+
+### In an editable GridField column
+
+`GridFieldEditableColumns` builds a column's field from the column config, so a plain
+`'field' => CheckboxField::class` cannot take the class. Build the field in a `callback` instead
+(it gets the record, the column name and the GridField):
+
+```php
+$editable = GridFieldEditableColumns::create();
+$editable->setDisplayFields([
+    'Title' => ['title' => 'Title', 'field' => TextField::class],
+    'Active' => [
+        'title' => 'Active',
+        'callback' => fn ($record, $column) => CheckboxField::create($column)->setToggleSwitch(),
+    ],
+]);
+```
+
+### `setToggleSwitch()`
+
+`ToggleSwitchExtension` adds `setToggleSwitch(bool $enable = true)` (chainable; `false` removes the
+class again) and `isToggleSwitch()` to `CheckboxField` and `CheckboxSetField`. It is a shorthand
+for the class and changes nothing until a field calls it; adding the class by hand is equivalent.
+
+### Read-only and disabled
+
+- `setDisabled(true)`: still drawn as a switch, faded; it cannot be toggled.
+- A read-only field (`performReadonlyTransformation()`, or a record the user cannot edit in an
+  editable GridField) is rendered by core as text ("Yes"/"No", or the option titles), not as a
+  checkbox, so there is no switch to show.
+- The HTML `readonly` attribute does not stop a checkbox from toggling (browsers ignore it on
+  checkboxes); a switch with it is faded like a disabled one, but use `setDisabled(true)` to
+  actually stop changes.
+
+### Changing the look
+
+The sizes and colours are custom properties on the switch, so a project stylesheet can override
+them, e.g. a larger green switch:
+
+```css
+input[type="checkbox"].toggle-switch,
+.toggle-switch input[type="checkbox"] {
+    --toggle-switch-width: 2.5rem;
+    --toggle-switch-height: 1.25rem;
+    --toggle-switch-checked: #008a00;
+}
+```
+
+Also available: `--toggle-switch-bg` (the track when off), `--toggle-switch-border`,
+`--toggle-switch-knob` (the knob when off; it is white when on) and `--toggle-switch-focus-border`.
+
+---
+
 ## IpAddressField
 
 A text field with IP address validation.

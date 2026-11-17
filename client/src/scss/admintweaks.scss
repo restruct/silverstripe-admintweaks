@@ -209,6 +209,129 @@ label,
   }
 }
 
+// Toggle switch: opt-in per field with the `toggle-switch` class, e.g.
+// CheckboxField::create('Active')->addExtraClass('toggle-switch') (docs/form-fields.md).
+// The native checkbox itself is drawn as a switch (appearance: none, the knob is its ::before), so
+// there is no JS and no extra markup: the click target, keyboard handling, form value and screen
+// reader role all stay the checkbox's own, and the editable-GridField row-click rule and the
+// checkbox_zero_input logic in admintweaks.js see a plain checkbox.
+// The class lands on the input for a CheckboxField (and on its holder); for a CheckboxSetField it
+// lands on the wrapper of the options only, hence the descendant selector as well.
+// Looks like the admin's own Bootstrap 4 `.custom-switch` (Silverstripe 4/5 admin bundle): 1.75rem
+// by 1rem, the same border, knob, focus and checked colours; the custom properties below can be
+// overridden per project.
+input[type="checkbox"].toggle-switch,
+.toggle-switch input[type="checkbox"] {
+  --toggle-switch-width: 1.75rem;
+  --toggle-switch-height: 1rem;
+  // Admin colours: .custom-control-label::before's border, .custom-switch's off knob (same colour),
+  // the admin's checked blue
+  --toggle-switch-bg: #fff;
+  --toggle-switch-border: #6f84a7;
+  --toggle-switch-knob: #6f84a7;
+  --toggle-switch-checked: #0071c4;
+  --toggle-switch-focus-border: #66afe9;
+
+  // Draw it ourselves: no native box
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  box-sizing: border-box;
+  // In the line, next to its label text, instead of Bootstrap's absolute position in the
+  // .form-check gutter (the gutter is a checkbox wide; a switch is twice that). The gutter is
+  // removed below.
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: var(--toggle-switch-width);
+  height: var(--toggle-switch-height);
+  margin: 0 .5em 0 0;
+  vertical-align: -.2em;
+  padding: 0;
+  background: var(--toggle-switch-bg) none;
+  border: 1px solid var(--toggle-switch-border);
+  border-radius: var(--toggle-switch-height);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+  cursor: pointer;
+  transition: background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+
+  // The knob: 2px inside the track's outer edge, like Bootstrap's
+  &::before {
+    content: "";
+    box-sizing: border-box;
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: calc(var(--toggle-switch-height) - 4px);
+    height: calc(var(--toggle-switch-height) - 4px);
+    border-radius: 50%;
+    background-color: var(--toggle-switch-knob);
+    transition: transform .15s ease-in-out, background-color .15s ease-in-out;
+  }
+
+  &:checked {
+    background-color: var(--toggle-switch-checked);
+    border-color: var(--toggle-switch-checked);
+    &::before {
+      background-color: #fff;
+      transform: translateX(calc(var(--toggle-switch-width) - var(--toggle-switch-height)));
+    }
+  }
+
+  // Focus: Bootstrap 4's ring (the admin bundle's own switch focus shadow is an invalid value, so
+  // it shows none) and its light-blue border when off
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(0, 113, 196, .25);
+    &:not(:checked) {
+      border-color: var(--toggle-switch-focus-border);
+    }
+  }
+
+  // Disabled: faded, and no pointer. A checkbox ignores the readonly attribute (it still toggles),
+  // so a readonly one is only shown as such; core's read-only transformation renders the value as
+  // text instead of a checkbox anyway.
+  &:disabled,
+  &[readonly] {
+    opacity: .5;
+    cursor: default;
+  }
+  &:disabled {
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &,
+    &::before {
+      transition: none;
+    }
+  }
+}
+// A CheckboxField's holder: its column padding is where the admin hangs a plain checkbox
+// (.form-check-input: margin-left -1.5385rem). Hang the switch there too, so its left edge lines up with the
+// checkboxes above and below it; its label text starts after it.
+.form__field-holder.form-check > label > input[type="checkbox"].toggle-switch {
+  margin-left: -1.5385rem;
+}
+// In an editable GridField the cell rules above put every .form-check-input back in the flow with
+// position: static, which would hang the knob on the nearest positioned ancestor instead of the track
+.grid-field.ss-gridfield-editable input[type="checkbox"].toggle-switch,
+.grid-field.ss-gridfield-editable .toggle-switch input[type="checkbox"] {
+  position: relative;
+}
+// A switch drawn with appearance: none has its bottom margin edge as baseline, so the negative
+// .editable-column-field margins above sank it below the first line of its row
+.grid-field.ss-gridfield-editable input[type="checkbox"].toggle-switch.editable-column-field {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+// The .form-check holder keeps a gutter for an absolutely positioned checkbox; the switch sits in
+// the line instead
+.toggle-switch .form-check,
+.form-check.toggle-switch {
+  padding-left: 0;
+}
+
 // CopyTextField inside GridField rows
 .ss-gridfield-item .copy-text-field {
   margin-top: -.6rem;
