@@ -1,5 +1,7 @@
 # Restruct Silverstripe Admin Tweaks module
 
+> **Legacy branch, unmaintained.** This is the Silverstripe 4 line; its last release is 2.4.0. For Silverstripe 4/5 use the `v3` branch (`^3`), for Silverstripe 6 `main` (`^4`). See the version table in the `main` README.
+
 This module serves as a portable set of small Silverstripe functionality & styling tweaks by Restruct.
 
 Currently it has been partially updated to SS4, most stuff is deactivated & will be reactivated when needed in projects.
