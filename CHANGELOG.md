@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **A `minimal` HTML editor config** (#116) for short rich-text fields: one toolbar line with
+  bold, italic, bullet and numbered lists, the link menu and "clear formatting".
+  `HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME)`. It is a copy
+  of the `cms` config made the first time `minimal` is requested (through
+  `HTMLEditorConfig.default_config_definitions` and an Injector factory), so it keeps the link
+  plugins and dialogs that a `_config.php` adds to `cms` even when that runs after this module's.
+  Toolbar and options are configurable in YAML (`MinimalEditorConfig.minimal_buttons` /
+  `minimal_options`). Registered only when `silverstripe/htmleditor-tinymce` is installed (now in
+  `suggest`). See [Form fields](docs/form-fields.md#the-minimal-html-editor-config).
+- New `MinimalEditorConfigTest` and browser spec `minimal-editor.spec.ts` (one toolbar line; the
+  link menu opens and its external-link dialog inserts a link). CI and the SS6 browser host now
+  install `silverstripe/htmleditor-tinymce`, which recipe-cms 6 does not include.
+
 ## 4.6.0 (2026-11-12)
 
 ### Added

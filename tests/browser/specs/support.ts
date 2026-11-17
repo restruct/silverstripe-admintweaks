@@ -10,6 +10,8 @@ import { test as base, expect, type Locator, type Page } from '@playwright/test'
 export const ADMINS = {
     tweaked: { url: '/admin/atb-tweaked', grid: 'tweaked' },
     plain: { url: '/admin/atb-plain', grid: 'plain' },
+    // AtBEditorRecord: an HTML editor on the minimal config next to one on cms (#116).
+    editor: { url: '/admin/atb-editor', grid: 'editor' },
 } as const;
 export type AdminName = keyof typeof ADMINS;
 

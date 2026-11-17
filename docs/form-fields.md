@@ -55,6 +55,86 @@ SilverStripe\Admin\LeftAndMain:
 
 ---
 
+## The minimal HTML editor config
+
+An HTML editor config named `minimal` for short rich-text fields (FAQ answers, intro texts, card
+texts): one toolbar line with bold, italic, bullet and numbered lists, the link menu and "clear
+formatting". The full `cms` toolbar (alignment, indent, tables, headings, embeds) is more than such
+a field needs, and it keeps the content clean.
+
+### Usage
+
+```php
+use Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfig;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorConfig;
+use SilverStripe\Forms\HTMLEditor\HTMLEditorField;
+
+$field = HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::NAME);
+
+// The config object itself
+$config = HTMLEditorConfig::get(MinimalEditorConfig::NAME);
+```
+
+Getting the config is what makes the copy (see below), so do not get it in a `_config.php`: the
+copy would then be made before every module has set up `cms`. Change the toolbar through YAML
+instead (see Configuration).
+
+On Silverstripe 6 TinyMCE is a separate module; the config is only registered when
+`silverstripe/htmleditor-tinymce` is installed.
+
+### How it is built
+
+The config is a copy of the `cms` config, made the first time `minimal` is requested. It keeps
+what `cms` has at that moment: the link plugins and their menu (page, file, external URL, anchor,
+email), the skin, the content CSS, and whatever a project's own `_config.php` added to `cms`. A
+copy made in a `_config.php` could miss some of that, because the `_config.php` that sets up
+`cms` can run after it.
+
+On Silverstripe 6 the copy gets the framework's default element rules, not the extra iframe,
+object and map rules of `cms`. Allow more HTML with `extraElementRules`, as core does for `cms`:
+
+```yaml
+SilverStripe\Forms\HTMLEditor\HTMLEditorConfig:
+  default_config_definitions:
+    minimal:
+      extraElementRules:
+        span:
+          attributes:
+            class: true
+```
+
+A project that registers its own `minimal` (`HTMLEditorConfig::set_config('minimal', ...)`)
+keeps it; the copy is only made when there is no `minimal` yet.
+
+### Configuration
+
+The toolbar is one space-separated string of TinyMCE button names per line (`|` is a
+separator). An empty string leaves the line out; lines the `cms` config has and this list does
+not name are emptied as well.
+
+```yaml
+Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfig:
+  minimal_buttons:
+    line_1: 'bold italic | bullist numlist | sslink unlink | removeformat'
+    line_2: ''
+    line_3: ''
+  minimal_options:
+    friendly_name: 'Simple'
+    contextmenu: 'sslink'
+```
+
+These are the defaults. Use strings, not lists: Silverstripe config adds a list you set to the
+module's list instead of replacing it, so a list of buttons would end up after the default ones.
+
+`minimal_options` are TinyMCE options set on the copy. `contextmenu: 'sslink'` replaces the `cms`
+right-click menu (tables, media, anchors) with the link menu.
+
+`unlink` is in the default list, as it is in core's own `cms` toolbar, and as there it only
+renders when TinyMCE's core `link` plugin is enabled, which the `cms` config does not do. Without
+it the button is left out and the toolbar shows the other five buttons.
+
+---
+
 ## IpAddressField
 
 A text field with IP address validation.
