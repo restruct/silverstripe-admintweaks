@@ -428,7 +428,8 @@ full table is in [UPGRADING.md](UPGRADING.md).
 |--------|----------------|--------------|-----|--------|
 | `main` | `4.x` | 6 | 8.3+ | active development |
 | `v3` | `3.x` | 4, 5 | as Silverstripe requires | security and bug fixes until Silverstripe 5 EOL (April 2027) |
-| `v2` | `2.x` | 4 | as Silverstripe requires | no further releases |
+| `3.0` | `3.0` to `3.11.1` | 4, 5 | as Silverstripe requires | legacy, unmaintained: superseded by `v3` from 3.12.0 |
+| `v2` | `2.x` | 4 | as Silverstripe requires | legacy, unmaintained: last release 2.4.0 |
 
 `composer.json` on each branch is the source of truth for exact constraints. Upgrading from 3.x?
 See [UPGRADING.md](UPGRADING.md): the CMS menu behaviour and the task invocations both changed.
