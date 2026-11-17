@@ -458,6 +458,17 @@ a.action[class^="bi-"]:before {
   }
 }
 
+// Icon actions without an action menu (e.g. the edit pencil) hold an absolutely positioned
+// sr-only label. The link and its ancestors up to the scroll panel (.cms-content-fields) are all
+// static, so the labels' containing block is the .cms-content outside the scroller: they are not
+// clipped and stretch body's scroll height, giving the page a second scrollbar on long grids (#124).
+// The action-menu toggle avoids this by being position: relative itself; do the same here.
+// (position: relative on .cms-content-fields would also work, but changes the containing block
+// for every absolutely positioned element in the panel.)
+.grid-field__icon-action {
+  position: relative;
+}
+
 
 // CMS system switcher (admintweaks#71) in the menu header, markup in
 // templates/Restruct/Silverstripe/AdminTweaks/Includes/SystemSwitcher.ss. The container keeps core's

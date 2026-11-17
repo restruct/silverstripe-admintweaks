@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **A long GridField with plain icon actions no longer gives the page a second scrollbar** (#124).
+  The screen-reader label inside each icon action (e.g. the edit pencil when the grid has no action
+  menu) is absolutely positioned, and nothing between it and the CMS content area was positioned,
+  so the labels escaped the scrolling panel and stretched the page. `.grid-field__icon-action` is
+  now `position: relative`, as core's action-menu toggle already is.
+
 ## 3.26.0 (2026-11-17)
 
 ### Added
