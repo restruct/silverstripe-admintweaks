@@ -153,11 +153,16 @@ Restruct\Silverstripe\AdminTweaks\SystemSwitcher:
 - **CopyTextField** - Read-only field with copy-to-clipboard button
 - **MultivalueSortField** - Sortable multi-value field
 - **Bootstrap Styling** - Auto-adds Bootstrap classes to form fields (opt-in)
+- **A `minimal` HTML editor config** - one toolbar line with bold, italic, lists and links, for
+  short rich-text fields; a copy of the `cms` config, so the link dialogs work
+  ([details](docs/form-fields.md#the-minimal-html-editor-config))
 
 ```php
 CopyTextField::create('ApiKey', 'API Key', $apiKey)
     ->setButtonLabel('Copy')
     ->setShowAlert(true);
+
+HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get());
 ```
 
 ### GridField Configurations
