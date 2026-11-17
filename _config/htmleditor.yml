@@ -1,0 +1,20 @@
+---
+Name: admintweaks-minimal-editor
+# Silverstripe 6 ships TinyMCE as its own module (silverstripe/htmleditor-tinymce), which this
+# module only suggests; without it there is no TinyMCE config to copy, so nothing is registered.
+Only:
+  classexists: 'SilverStripe\TinyMCE\TinyMCEConfig'
+---
+# The `minimal` editor config (admintweaks#116), created the first time it is requested:
+# HTMLEditorConfig::get('minimal') finds this definition and calls create() on its configClass,
+# which the Injector factory below answers with a copy of the `cms` config.
+# Toolbar and options: MinimalEditorConfig.minimal_buttons / minimal_options (see the class).
+# More allowed HTML: add `extraElementRules` under `minimal` here, as core does for `cms`.
+SilverStripe\Forms\HTMLEditor\HTMLEditorConfig:
+  default_config_definitions:
+    minimal:
+      configClass: 'Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfig'
+
+SilverStripe\Core\Injector\Injector:
+  Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfig:
+    factory: 'Restruct\Silverstripe\AdminTweaks\Forms\MinimalEditorConfigFactory'

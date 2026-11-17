@@ -252,6 +252,9 @@ that are installed) are grouped under "Advanced Config" in the menu. Nothing to 
 - **IpAddressField**: a text field with IP address validation (marked untested in its docs).
 - **Bootstrap classes**: adds Bootstrap's `form-control` / `form-select` classes to text, date,
   email, password, numeric and dropdown fields (opt-in).
+- **A `minimal` HTML editor config**: one toolbar line with bold, italic, lists and links, for
+  short rich-text fields. A copy of the `cms` config, so the link dialogs work. On Silverstripe 6
+  it needs `silverstripe/htmleditor-tinymce`.
 
 ```php
 CopyTextField::create('ApiKey', 'API Key', $apiKey)
@@ -265,6 +268,10 @@ CopyTextField::create('ApiKey', 'API Key', $apiKey)
 SilverStripe\Forms\FormField:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\FormFieldBootstrapExtension
+```
+
+```php
+HTMLEditorField::create('Answer')->setEditorConfig(MinimalEditorConfig::get());
 ```
 
 GridField configurations:
