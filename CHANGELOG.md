@@ -53,6 +53,9 @@
 
 - `SiteConfigExtension.enable_subnav_activation_field`: declared and documented, but never read
   (#145). `theme_subnav_slots` covers choosing a sub menu slot, or none.
+- `docs/fix-getlocalpath-plan.md`, an internal plan for the `getLocalPath()` rewrite that is in
+  the code; its one open point is fixed in signed-asset-urls. `docs/asset-path-resolution.md`
+  describes the current behaviour.
 
 ## 4.9.1 (2026-11-18)
 
