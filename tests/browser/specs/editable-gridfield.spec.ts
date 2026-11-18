@@ -130,6 +130,31 @@ test('a click on a checkbox toggles it and does not open the record', async ({ p
     expect(navigations()).toEqual([]);
 });
 
+test('a stored checkbox set value shows ticked in the grid, as in the edit form', async ({ page }) => {
+    // KNOWN UPSTREAM DEFECT, so this is expected to fail until gridfieldextensions fixes it.
+    // GridFieldEditableColumns::getForm() loads the record into the field (decoding the JSON),
+    // then getColumnContent() overwrites it with the raw '["red"]' string through setValue()
+    // without the record, which matches no option: every box shows unticked. Not the fixture and
+    // not this module: decoding the value in setFieldFormatting() first (a probe, not committed)
+    // makes this test pass on SS6. Checked 2026-11-18 on gridfieldextensions 5.2.2 (SS6) and,
+    // by reading the source, 4.1.5 (SS5). When this starts passing, Playwright reports it as an
+    // unexpected pass: drop the test.fail() line then.
+    test.fail(true, 'gridfieldextensions overwrites the loaded value of a MultiSelectField column with the raw string');
+
+    // The fixture stores Tags = '["red"]' (a Varchar holding JSON, the format MultiSelectField
+    // writes for a non-relation field) on every editable row.
+    const grid = await openGrid(page, EDITABLE);
+    const r = row(grid, 'Alpha editable');
+    await expect(r.locator('td.col-Tags input[value=red]')).toBeChecked();
+    await expect(r.locator('td.col-Tags input[value=green]')).not.toBeChecked();
+
+    // The control: the record's own edit form shows the same stored value ticked.
+    await clickRowSpace(r);
+    const form = page.locator('#Form_ItemEditForm');
+    await expect(form).toBeVisible();
+    await expect(form.locator('input[name="Tags[red]"]')).toBeChecked();
+});
+
 test('a click on a widget that replaces a field in its cell does not open the record', async ({ page }) => {
     const grid = await openGrid(page, EDITABLE);
     const navigations = watchDocumentNavigations(page);
