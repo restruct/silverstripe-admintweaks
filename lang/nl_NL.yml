@@ -24,3 +24,9 @@ nl_NL:
     ExtraHTML_BodyHeader: 'Voeg extra html tags toe aan (html) body'
     ExtraHTML_BodyStart: 'Na <body> (open-tag)'
     ExtraHTML_BodyEnd: 'Voor <body> (sluit-tag)'
+  Restruct\Silverstripe\AdminTweaks\FormFields\IpAddressField:
+    INVALID: 'Geen geldig IP-adres'
+  Restruct\Silverstripe\AdminTweaks\Shortcodes\CurrentYearShortcode:
+    SINGULARNAME: 'Actueel jaartal'
+  Restruct\Silverstripe\AdminTweaks\Shortcodes\FeaturedImageShortcode:
+    SINGULARNAME: 'Pagina afbeelding van huidige pagina invoegen'

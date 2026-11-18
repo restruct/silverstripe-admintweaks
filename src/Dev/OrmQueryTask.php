@@ -16,8 +16,8 @@ use SilverStripe\ORM\DataObject;
  *   sake dev/tasks/orm-query class=File schema=1
  *   sake dev/tasks/orm-query class=Page sql=1
  *   sake dev/tasks/orm-query class=Page "where=ParentID > 0 AND ShowInMenus = 1" limit=10
- *   sake dev/tasks/orm-query class=DataSyncItem groupBy=Type
- *   sake dev/tasks/orm-query class=DataSyncItem min=Created max=Created
+ *   sake dev/tasks/orm-query class=SiteTree groupBy=ClassName
+ *   sake dev/tasks/orm-query class=SiteTree min=Created max=Created
  */
 class OrmQueryTask extends BuildTask
 {
@@ -212,7 +212,7 @@ class OrmQueryTask extends BuildTask
     }
 
     /**
-     * Resolve a short class name (e.g. "DataSyncItem") to its FQCN.
+     * Resolve a short class name (e.g. "SiteTree") to its FQCN.
      */
     private function resolveClass(string $className): ?string
     {
@@ -564,8 +564,8 @@ class OrmQueryTask extends BuildTask
         echo "  sake dev/tasks/orm-query class=Page \"where=ParentID > 0 AND ShowInMenus = 1\"\n";
         echo "  sake dev/tasks/orm-query class=Page sql=1\n";
         echo "  sake dev/tasks/orm-query class=File schema=1\n";
-        echo "  sake dev/tasks/orm-query class=DataSyncItem groupBy=ClassName\n";
-        echo "  sake dev/tasks/orm-query class=DataSyncItem \"filter[ClassName]=Page\" groupBy=ParentID\n";
+        echo "  sake dev/tasks/orm-query class=SiteTree groupBy=ClassName\n";
+        echo "  sake dev/tasks/orm-query class=SiteTree \"filter[ClassName]=Page\" groupBy=ParentID\n";
         echo "  sake dev/tasks/orm-query class=Member min=Created max=Created\n";
         echo "  sake dev/tasks/orm-query class=File sum=Size avg=Size\n";
     }

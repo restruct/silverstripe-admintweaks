@@ -1,5 +1,83 @@
 # Changelog
 
+## Unreleased
+
+### Security
+
+- **Outbound fetches check their destination** (#139). `GeneralHelpers::perform_http_request()`,
+  the `CacheHelpers::cached_*_request()` methods on top of it, and the URL download in
+  `GeneralHelpers::import_file_asset()` now go through the new `OutboundUrlGuard`: http and https
+  only; `localhost` and hosts resolving to loopback, private, link-local, reserved and similar
+  addresses are refused with an `OutboundUrlRejectedException`; the connection is pinned to the
+  checked address; redirects are followed hop by hop (at most `max_redirects`, default 5) and each
+  hop is checked. A project that fetches from an internal host lists it in
+  `OutboundUrlGuard.allowed_hosts` (names, addresses or CIDR ranges; empty by default). See
+  `docs/caching.md`. **Behaviour change:** requests to such hosts that used to work now throw
+  until the host is allowed, and Guzzle's own `allow_redirects` option is ignored.
+- `import_file_asset()`'s URL download has the connect and total timeouts of
+  `perform_http_request()` (`GeneralHelpers.http_connect_timeout` / `http_timeout`, 5s / 10s); it
+  had none.
+
+### Fixed
+
+- **Silverstripe 4: the module no longer takes the application down on a config build** (#143).
+  `DedupSymfonyMailerHandler` extends Monolog 3's `SymfonyMailerHandler` and
+  `CliSafeMailerSubscriber` extends framework 5's `MailerSubscriber`; SS4 has neither. Because
+  silverstripe/config's `PrivateStaticTransformer` calls `class_exists()` on every manifest class,
+  both files were loaded on every config build and threw "Class not found", whatever the YAML or
+  the `APP_LOG_MAIL_*` variables said. Both now return early when their parent is missing, and the
+  error-mail YAML fragment also requires those classes, so it stays off on SS4 (it needs SS5).
+- **A failing upstream is no longer re-requested on every call; outbound HTTP requests are
+  bounded** (#140, backport of #55 from 4.x). `CacheHelpers::cached_http_request()` only cached a
+  200, and `perform_http_request()` throws on a connection failure, so a dead upstream was
+  contacted again on every call. Failures and non-200 responses are now cached for
+  `CacheHelpers.failure_cache_duration` (60s); a repeat call in that window fails (or returns the
+  same response) without a request. Guzzle has no default timeouts (0 = unlimited), so a vanished
+  upstream could hold a PHP worker indefinitely: `perform_http_request()` now defaults to 5s
+  connect / 10s total (`GeneralHelpers.http_connect_timeout` / `http_timeout`), and a caller's own
+  `$options` still win.
+- **An invalid JSON or JSON-LD response no longer stays cached for the full TTL** (#138).
+  `CacheHelpers::cached_json_request()` and `cached_jsonLD_request()` deleted `md5($reqUrl)`, but
+  the response is cached under `md5("cachedResponse_{$reqUrl}")`, so the bad body was kept and
+  every call in the window threw again without retrying. They now delete the right key, also on the
+  "no JSON-LD at all" exit, which did not invalidate anything.
+- **Silverstripe 4: `getLocalPath()` finds files again** (#141). It only built a path when the
+  asset adapter was `SilverStripe\Assets\Flysystem\LocalFilesystemAdapter`, which silverstripe/assets
+  1.x (SS4) does not have, so it returned `null` for every file there (and
+  `GeneralHelpers::getFileAssetsPath()` with it). On SS4 it now uses Flysystem 1's
+  `Local::applyPathPrefix()`.
+- **`FocusFill` has a fallback when FocusPoint is not installed** (#142). The FocusPoint fallback
+  extension named its `Fill` mapping `FocusFillFallback`, a method FocusPoint does not have, so
+  `$Image.FocusFill(...)` rendered nothing without FocusPoint (and threw in PHP). `FocusFill()` now
+  maps to core `Fill()`; `FocusFillFallback()` stays as a deprecated alias.
+- composer.json `suggest` lists `symbiote/silverstripe-multivaluefield`,
+  `symbiote/silverstripe-gridfieldextensions` and `silverstripe/lumberjack`, which the features
+  built on them need (#144).
+- `GeneralHelpers::add_tab_if_not_exists()` honours `$insertAfter` (#145): the tab goes after the
+  named sibling, or at the end when there is none. It used to land after `Main` whatever was
+  passed, and was named after the full path (`Root.Extra`) instead of `Extra`.
+- `IpAddressField`'s validation message is translatable, with an English default ("Not a valid IP
+  address"); it was hard-coded Dutch (#145).
+- **`[currentyear]` returns the bare year** (#145) instead of `<div class="me">2026</div>`, which
+  broke the line it sits in. Nothing in this module styled `.me`; a theme that did needs its own
+  wrapper now.
+- The `[currentyear]` and `[featuredimage]` shortcode labels use module-namespaced keys
+  (`<class>.SINGULARNAME`) with English defaults; they used a project-specific key with Dutch
+  defaults. Dutch is in `lang/nl_NL.yml` (#145).
+
+### Changed
+
+- Code comments, docblocks and `OrmQueryTask`'s usage examples no longer name project classes or
+  namespaces: they use core classes (`SiteTree`) or `App\...` placeholders.
+
+### Removed
+
+- `SiteConfigExtension.enable_subnav_activation_field`: declared and documented, but never read
+  (#145). `theme_subnav_slots` covers choosing a sub menu slot, or none.
+- `docs/fix-getlocalpath-plan.md`, an internal plan for the `getLocalPath()` rewrite that is in
+  the code; its one open point is fixed in signed-asset-urls. `docs/asset-path-resolution.md`
+  describes the current behaviour.
+
 ## 3.29.0 (2026-11-18)
 
 ### Added

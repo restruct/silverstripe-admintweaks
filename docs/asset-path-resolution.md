@@ -83,9 +83,10 @@ $path = $adapter->prefixPath($resolved->getFileID());
 
 This handles all storage layouts automatically - hash paths, natural paths, and any future FileIDHelper implementations.
 
-**Silverstripe 5 only.** The adapter check is made against `SilverStripe\Assets\Flysystem\LocalFilesystemAdapter`,
-which silverstripe/assets 2 (Silverstripe 5) has. On Silverstripe 4 (assets 1, Flysystem 1) that
-class does not exist, so `getLocalPath()` returns `null` for every file there.
+On Silverstripe 4 (silverstripe/assets 1, Flysystem 1) there is no `LocalFilesystemAdapter`: the
+asset adapters extend Flysystem 1's `League\Flysystem\Adapter\Local`, and `getLocalPath()` builds the
+path with its `applyPathPrefix()` instead. Any other adapter (S3 and the like) has no local path, so
+`getLocalPath()` returns `null`.
 
 ## When to Use What
 
@@ -155,6 +156,8 @@ $path = $file->getLocalPath();
 - Find a published file (in `public/assets/`) - should also resolve
 - A file that exists in neither store - should return `null`
 
-### What is NOT covered by automated tests
+### Automated tests
 
-`getLocalPath()` delegates to `FileResolutionStrategy::searchForTuple()` + `LocalFilesystemAdapter::prefixPath()`. These framework methods are tested by SilverStripe's own test suite. The extension's role is simply to wire them together and check both filesystems, which is verified manually.
+`tests/Extensions/FileLocalPathExtensionTest.php` stores a draft and a published file in a test asset
+store and checks that `getLocalPath()` returns a path holding the file's content. CI runs it on
+Silverstripe 5 only; the Silverstripe 4 branch was checked locally (framework 4.13, assets 1.13).

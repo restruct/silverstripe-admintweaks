@@ -2,6 +2,7 @@
 
 namespace Restruct\Silverstripe\AdminTweaks\Extensions;
 
+use League\Flysystem\Adapter\Local; # Flysystem 1 (Silverstripe 4); absent on SS5, only used in instanceof
 use League\Flysystem\Filesystem;
 use SilverStripe\Assets\File;
 use SilverStripe\Assets\FilenameParsing\FileResolutionStrategy;
@@ -16,7 +17,8 @@ use SilverStripe\ORM\DataExtension;
  * Adds getLocalPath() to File objects for resolving the actual filesystem path.
  *
  * Uses the framework's own FlysystemAssetStore resolution chain (FileResolutionStrategy
- * + LocalFilesystemAdapter::prefixPath()) to find files on disk. This handles all storage
+ * + LocalFilesystemAdapter::prefixPath(), or Flysystem 1's Local::applyPathPrefix() on
+ * Silverstripe 4) to find files on disk. This handles all storage
  * layouts: hash paths, natural paths, and any future FileIDHelper implementations.
  *
  * Primary use case: passing file paths to external CLI tools (cpdf, pdftotext, wkhtmltopdf, etc.)
@@ -89,11 +91,23 @@ class FileLocalPathExtension extends DataExtension
         }
 
         $adapter = $filesystem->getAdapter();
-        if (!$adapter instanceof LocalFilesystemAdapter) {
+//        if (!$adapter instanceof LocalFilesystemAdapter) {
+//            return null;
+//        }
+//
+//        $path = $adapter->prefixPath($resolved->getFileID());
+        if ($adapter instanceof LocalFilesystemAdapter) {
+            # Silverstripe 5: silverstripe/assets 2.x on Flysystem 3
+            $path = $adapter->prefixPath($resolved->getFileID());
+        } elseif ($adapter instanceof Local) {
+            # Silverstripe 4: silverstripe/assets 1.x has no LocalFilesystemAdapter; its Public/
+            # ProtectedAssetAdapter extend Flysystem 1's Local adapter, which builds the path with
+            # applyPathPrefix(). Without this branch every SS4 file resolved to null (admintweaks#141).
+            $path = $adapter->applyPathPrefix($resolved->getFileID());
+        } else {
+            # Not on local disk (S3 or another remote adapter): there is no local path
             return null;
         }
-
-        $path = $adapter->prefixPath($resolved->getFileID());
 
         return file_exists($path) ? $path : null;
     }

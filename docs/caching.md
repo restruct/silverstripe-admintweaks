@@ -72,13 +72,46 @@ try {
 
 - The cache key is the URL only: the method and options are not part of it, so a GET and a POST
   to the same URL share one cache entry.
-- Only a response with status 200 is cached. A request that fails, or answers with another status,
-  is made again on the next call.
-- Guzzle has no timeout of its own, so pass `connect_timeout` and `timeout` in `$options` for a
-  request made while a page renders; otherwise a dead upstream holds the request until PHP gives
-  up. (The 4.x line caches failures for a minute and sets default timeouts.)
+- A request that fails (an exception) or answers with a status other than 200 is cached as well,
+  for `failure_cache_duration` seconds (default 60): a repeat call in that window throws the same
+  error, or returns the same response, without another request. A dead upstream is then not
+  hammered on every page view.
+- Requests have a connect timeout of 5 seconds and a total timeout of 10 seconds (below), unless
+  `$options` sets its own.
 
-Request URLs are fetched as given: validate any URL that comes from user input before passing it.
+```yaml
+Restruct\Silverstripe\AdminTweaks\Helpers\CacheHelpers:
+  failure_cache_duration: 120
+```
+
+### Outbound URL checks
+
+`perform_http_request()`, and with it all the `cached_*_request()` methods, and the download in
+`import_file_asset()` send their request through `OutboundUrlGuard`:
+
+- only `http` and `https` URLs;
+- `localhost`, `*.localhost` and any host that resolves to a loopback, private, carrier-grade NAT,
+  link-local, multicast, documentation, benchmarking, reserved or unspecified address (IPv4 and
+  IPv6) are refused with an `OutboundUrlRejectedException` before anything is sent;
+- the connection is pinned to the address that was checked (cURL `CURLOPT_RESOLVE`), so a second
+  DNS answer cannot swap in another one;
+- redirects are followed one hop at a time, at most `max_redirects` (default 5), and every hop is
+  checked the same way. An `allow_redirects` in `$options` is ignored.
+
+Pinning needs Guzzle's cURL handler, which it uses whenever `ext-curl` is loaded.
+
+A project that fetches from an internal host on purpose lists it, by name, address or CIDR range:
+
+```yaml
+Restruct\Silverstripe\AdminTweaks\Helpers\OutboundUrlGuard:
+  allowed_hosts:
+    - intranet.example.lan
+    - 10.20.0.0/16
+```
+
+The list is empty by default. It widens the destinations only: other schemes stay refused.
+`OutboundUrlGuard::validate($url)` and `OutboundUrlGuard::send($method, $url, $options)` can be used
+directly for your own requests.
 
 ## GeneralHelpers
 
@@ -86,7 +119,13 @@ Request URLs are fetched as given: validate any URL that comes from user input b
 
 The uncached request the methods above use: `perform_http_request($reqUrl, $reqMethod = 'GET',
 array $options = [])` returns the same array as `cached_http_request()` and throws an `Exception`
-when the request fails. It sets no timeouts; pass them in `$options`.
+when the request fails. Default timeouts:
+
+```yaml
+Restruct\Silverstripe\AdminTweaks\Helpers\GeneralHelpers:
+  http_connect_timeout: 5   # seconds to connect
+  http_timeout: 10          # seconds for the whole request
+```
 
 ### add_tab_if_not_exists()
 
@@ -97,7 +136,9 @@ GeneralHelpers::add_tab_if_not_exists($fields, 'Advanced', 'Advanced settings');
 ```
 
 Adds a tab to a CMS FieldList unless it is there already. `Advanced` and `Root.Advanced` are the
-same. The fourth argument, `$insertAfter`, is not used yet: the tab is always placed after `Main`.
+same. A fourth argument names the tab to insert after, in the same tab set
+(`GeneralHelpers::add_tab_if_not_exists($fields, 'Advanced', 'Advanced settings', 'Main')`); without
+it, or when that tab does not exist, the new tab goes at the end.
 
 ### get_options_translations()
 
@@ -135,7 +176,9 @@ string $conflictResolution = AssetStore::CONFLICT_OVERWRITE)`:
   other values.
 - Only extensions in `File::getAllowedExtensions()` are accepted.
 - It throws an `Exception` for a disallowed extension, an empty download or a failed store.
-- The download sets no timeout, and the URL is fetched as given.
+- A URL download uses the default timeouts above and the [outbound URL checks](#outbound-url-checks).
+- A local path, or a `file:` URL, is read from the server's disk without any check: never pass it
+  a string that a user controls.
 
 ### getFileAssetsPath()
 
@@ -149,12 +192,12 @@ Silverstripe 3 method names:
 
 | Extension | Applied | Methods |
 |-----------|---------|---------|
-| `FocusImageFallbackExtension` | while [FocusPoint](https://github.com/jonom/silverstripe-focuspoint) is not installed | `FocusFillMax($w, $h)`, `FocusCropWidth($w)`, `FocusCropHeight($h)`, `FocusFillFallback($w, $h)` |
+| `FocusImageFallbackExtension` | while [FocusPoint](https://github.com/jonom/silverstripe-focuspoint) is not installed | `FocusFill($w, $h)`, `FocusFillMax($w, $h)`, `FocusCropWidth($w)`, `FocusCropHeight($h)`, and the deprecated `FocusFillFallback($w, $h)` |
 | `ImageCropperFallbackExtension` | while Restruct's image cropper is not installed | `CroppedFocusedImage($w, $h)`, `CroppedImage($w, $h)` |
 | `LegacyManipulationsExtension` | always | `PaddedImage` (`Pad`), `SetWidth` (`ScaleWidth`), `SetHeight` (`ScaleHeight`) |
 
 The FocusPoint fallbacks map to core's `Fill`, `FillMax`, `CropWidth` and `CropHeight`, without a
 focus point.
-`FocusFillMax`, `FocusCropWidth` and `FocusCropHeight` therefore work in a template with or
-without FocusPoint. FocusPoint's `FocusFill` has no fallback; `FocusFillFallback` only exists
-while FocusPoint is not installed.
+`FocusFill`, `FocusFillMax`, `FocusCropWidth` and `FocusCropHeight` therefore work in a template
+with or without FocusPoint. `FocusFillFallback` is the old name of the `FocusFill` fallback; it only
+exists while FocusPoint is not installed, so use `FocusFill`.

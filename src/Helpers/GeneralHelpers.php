@@ -11,6 +11,7 @@ use SilverStripe\Assets\File;
 use SilverStripe\Assets\Folder;
 use SilverStripe\Assets\Image;
 use SilverStripe\Assets\Storage\AssetStore;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Environment;
 use SilverStripe\Dev\Deprecation;
 use SilverStripe\Forms\FieldList;
@@ -18,6 +19,27 @@ use SilverStripe\Forms\Tab;
 
 class GeneralHelpers
 {
+    use Configurable;
+
+    /**
+     * @config
+     * Seconds to wait for a CONNECTION before giving up.
+     *
+     * Guzzle ships NO default for this (configureDefaults() sets neither timeout nor
+     * connect_timeout, so both are 0 = unlimited). An outbound call on a render path against an
+     * upstream that has gone away therefore blocks indefinitely and pins a PHP-FPM worker for the
+     * duration - and one crawler burst on such a page saturates the pool and takes the whole site
+     * down with 504s. That is not hypothetical: it is what happened to a production site on
+     * 2026-08-17 (admintweaks#55).
+     */
+    private static int $http_connect_timeout = 5;
+
+    /**
+     * @config
+     * Seconds to wait for the WHOLE request (connect + transfer) before giving up.
+     */
+    private static int $http_timeout = 10;
+
     /**
      * Insert a tab at a certain position (if it doesnt exist yet)
      *
@@ -36,12 +58,23 @@ class GeneralHelpers
 
         if(!$insertAfter){
             $fields->findOrMakeTab($tabPath, $tabTitle);
-        } else {
-            $fields->insertAfter('Main',
-                Tab::create($tabName, $tabTitle),
-                true
-            );
+//        } else {
+//            $fields->insertAfter('Main',
+//                Tab::create($tabName, $tabTitle),
+//                true
+//            );
+//        }
+            return;
         }
+
+        # Honour $insertAfter: it used to be ignored, any value placed the tab after Main, and the
+        # tab was named after the full $tabName ('Root.Extra') instead of its last segment
+        # (admintweaks#145). The new tab goes into the tab set it belongs to, after the named
+        # sibling, or at the end when there is no such sibling (insertAfter's appendIfMissing).
+        $segments = explode('.', $tabPath);
+        $name = array_pop($segments);
+        $tabSet = $fields->findOrMakeTab(implode('.', $segments));
+        $tabSet->insertAfter($insertAfter, Tab::create($name, $tabTitle), true);
     }
 
     /**
@@ -160,9 +193,22 @@ class GeneralHelpers
             $localFilePath = $filePathOrUrl;
         } else {
             # Download URL to temp file — pass path string (not handle) so Guzzle manages open/close
-            $client = new Client();
+//            $client = new Client();
             $tempFilePath = tempnam(sys_get_temp_dir(), 'asset');
-            $client->request('GET', $filePathOrUrl, ['sink' => $tempFilePath]);
+//            $client->request('GET', $filePathOrUrl, ['sink' => $tempFilePath]);
+            # The URL is often caller-supplied: OutboundUrlGuard allows http(s) to public addresses
+            # only, pins the checked address and validates every redirect hop (admintweaks#139).
+            # Bounded by the same timeouts as perform_http_request(), Guzzle's own are unlimited.
+            try {
+                OutboundUrlGuard::send('GET', $filePathOrUrl, [
+                    'sink' => $tempFilePath,
+                    'connect_timeout' => static::config()->get('http_connect_timeout'),
+                    'timeout' => static::config()->get('http_timeout'),
+                ]);
+            } catch (Exception $exception) {
+                @unlink($tempFilePath);
+                throw $exception;
+            }
             $localFilePath = $tempFilePath;
         }
 
@@ -217,13 +263,25 @@ class GeneralHelpers
         // HTTPlug allows you to write reusable libraries and applications that need an HTTP client without
         // binding to a specific implementation (https://docs.php-http.org/en/latest/httplug/introduction.html)
         // Using an adapter makes Guzzle conform to PSR-18 https://www.php-fig.org/psr/psr-18/ (Guzzle7 does out of the box)
+        // Bound the request unless the caller said otherwise. Guzzle's own defaults are
+        // unlimited (see $http_connect_timeout), which on a render path is an availability bug,
+        // not a slow page. A caller passing its own value in $options still wins.
+        $options = $options + [
+            'connect_timeout' => static::config()->get('http_connect_timeout'),
+            'timeout' => static::config()->get('http_timeout'),
+        ];
+
         try {
-            $client = new Client();
+//            $client = new Client();
             // Making Guzzle requests: https://docs.guzzlephp.org/en/stable/
 //            $options['on_stats'] = function (TransferStats $stats) use (&$effectiveUrl) {
 //                $effectiveUrl = $stats->getEffectiveUri();
 //            };
-            $response = $client->request($reqMethod, $reqUrl, $options);
+//            $response = $client->request($reqMethod, $reqUrl, $options);
+            # Destination checks, address pinning and per-hop redirect validation (admintweaks#139).
+            # A rejected URL throws OutboundUrlRejectedException, which is not a GuzzleException and
+            # so reaches the caller as is.
+            $response = OutboundUrlGuard::send($reqMethod, $reqUrl, $options);
 
         } catch ( GuzzleException $exception ) {
             throw new Exception("GUZZLE EXCEPTION [{$exception->getCode()}]: {$exception->getMessage()}");

@@ -7,6 +7,14 @@ use Monolog\LogRecord;
 use Restruct\Silverstripe\AdminTweaks\Helpers\CacheHelpers;
 use SilverStripe\Core\Config\Configurable;
 
+// Monolog's SymfonyMailerHandler is Monolog 3 (Silverstripe 5); Silverstripe 4 installs Monolog 1,
+// which has none, and has no symfony/mailer either. Without this guard the config build autoloads
+// this file (PrivateStaticTransformer class_exists()es every manifest class) and the missing parent
+// fatals every request on SS4, whether or not the APP_LOG_MAIL_* vars are set (admintweaks#143).
+if (!class_exists(SymfonyMailerHandler::class)) {
+    return;
+}
+
 /**
  * SymfonyMailerHandler with cache-based deduplication AND a global rate cap.
  *

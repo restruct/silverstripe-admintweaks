@@ -78,6 +78,8 @@ SilverStripe\Core\Injector\Injector:
 # Email error handler — sends error emails via Symfony Mailer with cache-based deduplication.
 # Only activates when ALL env vars below are set. To disable on dev/test,
 # simply don't define these vars in those environments.
+# Needs Silverstripe 5 (Monolog 3 + symfony/mailer): the classexists rules keep it inert on SS4,
+# where setting all four vars would otherwise point the logger at a class that cannot load (admintweaks#143).
 #
 # Required in .env (on live only):
 #   APP_LOG_MAIL_RECIPIENT="admin@example.com"
@@ -92,6 +94,9 @@ SilverStripe\Core\Injector\Injector:
 ---
 Name: admintweaks-error-email-logger
 Only:
+  classexists:
+    - Monolog\Handler\SymfonyMailerHandler
+    - Symfony\Component\Mailer\Mailer
   envvarset:
     - APP_LOG_MAIL_RECIPIENT
     - APP_LOG_MAIL_SUBJECT
