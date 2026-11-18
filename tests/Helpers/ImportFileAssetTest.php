@@ -230,4 +230,12 @@ class ImportFileAssetTest extends SapphireTest
         # Filename should be the basename of the temp file
         $this->assertStringContainsString('.txt', $result->getFilename());
     }
+
+    public function testImportRejectsAPrivateDestination(): void
+    {
+        # A URL to an internal address is refused before any request (admintweaks#139)
+        $this->expectException(\Restruct\Silverstripe\AdminTweaks\Helpers\OutboundUrlRejectedException::class);
+
+        GeneralHelpers::import_file_asset('http://192.168.1.1/config.txt', 'Imports/config.txt');
+    }
 }

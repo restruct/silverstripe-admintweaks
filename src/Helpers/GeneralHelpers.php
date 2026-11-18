@@ -182,9 +182,22 @@ class GeneralHelpers
             $localFilePath = $filePathOrUrl;
         } else {
             # Download URL to temp file — pass path string (not handle) so Guzzle manages open/close
-            $client = new Client();
+//            $client = new Client();
             $tempFilePath = tempnam(sys_get_temp_dir(), 'asset');
-            $client->request('GET', $filePathOrUrl, ['sink' => $tempFilePath]);
+//            $client->request('GET', $filePathOrUrl, ['sink' => $tempFilePath]);
+            # The URL is often caller-supplied: OutboundUrlGuard allows http(s) to public addresses
+            # only, pins the checked address and validates every redirect hop (admintweaks#139).
+            # Bounded by the same timeouts as perform_http_request(), Guzzle's own are unlimited.
+            try {
+                OutboundUrlGuard::send('GET', $filePathOrUrl, [
+                    'sink' => $tempFilePath,
+                    'connect_timeout' => static::config()->get('http_connect_timeout'),
+                    'timeout' => static::config()->get('http_timeout'),
+                ]);
+            } catch (Exception $exception) {
+                @unlink($tempFilePath);
+                throw $exception;
+            }
             $localFilePath = $tempFilePath;
         }
 
@@ -248,12 +261,16 @@ class GeneralHelpers
         ];
 
         try {
-            $client = new Client();
+//            $client = new Client();
             // Making Guzzle requests: https://docs.guzzlephp.org/en/stable/
 //            $options['on_stats'] = function (TransferStats $stats) use (&$effectiveUrl) {
 //                $effectiveUrl = $stats->getEffectiveUri();
 //            };
-            $response = $client->request($reqMethod, $reqUrl, $options);
+//            $response = $client->request($reqMethod, $reqUrl, $options);
+            # Destination checks, address pinning and per-hop redirect validation (admintweaks#139).
+            # A rejected URL throws OutboundUrlRejectedException, which is not a GuzzleException and
+            # so reaches the caller as is.
+            $response = OutboundUrlGuard::send($reqMethod, $reqUrl, $options);
 
         } catch ( GuzzleException $exception ) {
             throw new Exception("GUZZLE EXCEPTION [{$exception->getCode()}]: {$exception->getMessage()}");

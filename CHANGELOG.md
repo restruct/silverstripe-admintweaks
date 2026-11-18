@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+### Security
+
+- **Outbound fetches check their destination** (#139). `GeneralHelpers::perform_http_request()`,
+  the `CacheHelpers::cached_*_request()` methods on top of it, and the URL download in
+  `GeneralHelpers::import_file_asset()` now go through the new `OutboundUrlGuard`: http and https
+  only; `localhost` and hosts resolving to loopback, private, link-local, reserved and similar
+  addresses are refused with an `OutboundUrlRejectedException`; the connection is pinned to the
+  checked address; redirects are followed hop by hop (at most `max_redirects`, default 5) and each
+  hop is checked. A project that fetches from an internal host lists it in
+  `OutboundUrlGuard.allowed_hosts` (names, addresses or CIDR ranges; empty by default). See
+  `docs/caching.md`. **Behaviour change:** requests to such hosts that used to work now throw
+  until the host is allowed, and Guzzle's own `allow_redirects` option is ignored.
+- `import_file_asset()`'s URL download has the connect and total timeouts of
+  `perform_http_request()` (`GeneralHelpers.http_connect_timeout` / `http_timeout`, 5s / 10s); it
+  had none.
+
 ### Fixed
 
 - **Silverstripe 4: the module no longer takes the application down on a config build** (#143).

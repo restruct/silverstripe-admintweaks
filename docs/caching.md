@@ -84,7 +84,34 @@ Restruct\Silverstripe\AdminTweaks\Helpers\CacheHelpers:
   failure_cache_duration: 120
 ```
 
-Request URLs are fetched as given: validate any URL that comes from user input before passing it.
+### Outbound URL checks
+
+`perform_http_request()`, and with it all the `cached_*_request()` methods, and the download in
+`import_file_asset()` send their request through `OutboundUrlGuard`:
+
+- only `http` and `https` URLs;
+- `localhost`, `*.localhost` and any host that resolves to a loopback, private, carrier-grade NAT,
+  link-local, multicast, documentation, benchmarking, reserved or unspecified address (IPv4 and
+  IPv6) are refused with an `OutboundUrlRejectedException` before anything is sent;
+- the connection is pinned to the address that was checked (cURL `CURLOPT_RESOLVE`), so a second
+  DNS answer cannot swap in another one;
+- redirects are followed one hop at a time, at most `max_redirects` (default 5), and every hop is
+  checked the same way. An `allow_redirects` in `$options` is ignored.
+
+Pinning needs Guzzle's cURL handler, which it uses whenever `ext-curl` is loaded.
+
+A project that fetches from an internal host on purpose lists it, by name, address or CIDR range:
+
+```yaml
+Restruct\Silverstripe\AdminTweaks\Helpers\OutboundUrlGuard:
+  allowed_hosts:
+    - intranet.example.lan
+    - 10.20.0.0/16
+```
+
+The list is empty by default. It widens the destinations only: other schemes stay refused.
+`OutboundUrlGuard::validate($url)` and `OutboundUrlGuard::send($method, $url, $options)` can be used
+directly for your own requests.
 
 ## GeneralHelpers
 
@@ -147,7 +174,9 @@ string $conflictResolution = AssetStore::CONFLICT_OVERWRITE)`:
   other values.
 - Only extensions in `File::getAllowedExtensions()` are accepted.
 - It throws an `Exception` for a disallowed extension, an empty download or a failed store.
-- The download sets no timeout, and the URL is fetched as given.
+- A URL download uses the default timeouts above and the [outbound URL checks](#outbound-url-checks).
+- A local path, or a `file:` URL, is read from the server's disk without any check: never pass it
+  a string that a user controls.
 
 ### getFileAssetsPath()
 
