@@ -1,5 +1,42 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- **The admin CSS and JS are built with Vite 8 instead of laravel-mix 6** (`build-assets.mjs`,
+  `yarn build`; see README "Building the front-end assets"). Build tooling only: the output keeps
+  its names and paths (`client/dist/css/admintweaks.css`, `admintweaks-page-icons.css`,
+  `multivaluesortfield.css`, `client/dist/js/admintweaks.js`, the FontAwesome webfonts in
+  `client/dist/fonts/`), and its rules and script logic are the same. What differs in the built
+  files: the minifier writes some values differently (colours as hex, `flex:none`, `inset`
+  spelled out as `top/right/bottom/left`); the SVG page icons keep their `viewBox` (mix's CSS
+  minifier stripped it); `admintweaks.js` is a plain IIFE without the webpack runtime; the webfont
+  URLs lose their `?hash` query. Leaving mix drops most build-time advisories (`yarn audit`: 15
+  before, 2 after; the 2 left are picomatch GHSA-fc5q-39xc-vjpf through Vite and Sass, which has
+  no fixed release and was already among the 15).
+- Removed with mix: `webpack.mix.js`, `.babelrc`, `client/dist/mix-manifest.json` (nothing reads
+  it), and the committed `admintweaks.css.map` / `admintweaks.js.map` (no built file pointed at
+  them, `*.map` is gitignored, and they described the webpack output). Unused devDependencies
+  `bootstrap` and `bootstrap-sass` are gone; `bootstrap-icons` stays as the source of the SVG page
+  icons (`_page-icons-svg.scss`).
+
+### Removed
+
+- Asset files nothing uses any more (about 43 MB): the full FontAwesome 7.1 web kit under
+  `client/fonts/` except the two webfonts the stylesheet bundles and its licence, the eot, svg, ttf
+  and woff copies of those fonts and the Bootstrap Icons webfonts in `client/dist/fonts/` (the admin
+  loads Bootstrap Icons from the CDN, see `bootstrap_icons_cdn_url`), and the SS3-era images in
+  `client/_legacy_icons/` and `client/_legacy_img/`. `client/src/scss/_legacy_ss3-tweaks.scss` stays as the
+  record of what was ported; it is not compiled.
+
+### Tests
+
+- New browser spec `editable-gridfield-save.spec.ts`: an editable GridField in a record's edit form
+  (a has_many GridField with `GridFieldEditableColumns`), as in real use. A plain checkbox and a
+  toggle switch are unticked, the parent is saved and reloaded, and both stay unticked: the
+  unchecked-checkbox zero input in `admintweaks.js`. Fails when that entwine rule is disabled.
+
 ## 4.8.0 (2026-11-18)
 
 ### Added

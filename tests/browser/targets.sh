@@ -21,5 +21,6 @@ SS6_PORT="8862"
 SS6_SRC_REF=""
 # lumberjack: the SelectiveLumberjack fixture (fixtures/AtBHolder.php, site-tree.spec.ts, #105).
 # htmleditor-tinymce: recipe-cms 6 has no HTML editor without it (minimal-editor.spec.ts, #116).
-# gridfieldextensions: GridFieldEditableColumns in fixtures/AtBEditableAdmin.php (editable-gridfield.spec.ts, #114).
+# gridfieldextensions: GridFieldEditableColumns in fixtures/AtBEditableAdmin.php (editable-gridfield.spec.ts, #114)
+# and fixtures/AtBParentRecord.php (editable-gridfield-save.spec.ts).
 SS6_EXTRA_REQUIRE="silverstripe/lumberjack:^4 silverstripe/htmleditor-tinymce:^1 symbiote/silverstripe-gridfieldextensions:^5"
