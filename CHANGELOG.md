@@ -21,6 +21,13 @@
   `bootstrap` and `bootstrap-sass` are gone; `bootstrap-icons` stays as the source of the SVG page
   icons (`_page-icons-svg.scss`).
 
+### Tests
+
+- New browser spec `editable-gridfield-save.spec.ts`: an editable GridField in a record's edit form
+  (a has_many GridField with `GridFieldEditableColumns`), as in real use. A plain checkbox and a
+  toggle switch are unticked, the parent is saved and reloaded, and both stay unticked: the
+  unchecked-checkbox zero input in `admintweaks.js`. Fails when that entwine rule is disabled.
+
 ## 3.27.0 (2026-11-18)
 
 ### Added
