@@ -76,6 +76,10 @@ jobs:
         # lumberjack because the SelectiveLumberjack / AddNew tests (#61, #62) skip without it.
         # recipe-cms 4 and 5 already include reports (the #54 menu tests) and the TinyMCE
         # editor (the minimal editor config tests, #116).
+        #
+        # audit.block-insecure is off for this throwaway host only: SS4 and SS5 are out of
+        # support and some of their releases carry advisories that will not be fixed, so
+        # Composer 2.9+ refuses to resolve any of them. The module's composer.json is unaffected.
         run: |
           mkdir -p app-host
           cd app-host
@@ -99,7 +103,7 @@ jobs:
             },
             "minimum-stability": "dev",
             "prefer-stable": true,
-            "config": { "allow-plugins": true }
+            "config": { "allow-plugins": true, "audit": { "block-insecure": false } }
           }
           JSON
           composer update --no-interaction --no-progress
