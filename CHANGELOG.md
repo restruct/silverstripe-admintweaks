@@ -20,6 +20,11 @@
   upstream could hold a PHP worker indefinitely: `perform_http_request()` now defaults to 5s
   connect / 10s total (`GeneralHelpers.http_connect_timeout` / `http_timeout`), and a caller's own
   `$options` still win.
+- **An invalid JSON or JSON-LD response no longer stays cached for the full TTL** (#138).
+  `CacheHelpers::cached_json_request()` and `cached_jsonLD_request()` deleted `md5($reqUrl)`, but
+  the response is cached under `md5("cachedResponse_{$reqUrl}")`, so the bad body was kept and
+  every call in the window threw again without retrying. They now delete the right key, also on the
+  "no JSON-LD at all" exit, which did not invalidate anything.
 
 ## 3.28.1 (2026-11-18)
 
