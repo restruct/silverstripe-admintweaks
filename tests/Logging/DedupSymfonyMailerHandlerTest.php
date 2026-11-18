@@ -25,6 +25,11 @@ class DedupSymfonyMailerHandlerTest extends SapphireTest
     protected function setUp(): void
     {
         parent::setUp();
+        # The handler needs Monolog 3 and Symfony Mailer (Silverstripe 5). On Silverstripe 4 the
+        # class is deliberately left undeclared (admintweaks#143), so there is nothing to test.
+        if (!class_exists(DedupSymfonyMailerHandler::class)) {
+            $this->markTestSkipped('DedupSymfonyMailerHandler needs Silverstripe 5 (Monolog 3, Symfony Mailer)');
+        }
         $this->sent = 0;
         // Isolate every test run: wipe any counters/dedup keys from prior runs.
         CacheHelpers::load_cache()->clear();
