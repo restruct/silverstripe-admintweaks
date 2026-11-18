@@ -1,11 +1,11 @@
 // @TODO:
 // - ModelAdmin advanced search
-// - etc (check ss3-tweaks.scss)
+// - etc (the SS3-era leftovers sat in the uncompiled _legacy_ss3-tweaks.scss, removed 2026-11-18; see git history)
 
 
 // Styled checkboxes (paired with the .styled-checkbox JS injector in admintweaks.js, which hides the
 // input and injects an inner <label for> whose :before draws the box). These styles sat in the
-// UNCOMPILED _legacy_ss3-tweaks.scss, so the injector ran without its styling — ported 2026-07.
+// UNCOMPILED _legacy_ss3-tweaks.scss (since removed), so the injector ran without its styling — ported 2026-07.
 input.checkbox.styled-checkbox {
   &.styled-checkbox-hide {
     display: none;
