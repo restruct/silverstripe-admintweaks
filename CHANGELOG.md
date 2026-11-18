@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+### Documentation
+
+- README and `docs/` rewritten around a feature overview: each feature gets a short section with
+  how to switch it on and one snippet, larger features link to their own page. New pages:
+  `docs/security.md` (password policy, breached passwords), `docs/system-switcher.md`,
+  `docs/tasks.md`; `docs/gridfield.md` gains an editable GridField section. Option names, defaults
+  and method names checked against the code, and wrong or invented ones in `docs/caching.md`,
+  `docs/template-helpers.md`, `docs/siteconfig.md`, `docs/form-fields.md` and `docs/gridfield.md`
+  corrected.
+- `docs/form-fields.md`: the MultivalueSortField section had swallowed the heading of the
+  `minimal` editor section, so the README's link to it led nowhere; both sections restored.
+
 ## 3.28.0 (2026-11-18)
 
 ### Changed

@@ -1,235 +1,160 @@
-# Caching & General Helpers
+# Caching and general helpers
 
-The module provides utility classes for HTTP request caching, file operations, and general helper methods.
+Static helpers for cached HTTP requests, CMS fields and file imports, the cache namespaces the
+module sets up, and the image method fallbacks.
 
-## CacheHelpers
+## Cache namespaces
 
-Cached HTTP requests using Guzzle with automatic invalidation on errors.
+`_config/caches.yml` sets up three PSR-16 caches:
 
-### cached_http_request()
-
-Make cached HTTP requests with Guzzle.
+| Namespace | Lifetime | Used for |
+|-----------|----------|----------|
+| `cacheblock` | 24 hours (core: 10 minutes) | Template `<% cached %>` blocks |
+| `appcache` | 1 hour | Free for project code |
+| `adminCache` | 1 hour | `CacheHelpers` requests, error-mail deduplication |
 
 ```php
 use Restruct\Silverstripe\AdminTweaks\Helpers\CacheHelpers;
 
-// GET request with 1 hour cache
-$response = CacheHelpers::cached_http_request(
-    'https://api.example.com/data',
-    'GET',
-    [],      // Guzzle options
-    3600     // Cache TTL in seconds
-);
+$cache = CacheHelpers::load_appcache();         // the appcache namespace
+$cache = CacheHelpers::load_cache('adminCache'); // any namespace by name
+$cache->set('my-key', $value, 600);
+```
 
-// POST request (not cached by default)
-$response = CacheHelpers::cached_http_request(
-    'https://api.example.com/submit',
-    'POST',
-    ['json' => ['key' => 'value']],
-    0        // No caching for POST
-);
+Your own namespace:
+
+```yaml
+SilverStripe\Core\Injector\Injector:
+  Psr\SimpleCache\CacheInterface.myCache:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: "myCache"
+      defaultLifetime: 7200
+```
+
+## CacheHelpers: cached HTTP requests
+
+All three methods take `($reqUrl, $reqMethod = 'GET', array $options = [], $cacheDuration = 900)`.
+`$options` are Guzzle request options. Responses are cached in `adminCache` for `$cacheDuration`
+seconds; `0` skips the cache.
+
+### cached_http_request()
+
+```php
+$response = CacheHelpers::cached_http_request('https://api.example.com/data');
+// ['body' => '...', 'statuscode' => 200, 'requesturl' => '...', 'effectiveurl' => '...']
 ```
 
 ### cached_json_request()
 
-Fetch and parse JSON API responses.
+The decoded JSON as an associative array; throws an `Exception` with code
+`CacheHelpers::INVALID_JSON_EXCEPTION` when the body is not valid JSON.
 
 ```php
-// Returns parsed JSON as array/object
-$data = CacheHelpers::cached_json_request(
-    'https://api.example.com/products',
-    'GET',
-    [],
-    3600
-);
-
-foreach ($data['products'] as $product) {
-    echo $product['name'];
-}
+$data = CacheHelpers::cached_json_request('https://api.example.com/data', 'GET', [], 3600);
 ```
 
 ### cached_jsonLD_request()
 
-Extract JSON-LD structured data from web pages.
+Every `<script type="application/ld+json">` block on a web page, decoded, as a list. Throws an
+`Exception` (code `CacheHelpers::NO_JSONLD_FOUND_EXCEPTION`) when the page has none.
 
 ```php
-// Extract JSON-LD from a product page
-$jsonLd = CacheHelpers::cached_jsonLD_request(
-    'https://shop.example.com/product/123',
-    3600
-);
-
-if ($jsonLd && $jsonLd['@type'] === 'Product') {
-    $price = $jsonLd['offers']['price'];
-    $name = $jsonLd['name'];
+try {
+    $blocks = CacheHelpers::cached_jsonLD_request('https://example.com/product', 'GET', [], 3600);
+    $product = $blocks[0];
+} catch (Exception $e) {
+    // no JSON-LD on the page, or the request failed
 }
 ```
 
-**Use cases:**
-- Extracting product data from e-commerce sites
-- Reading article metadata from news sites
-- Importing structured data from external sources
+### Cache behaviour
 
-### Cache Behavior
+- The cache key is the URL only: the method and options are not part of it, so a GET and a POST
+  to the same URL share one cache entry.
+- Only a response with status 200 is cached. A request that fails, or answers with another status,
+  is made again on the next call.
+- Guzzle has no timeout of its own, so pass `connect_timeout` and `timeout` in `$options` for a
+  request made while a page renders; otherwise a dead upstream holds the request until PHP gives
+  up. (The 4.x line caches failures for a minute and sets default timeouts.)
 
-- Cache uses SilverStripe's cache system (`appcache` by default)
-- Failed requests (errors, non-200 status) are not cached
-- Cache is automatically invalidated on errors
-- Cache key is generated from URL + method + options hash
-
----
+Request URLs are fetched as given: validate any URL that comes from user input before passing it.
 
 ## GeneralHelpers
 
-Static utility methods for common operations.
+### perform_http_request()
 
-### Tab Management
+The uncached request the methods above use: `perform_http_request($reqUrl, $reqMethod = 'GET',
+array $options = [])` returns the same array as `cached_http_request()` and throws an `Exception`
+when the request fails. It sets no timeouts; pass them in `$options`.
+
+### add_tab_if_not_exists()
 
 ```php
 use Restruct\Silverstripe\AdminTweaks\Helpers\GeneralHelpers;
 
-// Move a field to a specific tab
-GeneralHelpers::moveFieldToTab($fields, 'MyField', 'Root.Settings');
-
-// Create a new tab if it doesn't exist
-GeneralHelpers::ensureTab($fields, 'Root.Advanced', 'Advanced Settings');
+GeneralHelpers::add_tab_if_not_exists($fields, 'Advanced', 'Advanced settings');
 ```
 
-### Safe Property Access
+Adds a tab to a CMS FieldList unless it is there already. `Advanced` and `Root.Advanced` are the
+same. The fourth argument, `$insertAfter`, is not used yet: the tab is always placed after `Main`.
 
-Access nested object properties without null checks:
+### get_options_translations()
+
+Turns a list of values into a value => translated label map, for a dropdown:
 
 ```php
-// Instead of: $obj?->relation?->subrelation?->property
-$value = GeneralHelpers::safelyGetProperty($obj, 'relation.subrelation.property');
-
-// With default value
-$value = GeneralHelpers::safelyGetProperty($obj, 'config.setting', 'default');
+$source = GeneralHelpers::get_options_translations(['draft', 'published'], MyClass::class . '.Status_');
+// ['draft' => _t('MyClass.Status_draft', 'draft'), 'published' => ...]
 ```
 
-### Option Translation
+### safelyGetProperty()
 
-Translate option arrays for dropdowns:
+Follows a chain of plain PHP object properties and returns `null` when any step is missing:
 
 ```php
-$options = [
-    'draft' => 'Draft',
-    'published' => 'Published',
-    'archived' => 'Archived',
-];
-
-// Translates values using i18n
-$translated = GeneralHelpers::translateOptions($options, 'MyApp.Status');
+$value = GeneralHelpers::safelyGetProperty($apiResponse, 'data->items->first');
 ```
 
-### File Import/Download
+It uses `property_exists()`, so it does not see a DataObject's fields or relations.
 
-Download remote files and save to assets:
+### import_file_asset()
+
+Downloads a file from a URL, or reads a local path (also with a `file:` prefix), and stores it as a
+File, or an Image for image extensions:
 
 ```php
-// Download image and save to assets
-$file = GeneralHelpers::download_and_save_asset(
-    'https://example.com/image.jpg',
-    'imports',           // Folder in assets
-    'imported-image.jpg' // Filename (optional, uses remote name if omitted)
-);
-
-if ($file) {
-    $this->ImageID = $file->ID;
-    $this->write();
-}
+$file = GeneralHelpers::import_file_asset('https://example.com/document.pdf', 'Imports/document.pdf');
 ```
 
-**Features:**
-- Creates folder if it doesn't exist
-- Handles file naming conflicts
-- Returns File object on success, null on failure
-- Supports all file types
+`import_file_asset(string $filePathOrUrl, ?string $assetPath = null, bool $publish = true,
+string $conflictResolution = AssetStore::CONFLICT_OVERWRITE)`:
 
-### Import File Asset
+- `$assetPath` is `folder/filename` in the asset store.
+- The file is published, and an existing file with the same name is overwritten, unless you pass
+  other values.
+- Only extensions in `File::getAllowedExtensions()` are accepted.
+- It throws an `Exception` for a disallowed extension, an empty download or a failed store.
+- The download sets no timeout, and the URL is fetched as given.
 
-Alternative method for importing files:
+### getFileAssetsPath()
 
-```php
-$file = GeneralHelpers::import_file_asset(
-    'https://example.com/document.pdf',
-    'assets/documents'
-);
-```
+`GeneralHelpers::getFileAssetsPath($file)` returns `$file->getLocalPath()`, or `null` for a missing
+file; see [Asset path resolution](asset-path-resolution.md) (Silverstripe 5 only).
 
----
+## Image method fallbacks
 
-## Default Cache Configuration
+Template methods of optional image modules, kept working when the module is not installed, and some
+Silverstripe 3 method names:
 
-The module configures two caches automatically:
+| Extension | Applied | Methods |
+|-----------|---------|---------|
+| `FocusImageFallbackExtension` | while [FocusPoint](https://github.com/jonom/silverstripe-focuspoint) is not installed | `FocusFillMax($w, $h)`, `FocusCropWidth($w)`, `FocusCropHeight($h)`, `FocusFillFallback($w, $h)` |
+| `ImageCropperFallbackExtension` | while Restruct's image cropper is not installed | `CroppedFocusedImage($w, $h)`, `CroppedImage($w, $h)` |
+| `LegacyManipulationsExtension` | always | `PaddedImage` (`Pad`), `SetWidth` (`ScaleWidth`), `SetHeight` (`ScaleHeight`) |
 
-```yaml
-# Applied via _config/caches.yml
-SilverStripe\Core\Injector\Injector:
-  # Default cache: 24 hours
-  Psr\SimpleCache\CacheInterface.cacheblock:
-    factory: SilverStripe\Core\Cache\CacheFactory
-    constructor:
-      namespace: cacheblock
-      defaultLifetime: 86400
-
-  # App cache: 1 hour
-  Psr\SimpleCache\CacheInterface.appcache:
-    factory: SilverStripe\Core\Cache\CacheFactory
-    constructor:
-      namespace: appcache
-      defaultLifetime: 3600
-```
-
-### Using Custom Caches
-
-```php
-use SilverStripe\Core\Injector\Injector;
-use Psr\SimpleCache\CacheInterface;
-
-// Get app cache
-$cache = Injector::inst()->get(CacheInterface::class . '.appcache');
-
-// Store value
-$cache->set('my-key', $data, 3600);
-
-// Retrieve value
-$data = $cache->get('my-key');
-
-// Delete value
-$cache->delete('my-key');
-```
-
----
-
-## ScheduledMethodCall
-
-Moved to [restruct/silverstripe-queuedjobs-enhancements](https://github.com/restruct/silverstripe-queuedjobs-enhancements)
-(`Restruct\QueuedJobsEnhancements\Jobs\ScheduledMethodCall`, Silverstripe 5.4+); this module no
-longer ships it. See that module's README for the current `schedule()` / `scheduleImmediate()`
-signatures.
-
----
-
-## Image Fallback Extensions
-
-Provides fallback methods when optional image manipulation modules are not installed.
-
-### FocusImageFallbackExtension
-
-Fallback methods when FocusPoint is not installed:
-
-```php
-// These methods work whether FocusPoint is installed or not
-$image->FocusFillFallback(400, 300);
-$image->FocusCropWidth(400);
-$image->FocusCropHeight(300);
-```
-
-### ImageCropperFallbackExtension
-
-Fallback for image cropping methods.
-
-### LegacyManipulationsExtension
-
-Compatibility methods for legacy image manipulations from SilverStripe 3.
+The FocusPoint fallbacks map to core's `Fill`, `FillMax`, `CropWidth` and `CropHeight`, without a
+focus point.
+`FocusFillMax`, `FocusCropWidth` and `FocusCropHeight` therefore work in a template with or
+without FocusPoint. FocusPoint's `FocusFill` has no fallback; `FocusFillFallback` only exists
+while FocusPoint is not installed.

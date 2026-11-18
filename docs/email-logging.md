@@ -1,6 +1,7 @@
-# Email & Logging Configuration
+# Email and error mails
 
-The module provides environment-based email configuration and enhanced error logging.
+The system sender and the queued-job report recipient from environment variables, and error mails
+with request details and deduplication.
 
 ## Email Configuration
 
@@ -14,7 +15,8 @@ APP_SYSTEM_EMAIL_SENDER="My Application"
 APP_SYSTEM_EMAIL_ADDRESS="noreply@example.com"
 ```
 
-These are used as defaults for all outgoing emails:
+Together they fill `Email.admin_email`, the default sender of outgoing email, but only when the
+project has not set `admin_email` itself (an explicit config value always wins):
 
 ```php
 // Emails will use these as From address
@@ -93,30 +95,49 @@ APP_SYSTEM_EMAIL_ADDRESS="dev@example.com"
 # APP_LOG_MAIL_* variables not set = no error emails
 ```
 
+### Queued-job reports
+
+With [symbiote/silverstripe-queuedjobs](https://github.com/symbiote/silverstripe-queuedjobs)
+installed, `Email.queued_job_admin_email` (the recipient of its broken, stalled and missing-job
+reports) is filled from `APP_LOG_MAIL_RECIPIENT`, again only when the project has not set it. Set
+it to `false` to receive no such reports.
+
+While a job runs, the job and its memory use are recorded in `$_SERVER` (`QUEUED_JOB`,
+`QUEUED_JOB_MEMORY`), so an error mail from the queue runner names the job and step instead of only
+the runner task. This `QueuedJobContextExtension` is deprecated here:
+[queuedjobs-enhancements](https://github.com/restruct/silverstripe-queuedjobs-enhancements) 1.7.0
+and later register their own copy, and this one then stays off.
+
 ---
 
 ## EnhancedErrorFormatter
 
-Extends `DetailedErrorFormatter` — inherits record parsing and context extraction,
+Extends `DetailedErrorFormatter` - inherits record parsing and context extraction,
 overrides `output()` to produce email-friendly HTML.
 
 Solves: `DetailedErrorFormatter::output()` calls `Debug::create_debug_view()` which
 falls back to `CliDebugView` (plain text) when there's no HTTP request context during
-error handling — producing unreadable "wall of text" emails.
+error handling - producing unreadable "wall of text" emails.
 
 ### Features
 
 - Inline-styled HTML (no external CSS links that get stripped in email)
 - Source code context around the error
 - Full stack trace
-- `$_SERVER` details table (like SS3 had)
+- A table of request and server details from `$_SERVER` (like SS3 had), including the queued job
+  that was running, when the error came from the queue runner
 - Configurable: `format_mode` = `html` (default) or `plaintext` (monospace)
 
 ```yaml
-# Switch to monospace plaintext mode if preferred
 Restruct\Silverstripe\AdminTweaks\Logging\EnhancedErrorFormatter:
+  # Switch to monospace plaintext mode if preferred
   format_mode: plaintext
+  # More $_SERVER keys in the details table (added to the default list)
+  server_vars:
+    - HTTP_X_FORWARDED_FOR
 ```
+
+The default `server_vars` list is in `src/Logging/EnhancedErrorFormatter.php`.
 
 ---
 
@@ -125,12 +146,19 @@ Restruct\Silverstripe\AdminTweaks\Logging\EnhancedErrorFormatter:
 Extends `SymfonyMailerHandler` with PSR-16 cache-based deduplication.
 Prevents email bombing when the same error repeats (e.g. DB down).
 
-- No buffering — sends immediately (unlike Monolog's DeduplicationHandler/BufferHandler)
-- PSR-16 cache handles TTL expiry (uses existing `adminCache` pool)
-- Configurable dedup window (default: 300 seconds / 5 minutes)
+- No buffering - sends immediately (unlike Monolog's DeduplicationHandler/BufferHandler)
+- PSR-16 cache handles TTL expiry (uses the `adminCache` pool)
+- The same error (same level and message start) is mailed once per `dedup_time`
+- A hard cap of `max_emails_per_window` mails per `rate_window` across all errors, so even an
+  outage that throws many different errors cannot flood the inbox
+
+| Setting | Default | What it does |
+|---------|---------|--------------|
+| `dedup_time` | `300` | Seconds a repeat of the same error is not mailed again |
+| `max_emails_per_window` | `20` | Most error mails in one window; `0` switches the cap off (deduplication still applies) |
+| `rate_window` | `3600` | Length of that window in seconds |
 
 ```yaml
-# Adjust dedup time window
 Restruct\Silverstripe\AdminTweaks\Logging\DedupSymfonyMailerHandler:
   dedup_time: 600  # 10 minutes
 ```
@@ -185,9 +213,10 @@ APP_LOG_MAIL_LEVEL="error"
 
 ### Too many error emails
 
-1. Increase log level to `critical`
-2. Use DeduplicationHandler to prevent duplicates
-3. Consider using external error tracking (Sentry, Bugsnag)
+1. Raise `APP_LOG_MAIL_LEVEL` to `critical`
+2. Lower `max_emails_per_window` or raise `dedup_time` (above)
+3. Consider using external error tracking (Sentry, Bugsnag); the mail handler lets records bubble
+   on to other handlers, so both can run
 
 ### Disabling the error email handler from a project
 
@@ -208,29 +237,3 @@ SilverStripe\Core\Injector\Injector:
     class: Monolog\Handler\NullHandler
 ```
 
----
-
-## Changelog
-
-### 3.8.1
-
-- **Fixed:** MailHandler now uses `bubble: true`. The original `bubble: false` (3.7.1) was needed
-  when the MailHandler was on the same logger as HTTPOutputHandler, causing formatted email HTML
-  to leak into web responses. Since 3.8.0, the MailHandler is on `Psr\Log\LoggerInterface` (standard
-  logger) while HTTPOutputHandler is on `Psr\Log\LoggerInterface.errorhandler` (separate logger).
-  With `bubble: true`, downstream handlers like SentryHandler now correctly receive error records.
-- **Changed:** IconsPreviewController moved from `/dev/admintweaks-icons` to `/admin/admintweaks-icons`.
-  Now extends LeftAndMain with `ignore_menuitem: true` (hidden from CMS menu, requires CMS access).
-- **Changed:** CampaignAdmin and ReportAdmin hiding moved from CSS (`display: none !important`)
-  to config (`ignore_menuitem: true`). Projects can override with `ignore_menuitem: false` in
-  their own YAML config to re-enable these menu items.
-
-### 3.7.1
-
-- **Fixed:** SymfonyMailerHandler now uses `bubble: false` to prevent the EnhancedErrorFormatter
-  HTML from leaking into web responses via SilverStripe's HTTPOutputHandler. Previously, the
-  formatted email HTML was set on `$record->formatted` and propagated to downstream handlers,
-  corrupting AJAX/JSON responses with HTML error email content.
-- **Removed:** ThrottledQueuedJobService — the parent QueuedJobService now handles broken job
-  notification dedup natively via the `NotifiedBroken` DB flag (queuedjobs 4.x+). The reimplemented
-  `checkJobHealth()` had also become stale, missing upstream fixes.
