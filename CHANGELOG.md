@@ -1,5 +1,62 @@
 # Changelog
 
+## Unreleased
+
+### Security
+
+- **Outbound fetches check their destination** (#139). `GeneralHelpers::perform_http_request()`,
+  the `CacheHelpers::cached_*_request()` methods on top of it, and the URL download in
+  `GeneralHelpers::import_file_asset()` now go through the new `OutboundUrlGuard`: http and https
+  only; `localhost` and hosts resolving to loopback, private, link-local, reserved and similar
+  addresses are refused with an `OutboundUrlRejectedException`; the connection is pinned to the
+  checked address; redirects are followed hop by hop (at most `max_redirects`, default 5) and each
+  hop is checked. A project that fetches from an internal host lists it in
+  `OutboundUrlGuard.allowed_hosts` (names, addresses or CIDR ranges; empty by default). See
+  `docs/caching.md`. **Behaviour change:** requests to such hosts that used to work now throw
+  until the host is allowed, and Guzzle's own `allow_redirects` option is ignored.
+- `import_file_asset()`'s URL download has the connect and total timeouts of
+  `perform_http_request()` (`GeneralHelpers.http_connect_timeout` / `http_timeout`, 5s / 10s); it
+  had none.
+
+### Fixed
+
+- **An invalid JSON or JSON-LD response no longer stays cached for the full TTL** (#138).
+  `CacheHelpers::cached_json_request()` and `cached_jsonLD_request()` deleted `md5($reqUrl)`, but
+  the response is cached under `md5("cachedResponse_{$reqUrl}")`, so the bad body was kept and
+  every call in the window threw again without retrying. They now delete the right key, also on the
+  "no JSON-LD at all" exit, which did not invalidate anything.
+- **`FocusFill` has a fallback when FocusPoint is not installed** (#142). The FocusPoint fallback
+  extension named its `Fill` mapping `FocusFillFallback`, a method FocusPoint does not have, so
+  `$Image.FocusFill(...)` rendered nothing without FocusPoint (and threw in PHP). `FocusFill()` now
+  maps to core `Fill()`; `FocusFillFallback()` stays as a deprecated alias.
+- composer.json `suggest` lists `symbiote/silverstripe-multivaluefield`,
+  `symbiote/silverstripe-gridfieldextensions` and `silverstripe/lumberjack`, which the features
+  built on them need (#144).
+- `GeneralHelpers::add_tab_if_not_exists()` honours `$insertAfter` (#145): the tab goes after the
+  named sibling, or at the end when there is none. It used to land after `Main` whatever was
+  passed, and was named after the full path (`Root.Extra`) instead of `Extra`.
+- `IpAddressField`'s validation message is translatable, with an English default ("Not a valid IP
+  address"); it was hard-coded Dutch (#145).
+- **`[currentyear]` returns the bare year** (#145) instead of `<div class="me">2026</div>`, which
+  broke the line it sits in. Nothing in this module styled `.me`; a theme that did needs its own
+  wrapper now.
+- The `[currentyear]` and `[featuredimage]` shortcode labels use module-namespaced keys
+  (`<class>.SINGULARNAME`) with English defaults; they used a project-specific key with Dutch
+  defaults. Dutch is in `lang/nl_NL.yml` (#145).
+
+### Changed
+
+- Code comments, docblocks and `OrmQueryTask`'s usage examples no longer name project classes or
+  namespaces: they use core classes (`SiteTree`) or `App\...` placeholders.
+
+### Removed
+
+- `SiteConfigExtension.enable_subnav_activation_field`: declared and documented, but never read
+  (#145). `theme_subnav_slots` covers choosing a sub menu slot, or none.
+- `docs/fix-getlocalpath-plan.md`, an internal plan for the `getLocalPath()` rewrite that is in
+  the code; its one open point is fixed in signed-asset-urls. `docs/asset-path-resolution.md`
+  describes the current behaviour.
+
 ## 4.10.0 (2026-11-18)
 
 ### Added

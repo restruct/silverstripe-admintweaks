@@ -162,7 +162,7 @@
       }
     });
 
-    // @TODO: fix this based on HLCL publisher update publications action
+    // @TODO: fix this based on a project's publisher "update publications" action
     // Add optional loading feedback overlay to buttons
     $('button[data-show-loading-feedback]').entwine({
 

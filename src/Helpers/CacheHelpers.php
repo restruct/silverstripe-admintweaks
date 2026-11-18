@@ -84,6 +84,17 @@ class CacheHelpers
 //    }
 
     /**
+     * The cache key a response for $reqUrl is stored under.
+     *
+     * One place for it, so the code that invalidates an entry cannot drift from the code that
+     * writes it again (admintweaks#138).
+     */
+    private static function response_cache_key($reqUrl): string
+    {
+        return md5("cachedResponse_{$reqUrl}");
+    }
+
+    /**
      * Perform a cached HTTP request via Guzzle and return the response body
      *
      * @param $reqUrl
@@ -100,7 +111,7 @@ class CacheHelpers
             return GeneralHelpers::perform_http_request($reqUrl, $reqMethod, $options);
         }
 
-        $cacheKey = md5("cachedResponse_{$reqUrl}");
+        $cacheKey = self::response_cache_key($reqUrl);
         $cache = self::load_cache();
         $cachedResponse = $cache->get($cacheKey);
 
@@ -158,7 +169,9 @@ class CacheHelpers
         // invalidate cache if invalid JSON
         $jsonDataParsed = json_decode($jsonData['body'], true);
         if(json_last_error() !== JSON_ERROR_NONE) {
-            self::load_cache()->delete(md5($reqUrl));
+            # Must be the key cached_http_request() wrote: this used to delete md5($reqUrl), a key
+            # that never exists, so the bad body stayed cached for the full TTL (admintweaks#138)
+            self::load_cache()->delete(self::response_cache_key($reqUrl));
 
             throw new Exception("EXCEPTION (INVALID JSON RESPONSE) {$reqUrl}", self::INVALID_JSON_EXCEPTION);
         }
@@ -181,6 +194,8 @@ class CacheHelpers
         $htmlData = self::cached_http_request($reqUrl, $reqMethod, $options, $cacheDuration);
         $jsonLDstart = '<script type="application/ld+json">';
         if(!strpos($htmlData['body'], $jsonLDstart)){
+            # Drop the response here too: this exit never invalidated anything (admintweaks#138)
+            self::load_cache()->delete(self::response_cache_key($reqUrl));
             $redirectInfo = $reqUrl!=$htmlData['effectiveurl'] ? " → {$htmlData['effectiveurl']}" : '';
             throw new Exception("EXCEPTION: NO JSON+LD found in RESPONSE ({$reqUrl}{$redirectInfo})", self::NO_JSONLD_FOUND_EXCEPTION);
         }
@@ -199,7 +214,8 @@ class CacheHelpers
 
         // invalidate cache if no valid json+ld found
         if(!count($jsonLDparts)){
-            self::load_cache()->delete(md5($reqUrl));
+            # Same key as cached_http_request(), see cached_json_request() (admintweaks#138)
+            self::load_cache()->delete(self::response_cache_key($reqUrl));
             throw new Exception("EXCEPTION (NO JSON+LD found in RESPONSE) {$reqUrl}");
         }
 

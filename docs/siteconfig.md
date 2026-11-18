@@ -155,8 +155,7 @@ SilverStripe\SiteConfig\SiteConfig:
 ```
 
 The option labels are translated through
-`Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension.ThemeSubNavSlot_<slot>`. The
-`enable_subnav_activation_field` option is declared but does nothing.
+`Restruct\Silverstripe\AdminTweaks\Extensions\SiteConfigExtension.ThemeSubNavSlot_<slot>`.
 
 ## Full example
 

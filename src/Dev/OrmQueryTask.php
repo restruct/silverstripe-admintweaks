@@ -21,8 +21,8 @@ use SilverStripe\ORM\DataObject;
  *   sake tasks:orm-query --class=File --schema
  *   sake tasks:orm-query --class=Page --sql
  *   sake tasks:orm-query --class=Page --where='ParentID > 0 AND ShowInMenus = 1' --limit=10
- *   sake tasks:orm-query --class=DataSyncItem --group-by=Type
- *   sake tasks:orm-query --class=DataSyncItem --min=Created --max=Created
+ *   sake tasks:orm-query --class=SiteTree --group-by=ClassName
+ *   sake tasks:orm-query --class=SiteTree --min=Created --max=Created
  */
 class OrmQueryTask extends BuildTask
 {
@@ -233,7 +233,7 @@ class OrmQueryTask extends BuildTask
     }
 
     /**
-     * Resolve a short class name (e.g. "DataSyncItem") to its FQCN.
+     * Resolve a short class name (e.g. "SiteTree") to its FQCN.
      */
     private function resolveClass(string $className): ?string
     {
@@ -569,8 +569,8 @@ class OrmQueryTask extends BuildTask
         $this->out("  sake tasks:orm-query --class=Page --where='ParentID > 0 AND ShowInMenus = 1'\n");
         $this->out("  sake tasks:orm-query --class=Page --sql\n");
         $this->out("  sake tasks:orm-query --class=File --schema\n");
-        $this->out("  sake tasks:orm-query --class=DataSyncItem --group-by=ClassName\n");
-        $this->out("  sake tasks:orm-query --class=DataSyncItem --filter='ClassName=Page' --group-by=ParentID\n");
+        $this->out("  sake tasks:orm-query --class=SiteTree --group-by=ClassName\n");
+        $this->out("  sake tasks:orm-query --class=SiteTree --filter='ClassName=Page' --group-by=ParentID\n");
         $this->out("  sake tasks:orm-query --class=Member --min=Created --max=Created\n");
         $this->out("  sake tasks:orm-query --class=File --sum=Size --avg=Size\n");
     }
