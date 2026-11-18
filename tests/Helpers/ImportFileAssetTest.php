@@ -93,7 +93,10 @@ class ImportFileAssetTest extends SapphireTest
     {
         $result = GeneralHelpers::import_file_asset(
             $this->tempFile,
-            'Imports/test-import.txt'
+            'Imports/test-import.txt',
+            true,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            dirname($this->tempFile)
         );
 
         $this->assertInstanceOf(File::class, $result);
@@ -106,7 +109,10 @@ class ImportFileAssetTest extends SapphireTest
     {
         $result = GeneralHelpers::import_file_asset(
             $this->tempFile,
-            'Imports/content-check.txt'
+            'Imports/content-check.txt',
+            true,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            dirname($this->tempFile)
         );
 
         # Verify the content was actually stored, not just the record
@@ -118,7 +124,10 @@ class ImportFileAssetTest extends SapphireTest
     {
         $result = GeneralHelpers::import_file_asset(
             $this->tempFile,
-            'Imports/published-default.txt'
+            'Imports/published-default.txt',
+            true,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            dirname($this->tempFile)
         );
 
         $this->assertTrue($result->isPublished(), 'File should be published by default');
@@ -129,7 +138,9 @@ class ImportFileAssetTest extends SapphireTest
         $result = GeneralHelpers::import_file_asset(
             $this->tempFile,
             'Imports/draft-only.txt',
-            false
+            false,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            dirname($this->tempFile)
         );
 
         $this->assertTrue($result->exists(), 'File record should exist');
@@ -145,7 +156,10 @@ class ImportFileAssetTest extends SapphireTest
 
         $result = GeneralHelpers::import_file_asset(
             $fileUri,
-            'Imports/from-uri.txt'
+            'Imports/from-uri.txt',
+            true,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            dirname($this->tempFile)
         );
 
         $this->assertInstanceOf(File::class, $result);
@@ -161,13 +175,17 @@ class ImportFileAssetTest extends SapphireTest
         # .exe is not in allowed extensions
         GeneralHelpers::import_file_asset(
             $this->tempFile,
-            'Imports/malicious.exe'
+            'Imports/malicious.exe',
+            true,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            dirname($this->tempFile)
         );
     }
 
     public function testImportNonExistentFileThrows(): void
     {
         # Non-existent path without file: prefix falls through to Guzzle (treated as URL)
+        # Since #151 it is refused as a local source instead, before Guzzle; still an Exception
         $this->expectException(Exception::class);
 
         GeneralHelpers::import_file_asset(
@@ -184,7 +202,10 @@ class ImportFileAssetTest extends SapphireTest
 
         GeneralHelpers::import_file_asset(
             'file:///tmp/this-file-does-not-exist-at-all.txt',
-            'Imports/ghost.txt'
+            'Imports/ghost.txt',
+            true,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            '/tmp'
         );
     }
 
@@ -200,7 +221,10 @@ class ImportFileAssetTest extends SapphireTest
 
             GeneralHelpers::import_file_asset(
                 $emptyFile,
-                'Imports/empty.txt'
+                'Imports/empty.txt',
+                true,
+                \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+                dirname($emptyFile)
             );
         } finally {
             @unlink($emptyFile);
@@ -212,7 +236,10 @@ class ImportFileAssetTest extends SapphireTest
         # Import first version
         $first = GeneralHelpers::import_file_asset(
             $this->tempFile,
-            'Imports/overwrite-test.txt'
+            'Imports/overwrite-test.txt',
+            true,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            dirname($this->tempFile)
         );
         $firstId = $first->ID;
 
@@ -223,7 +250,10 @@ class ImportFileAssetTest extends SapphireTest
         try {
             $second = GeneralHelpers::import_file_asset(
                 $secondFile,
-                'Imports/overwrite-test.txt'
+                'Imports/overwrite-test.txt',
+                true,
+                \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+                dirname($secondFile)
             );
 
             # Should reuse the existing File record (same ID)
@@ -245,7 +275,10 @@ class ImportFileAssetTest extends SapphireTest
         try {
             $result = GeneralHelpers::import_file_asset(
                 $pngFile,
-                'Imports/test-image.png'
+                'Imports/test-image.png',
+                true,
+                \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+                dirname($pngFile)
             );
 
             $this->assertInstanceOf(Image::class, $result, 'PNG should create an Image, not a File');
@@ -259,7 +292,10 @@ class ImportFileAssetTest extends SapphireTest
     {
         $result = GeneralHelpers::import_file_asset(
             $this->tempFile,
-            'Custom/Folder/renamed-file.txt'
+            'Custom/Folder/renamed-file.txt',
+            true,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            dirname($this->tempFile)
         );
 
         $this->assertEquals('Custom/Folder/renamed-file.txt', $result->getFilename());
@@ -269,7 +305,11 @@ class ImportFileAssetTest extends SapphireTest
     {
         # When no assetPath is provided, it should derive from the source filename
         $result = GeneralHelpers::import_file_asset(
-            $this->tempFile
+            $this->tempFile,
+            null,
+            true,
+            \SilverStripe\Assets\Storage\AssetStore::CONFLICT_OVERWRITE,
+            dirname($this->tempFile)
         );
 
         $this->assertInstanceOf(File::class, $result);
