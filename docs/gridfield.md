@@ -37,7 +37,7 @@ Applied on install, nothing to configure:
 
 For GridFields with gridfieldextensions' `GridFieldEditableColumns`, also applied on install:
 
-![An editable GridField: rows with a text input, a dropdown, a checkbox, a set of three checkboxes, a two-line read-only summary and a toggle switch, all on one compact line per row; the third row is locked and shows its values as text](images/editable-gridfield.png)
+![An editable GridField: rows with a text input, a dropdown, a checkbox, a set of three checkboxes, a two-line read-only summary, a toggle switch (on in the first row, off in the second) and an inverted one (on while unchecked, off in the second row where it is ticked), all on one compact line per row; the third row is locked and shows its values as text](images/editable-gridfield.png)
 
 - **Compact rows**: inputs, dropdowns, checkboxes and checkbox sets no longer bring Bootstrap's
   form spacing into the row, so an editable row is about as high as a plain one. Cells line up on

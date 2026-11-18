@@ -10,6 +10,18 @@ import type { Locator, Page } from '@playwright/test';
 // Must-fail control: without the toggle-switch rules in admintweaks.scss, the "renders as a switch"
 // assertions fail (the checkbox keeps its square box: appearance stays native on SS5, the box is 1em
 // wide, and there is no knob that moves).
+//
+// The inverted switch (`toggle-switch--inverted`, ->setToggleSwitchInverted()) is ON while the box
+// is UNCHECKED, display only. The fixture has Hidden as an inverted column in the "toggle" grid tab
+// (both classes by hand in the callback), and in the edit form Hidden (->setToggleSwitchInverted()),
+// HiddenTags (a CheckboxSetField, the same), Retired (disabled) and Excluded (a checkbox in a
+// CompositeField that carries both classes by hand).
+//
+// Must-fail controls for the inverted tests (run 2026-11-18 on SS6 and SS5): without the inverted
+// rules in admintweaks.scss the inverted switches are drawn as plain ones, and the four look tests
+// fail on the knob position (left while unchecked, right while checked); the keyboard test fails
+// there too on SS5 (focus border), not on SS6, where the plain focus border is the same in both
+// states. Without only the inverted :focus rule, the keyboard test fails on the focus look.
 
 const TOGGLE = { url: '/admin/atb-editable/toggle', grid: '#Form_EditForm_toggle' };
 
@@ -59,7 +71,9 @@ async function switchStyle(input: Locator) {
             knobWidth: parseFloat(knob.width),
             // The knob's horizontal shift (0 when off)
             knobX: knob.transform === 'none' ? 0 : new DOMMatrix(knob.transform).m41,
+            knobColour: knob.backgroundColor,
             background: cs.backgroundColor,
+            border: cs.borderTopColor,
         };
     });
 }
@@ -273,5 +287,234 @@ test.describe('in an edit form', () => {
         await expect(page.locator('.message.good, .alert-success, .toast--success').first()).toBeVisible();
         await page.goto(url);
         await expect(page.locator('#Form_ItemEditForm_Featured')).not.toBeChecked();
+    });
+});
+
+/** Blur whatever has focus, so a style read is not the focus look. */
+async function blur(page: Page): Promise<void> {
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+}
+
+/**
+ * The switch's style once its transitions (track colours, and the knob's on ::before) have run, so
+ * a colour is not read half-way (a focus border fading back after a blur, for one).
+ */
+async function settledStyle(input: Locator) {
+    await input.evaluate((el) => Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished)));
+    return switchStyle(input);
+}
+
+/**
+ * The plain switch's look when off and when on, read from a plain switch on the same page, as the
+ * reference for the inverted one: both are drawn from the same custom properties.
+ */
+async function plainLook(plain: Locator) {
+    const wasChecked = await plain.isChecked();
+    await plain.uncheck();
+    await blur(plain.page());
+    await expect.poll(async () => (await switchStyle(plain)).knobX).toBe(0);
+    const off = await settledStyle(plain);
+    await plain.check();
+    await blur(plain.page());
+    await expect.poll(async () => (await switchStyle(plain)).knobX).toBeCloseTo(off.width - off.height, 0);
+    const on = await settledStyle(plain);
+    await plain.setChecked(wasChecked);
+    await blur(plain.page());
+    return { off, on };
+}
+
+/**
+ * Assert the checkbox is drawn as an INVERTED switch: while unchecked it looks like the plain
+ * switch when on (knob right, white, the checked track colour), while checked like the plain switch
+ * when off. Only the drawing is inverted: the real checked state is asserted at each step.
+ */
+async function expectInvertedSwitch(input: Locator, plain: Awaited<ReturnType<typeof plainLook>>): Promise<void> {
+    const page = input.page();
+    const wasChecked = await input.isChecked();
+    await input.setChecked(false);
+    await blur(page);
+    await expect(input).not.toBeChecked();
+    const travel = plain.off.width - plain.off.height;
+    // Unchecked: the knob slides to the right (a short transition) and the track takes the colour of on
+    await expect.poll(async () => (await switchStyle(input)).knobX, 'unchecked: knob at the right').toBeCloseTo(travel, 0);
+    const unchecked = await settledStyle(input);
+    expect(unchecked.appearance, 'appearance').toBe('none');
+    expect(unchecked.width / unchecked.height).toBeGreaterThan(1.5);
+    expect(unchecked.background, 'unchecked: track as plain on').toBe(plain.on.background);
+    expect(unchecked.border, 'unchecked: border as plain on').toBe(plain.on.border);
+    expect(unchecked.knobColour, 'unchecked: knob as plain on').toBe(plain.on.knobColour);
+
+    await input.setChecked(true);
+    await blur(page);
+    await expect(input).toBeChecked();
+    await expect.poll(async () => (await switchStyle(input)).knobX, 'checked: knob at the left').toBe(0);
+    const checked = await settledStyle(input);
+    expect(checked.background, 'checked: track as plain off').toBe(plain.off.background);
+    expect(checked.border, 'checked: border as plain off').toBe(plain.off.border);
+    expect(checked.knobColour, 'checked: knob as plain off').toBe(plain.off.knobColour);
+
+    await input.setChecked(wasChecked);
+    await blur(page);
+}
+
+test.describe('inverted, in an edit form', () => {
+    test('CheckboxField, CheckboxSetField options and a container: ON while unchecked', async ({ page }) => {
+        const form = await openForm(page, 'Alpha editable');
+        const plain = await plainLook(form.locator('#Form_ItemEditForm_Featured'));
+        // The plain look itself is a switch that moves, or the comparison below proves nothing
+        expect(plain.on.background).not.toBe(plain.off.background);
+
+        // As seeded (Hidden unchecked): shown ON, while the checkbox is not checked
+        const hidden = form.locator('#Form_ItemEditForm_Hidden');
+        await expect(hidden).not.toBeChecked();
+        await expect.poll(async () => (await switchStyle(hidden)).knobX).toBeGreaterThan(0);
+        await expectInvertedSwitch(hidden, plain);
+
+        // Every option of the checkbox set, as seeded: Red ticked (shown OFF), Green and Blue not (ON)
+        const tags = form.locator('#Form_ItemEditForm_HiddenTags input[type=checkbox]');
+        await expect(tags).toHaveCount(3);
+        await expect(tags.nth(0)).toBeChecked();
+        expect((await switchStyle(tags.nth(0))).knobX).toBe(0);
+        for (const i of [1, 2]) {
+            await expect(tags.nth(i)).not.toBeChecked();
+            expect((await switchStyle(tags.nth(i))).knobX).toBeGreaterThan(0);
+        }
+        for (const tag of await tags.all()) {
+            await expectInvertedSwitch(tag, plain);
+        }
+
+        // Both classes by hand on a container (CompositeField): the checkbox inside is inverted,
+        // and lines up with the plain checkbox (Locked) and the other switches
+        const excluded = form.locator('#Form_ItemEditForm_Excluded');
+        await expectInvertedSwitch(excluded, plain);
+        const plainX = (await form.locator('#Form_ItemEditForm_Locked').boundingBox())!.x;
+        for (const sw of [excluded, hidden, tags.first()]) {
+            const x = (await sw.boundingBox())!.x;
+            expect(Math.abs(x - plainX), `switch ${x}, plain checkbox ${plainX}`).toBeLessThan(2);
+        }
+
+        // The plain switches next to them are not inverted
+        await expectSwitch(form.locator('#Form_ItemEditForm_Featured'));
+        await expectSwitch(form.locator('#Form_ItemEditForm_Tags input[type=checkbox]').first());
+    });
+
+    test('a click and the space key toggle the real state, with the focus look of a plain switch', async ({ page }) => {
+        const form = await openForm(page, 'Alpha editable');
+        const hidden = form.locator('#Form_ItemEditForm_Hidden');
+        const featured = form.locator('#Form_ItemEditForm_Featured');
+
+        await expect(hidden).not.toBeChecked();
+        await hidden.click();
+        await expect(hidden).toBeChecked();
+        await hidden.click();
+        await expect(hidden).not.toBeChecked();
+
+        // By keyboard: Tab from Featured (Archived between them is disabled, so Tab skips it)
+        await featured.focus();
+        await page.keyboard.press('Tab');
+        await expect(hidden).toBeFocused();
+        const focus = await focusIndicator(hidden);
+        expect(focus.focusVisible, 'focus from the keyboard is :focus-visible').toBe(true);
+        expect(focus.outline || focus.ring, JSON.stringify(focus)).not.toBe('');
+        // The border as on a focused plain switch that shows ON (its own state rules do not win
+        // over the focus look): read from Featured, checked and focused, after its transition
+        const border = async (l: Locator) => l.evaluate((el) => getComputedStyle(el).borderTopColor);
+        await page.waitForTimeout(300);
+        const hiddenBorder = await border(hidden);
+        await featured.check();
+        await featured.focus();
+        await page.waitForTimeout(300);
+        const plainOnFocused = await border(featured);
+        await featured.uncheck();
+        await hidden.focus();
+        expect(hiddenBorder, 'focused: border as a focused plain switch that is on').toBe(plainOnFocused);
+
+        await page.keyboard.press('Space');
+        await expect(hidden).toBeChecked();
+        // Shown OFF and focused: border and knob as a focused plain switch that is off
+        const look = async (l: Locator) => l.evaluate((el) => ({
+            border: getComputedStyle(el).borderTopColor,
+            knob: getComputedStyle(el, '::before').backgroundColor,
+        }));
+        await page.waitForTimeout(300);
+        const hiddenOff = await look(hidden);
+        await featured.focus();
+        await page.waitForTimeout(300);
+        expect(hiddenOff, 'focused and shown off: as a focused plain switch that is off').toEqual(await look(featured));
+        await hidden.focus();
+
+        await page.keyboard.press('Space');
+        await expect(hidden).not.toBeChecked();
+    });
+
+    test('a disabled inverted switch is faded and cannot be toggled', async ({ page }) => {
+        const form = await openForm(page, 'Alpha editable');
+        const retired = form.locator('#Form_ItemEditForm_Retired');
+        await expect(retired).toBeDisabled();
+        await expect(retired).not.toBeChecked();
+        // Shown ON (unchecked), faded
+        const style = await switchStyle(retired);
+        expect(style.appearance).toBe('none');
+        expect(style.knobX, 'unchecked: knob at the right').toBeGreaterThan(0);
+        expect(Number(await retired.evaluate((el) => getComputedStyle(el).opacity))).toBeLessThan(1);
+
+        await retired.click({ force: true });
+        await form.locator('#Form_ItemEditForm_Retired_Holder label').click({ force: true });
+        await expect(retired).not.toBeChecked();
+    });
+
+    test('the real value is saved: checked (shown OFF) stays checked', async ({ page }) => {
+        // Bravo: the other specs expect Alpha as seeded
+        let form = await openForm(page, 'Bravo editable');
+        const url = page.url();
+        await form.locator('#Form_ItemEditForm_Hidden').click();
+        await expect(form.locator('#Form_ItemEditForm_Hidden')).toBeChecked();
+        await form.locator('button[name=action_doSave]').click();
+        await expect(page.locator('.message.good, .alert-success, .toast--success').first()).toBeVisible();
+
+        await page.goto(url);
+        form = page.locator('#Form_ItemEditForm');
+        const hidden = form.locator('#Form_ItemEditForm_Hidden');
+        await expect(hidden).toBeChecked();
+        await blur(page);
+        expect((await switchStyle(hidden)).knobX, 'checked: shown OFF').toBe(0);
+
+        // And back: unchecked saves as unchecked
+        await hidden.click();
+        await form.locator('button[name=action_doSave]').click();
+        await expect(page.locator('.message.good, .alert-success, .toast--success').first()).toBeVisible();
+        await page.goto(url);
+        await expect(page.locator('#Form_ItemEditForm_Hidden')).not.toBeChecked();
+    });
+});
+
+test.describe('inverted, in an editable GridField column', () => {
+    test('ON while unchecked; a click toggles it without opening the row, and unchecking keeps the zero input', async ({ page }) => {
+        const grid = await openGrid(page);
+        const r = row(grid, 'Alpha editable');
+        const plain = await plainLook(r.locator('td.col-Featured input[type=checkbox]'));
+        const hidden = r.locator('td.col-Hidden input[type=checkbox]');
+        await expectInvertedSwitch(hidden, plain);
+
+        const navigations = watchDocumentNavigations(page);
+        await expect(hidden).not.toBeChecked();
+        await hidden.click();
+        await expect(hidden).toBeChecked();
+        // Checked: the checkbox submits its own value, so no zero input
+        const zero = r.locator('td.col-Hidden input.checkbox_zero_input[type=hidden]');
+        await expect(zero).toHaveCount(0);
+        await hidden.click();
+        await expect(hidden).not.toBeChecked();
+
+        // admintweaks.js: unchecked (here: shown ON) still submits an empty value through the
+        // hidden input with its name, inserted before it
+        const name = await hidden.getAttribute('name');
+        await expect(zero).toHaveCount(1);
+        await expect(zero).toHaveAttribute('name', name!);
+
+        await page.waitForTimeout(500);
+        await expect(page.locator('#Form_ItemEditForm')).toHaveCount(0);
+        expect(page.url()).toContain(TOGGLE.url);
+        expect(navigations()).toEqual([]);
     });
 });

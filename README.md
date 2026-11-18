@@ -226,7 +226,7 @@ options" popover no longer overlap, and long option lists scroll. Details:
 
 For GridFields with gridfieldextensions' `GridFieldEditableColumns`, on install:
 
-![An editable GridField: rows with a text input, a dropdown, a checkbox, a set of three checkboxes, a two-line read-only summary and a toggle switch, all on one compact line per row; the third row is locked and shows its values as text](docs/images/editable-gridfield.png)
+![An editable GridField: rows with a text input, a dropdown, a checkbox, a set of three checkboxes, a two-line read-only summary, a toggle switch (on in the first row, off in the second) and an inverted one (on while unchecked, off in the second row where it is ticked), all on one compact line per row; the third row is locked and shows its values as text](docs/images/editable-gridfield.png)
 
 - **Compact rows**: fields no longer bring Bootstrap's form spacing into the row, and cells line
   up on their first line.
@@ -264,10 +264,11 @@ CheckboxField::create('Active')->setToggleSwitch();
 CheckboxSetField::create('Channels', 'Channels', $options)->setToggleSwitch();
 ```
 
-![Toggle switches in a CMS edit form: a "Tags" checkbox set whose three options are switches, "Red" on and "Green" and "Blue" off; a plain "Locked" checkbox for comparison; a "Featured" switch that is off; and a faded, disabled "Archived" switch](docs/images/toggle-switch.png)
+![Toggle switches in a CMS edit form: a "Tags" checkbox set whose three options are switches, "Red" on and "Green" and "Blue" off; a plain "Locked" checkbox for comparison; a "Featured" switch that is off; and a faded, disabled "Archived" switch; below them inverted switches, ON while unchecked: "Hidden" on, a "Hidden tags" set with "Red" off and "Green" and "Blue" on, a faded disabled "Retired" that is on, and "Excluded" on](docs/images/toggle-switch.png)
 
 `setToggleSwitch()` is a shorthand for `addExtraClass('toggle-switch')`. Disabled switches are
-faded. In an editable GridField column, read-only behaviour and the CSS custom properties for size
+faded. `setToggleSwitchInverted()` shows the switch ON while the box is unchecked, for a stored
+negative flag ("Hidden"); display only, so screen readers still announce the real state. In an editable GridField column, read-only behaviour and the CSS custom properties for size
 and colour: [Form fields](docs/form-fields.md#toggle-switch).
 
 ### CopyTextField
