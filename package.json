@@ -2,36 +2,19 @@
   "name": "restruct-silverstripe-admintweaks",
   "description": "Restruct Silverstripe Admintweaks",
   "scripts": {
-    "development": "mix",
-    "watch": "mix watch",
-    "watch-poll": "mix watch -- --watch-options-poll=1000",
-    "hot": "mix watch --hot",
-    "prod": "mix --production -- --watch",
-    "production": "mix --production"
+    "build": "node build-assets.mjs",
+    "production": "node build-assets.mjs",
+    "dev": "node build-assets.mjs --dev",
+    "development": "node build-assets.mjs --dev",
+    "watch": "node build-assets.mjs --watch"
   },
   "author": "restruct",
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.0.0-0",
-    "@babel/preset-react": "^7.12.5",
-    "bootstrap": "^5.2.0",
     "bootstrap-icons": "^1.13.1",
-    "bootstrap-sass": "^3.4.1",
-    "css-loader": "^5.0.0",
-    "html-webpack-plugin": "^4.5.0",
-    "laravel-mix": "^6.0.11",
-    "postcss": "^8.2.5",
-    "resolve-url-loader": "^5.0.0",
-    "sass": "^1.28.0",
-    "sass-loader": "^10.0.5",
-    "webpack": "~5.104.1"
-  },
-  "resolutions": {
-    "webpack": "~5.104.1",
-    "webpack-dev-middleware": "^7.4.6",
-    "postcss-selector-parser": "^7.1.6"
+    "sass": "1.107.1",
+    "vite": "8.3.5"
   },
   "version": "1.0.0",
-  "main": "webpack.mix.js",
   "keywords": []
 }
