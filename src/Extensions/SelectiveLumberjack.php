@@ -25,7 +25,7 @@ class SelectiveLumberjack extends Lumberjack
      * Instead, use config/core functionality to hide pages from sitetree (function left here as fallback)
      * HolderPage:
      *   hide_from_cms_tree:
-     *     - 'HLCL\CMS\Pages\Specialist'
+     *     - 'App\Pages\TeamMemberPage'
      *
      * @return bool
      */
@@ -69,7 +69,7 @@ class SelectiveLumberjack extends Lumberjack
         }
 //            var_dump($lumberJacked);
         //array (
-        //  'HLCL\\CMS\\Pages\\CatalogItem' => 'HLCL\\CMS\\Pages\\CatalogItem',
+        //  'App\\Pages\\ProductPage' => 'App\\Pages\\ProductPage',
         //)
         foreach ($hidden as $classPath){
             $lumberJacked[$classPath] = $classPath;
@@ -78,7 +78,7 @@ class SelectiveLumberjack extends Lumberjack
         }
 //            var_dump($lumberJacked);
         //array (
-        //  'HLCL\\CMS\\Pages\\CatalogItem' => 'HLCL\\CMS\\Pages\\CatalogItem',
+        //  'App\\Pages\\ProductPage' => 'App\\Pages\\ProductPage',
         //)
 //            die();
 
