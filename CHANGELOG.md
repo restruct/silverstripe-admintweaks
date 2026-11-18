@@ -46,6 +46,10 @@
   1.x (SS4) does not have, so it returned `null` for every file there (and
   `GeneralHelpers::getFileAssetsPath()` with it). On SS4 it now uses Flysystem 1's
   `Local::applyPathPrefix()`.
+- **`FocusFill` has a fallback when FocusPoint is not installed** (#142). The FocusPoint fallback
+  extension named its `Fill` mapping `FocusFillFallback`, a method FocusPoint does not have, so
+  `$Image.FocusFill(...)` rendered nothing without FocusPoint (and threw in PHP). `FocusFill()` now
+  maps to core `Fill()`; `FocusFillFallback()` stays as a deprecated alias.
 
 ## 3.28.1 (2026-11-18)
 

@@ -190,12 +190,12 @@ Silverstripe 3 method names:
 
 | Extension | Applied | Methods |
 |-----------|---------|---------|
-| `FocusImageFallbackExtension` | while [FocusPoint](https://github.com/jonom/silverstripe-focuspoint) is not installed | `FocusFillMax($w, $h)`, `FocusCropWidth($w)`, `FocusCropHeight($h)`, `FocusFillFallback($w, $h)` |
+| `FocusImageFallbackExtension` | while [FocusPoint](https://github.com/jonom/silverstripe-focuspoint) is not installed | `FocusFill($w, $h)`, `FocusFillMax($w, $h)`, `FocusCropWidth($w)`, `FocusCropHeight($h)`, and the deprecated `FocusFillFallback($w, $h)` |
 | `ImageCropperFallbackExtension` | while Restruct's image cropper is not installed | `CroppedFocusedImage($w, $h)`, `CroppedImage($w, $h)` |
 | `LegacyManipulationsExtension` | always | `PaddedImage` (`Pad`), `SetWidth` (`ScaleWidth`), `SetHeight` (`ScaleHeight`) |
 
 The FocusPoint fallbacks map to core's `Fill`, `FillMax`, `CropWidth` and `CropHeight`, without a
 focus point.
-`FocusFillMax`, `FocusCropWidth` and `FocusCropHeight` therefore work in a template with or
-without FocusPoint. FocusPoint's `FocusFill` has no fallback; `FocusFillFallback` only exists
-while FocusPoint is not installed.
+`FocusFill`, `FocusFillMax`, `FocusCropWidth` and `FocusCropHeight` therefore work in a template
+with or without FocusPoint. `FocusFillFallback` is the old name of the `FocusFill` fallback; it only
+exists while FocusPoint is not installed, so use `FocusFill`.
