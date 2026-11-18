@@ -296,6 +296,15 @@ async function blur(page: Page): Promise<void> {
 }
 
 /**
+ * The switch's style once its transitions (track colours, and the knob's on ::before) have run, so
+ * a colour is not read half-way (a focus border fading back after a blur, for one).
+ */
+async function settledStyle(input: Locator) {
+    await input.evaluate((el) => Promise.all(el.getAnimations({ subtree: true }).map((a) => a.finished)));
+    return switchStyle(input);
+}
+
+/**
  * The plain switch's look when off and when on, read from a plain switch on the same page, as the
  * reference for the inverted one: both are drawn from the same custom properties.
  */
@@ -304,11 +313,11 @@ async function plainLook(plain: Locator) {
     await plain.uncheck();
     await blur(plain.page());
     await expect.poll(async () => (await switchStyle(plain)).knobX).toBe(0);
-    const off = await switchStyle(plain);
+    const off = await settledStyle(plain);
     await plain.check();
     await blur(plain.page());
     await expect.poll(async () => (await switchStyle(plain)).knobX).toBeCloseTo(off.width - off.height, 0);
-    const on = await switchStyle(plain);
+    const on = await settledStyle(plain);
     await plain.setChecked(wasChecked);
     await blur(plain.page());
     return { off, on };
@@ -328,7 +337,7 @@ async function expectInvertedSwitch(input: Locator, plain: Awaited<ReturnType<ty
     const travel = plain.off.width - plain.off.height;
     // Unchecked: the knob slides to the right (a short transition) and the track takes the colour of on
     await expect.poll(async () => (await switchStyle(input)).knobX, 'unchecked: knob at the right').toBeCloseTo(travel, 0);
-    const unchecked = await switchStyle(input);
+    const unchecked = await settledStyle(input);
     expect(unchecked.appearance, 'appearance').toBe('none');
     expect(unchecked.width / unchecked.height).toBeGreaterThan(1.5);
     expect(unchecked.background, 'unchecked: track as plain on').toBe(plain.on.background);
@@ -339,7 +348,7 @@ async function expectInvertedSwitch(input: Locator, plain: Awaited<ReturnType<ty
     await blur(page);
     await expect(input).toBeChecked();
     await expect.poll(async () => (await switchStyle(input)).knobX, 'checked: knob at the left').toBe(0);
-    const checked = await switchStyle(input);
+    const checked = await settledStyle(input);
     expect(checked.background, 'checked: track as plain off').toBe(plain.off.background);
     expect(checked.border, 'checked: border as plain off').toBe(plain.off.border);
     expect(checked.knobColour, 'checked: knob as plain off').toBe(plain.off.knobColour);
