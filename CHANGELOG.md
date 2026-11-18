@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 3.28.1 (2026-11-18)
 
 ### Removed
 
