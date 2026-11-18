@@ -103,7 +103,11 @@ jobs:
             },
             "minimum-stability": "dev",
             "prefer-stable": true,
-            "config": { "allow-plugins": true, "audit": { "block-insecure": false } }
+            "config": {
+              "allow-plugins": true,
+              "audit": { "block-insecure": false },
+              "policy": { "advisories": { "block": false } }
+            }
           }
           JSON
           composer update --no-interaction --no-progress
