@@ -443,6 +443,9 @@ More, including `GeneralHelpers`: [Caching and helpers](docs/caching.md).
   [Caching and helpers](docs/caching.md#image-method-fallbacks).
 - Image quality 90; WEBP output and MIME upload validation switch on with their modules (see
   [Applied on install](#applied-on-install)).
+- **`GeneralHelpers::import_file_asset()`**: stores a downloaded URL or a local file as a File or
+  Image. URLs go through the outbound URL checks; a local path or `file:` URL is read only when
+  the caller names the directory it must be in. [Caching and helpers](docs/caching.md#import_file_asset).
 
 ## Tasks
 
