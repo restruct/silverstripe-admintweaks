@@ -199,8 +199,46 @@ $editable->setDisplayFields([
 ### `setToggleSwitch()`
 
 `ToggleSwitchExtension` adds `setToggleSwitch(bool $enable = true)` (chainable; `false` removes the
-class again) and `isToggleSwitch()` to `CheckboxField` and `CheckboxSetField`. It is a shorthand
-for the class and changes nothing until a field calls it; adding the class by hand is equivalent.
+class again) and `isToggleSwitch()` to `CheckboxField` and `CheckboxSetField`, and
+`setToggleSwitchInverted()` / `isToggleSwitchInverted()` for the inverted switch (below). It is a
+shorthand for the class and changes nothing until a field calls it; adding the class by hand is
+equivalent.
+
+### Inverted: ON while unchecked
+
+For a checkbox that stores a negative flag ("Hidden", "Exclude from search") but should read
+positively, the inverted switch shows ON while the box is *unchecked*:
+
+```php
+CheckboxField::create('Hidden', 'Hidden')->setToggleSwitchInverted();
+CheckboxSetField::create('HiddenChannels', 'Hidden channels', $options)->setToggleSwitchInverted();
+// the same, by hand (both classes; the modifier alone draws nothing):
+CheckboxField::create('Hidden')->addExtraClass('toggle-switch toggle-switch--inverted');
+// in an editable GridField column:
+'Hidden' => [
+    'title' => 'Hidden',
+    'callback' => fn ($record, $column) => CheckboxField::create($column)->setToggleSwitchInverted(),
+],
+```
+
+`setToggleSwitchInverted()` adds `toggle-switch` and the modifier `toggle-switch--inverted`.
+Like the plain class, the pair works on the input or on any element around it (a
+CheckboxSetField's options, a CompositeField). `setToggleSwitchInverted(false)` removes the
+inversion and leaves a plain switch; `setToggleSwitch(false)` removes both. `isToggleSwitchInverted()`
+is true when the field has both classes.
+
+The inversion is display only: the knob position and track colour follow `:not(:checked)` instead
+of `:checked`, with the same custom properties, so a project's restyle applies to both. Disabled
+and focus look as on the plain switch. The checkbox's checked state, its value and what it submits
+do not change, so a click in an editable GridField still does not open the row, and an unchecked
+box in a GridField row still submits a value.
+
+**Screen readers announce the real checkbox state**, so an inverted switch that shows ON is
+announced "not checked". Word the label for the stored flag ("Hidden": not checked means shown),
+so that what is announced is true; a sighted user then reads the label against the switch. Or word
+it positively ("Shown") and accept that the announced state is the opposite of what is shown. When
+that matters, invert the value instead of the display: a field that loads the negated value and
+saves it back negated keeps the checkbox state, the label and the switch in agreement.
 
 ### Read-only and disabled
 

@@ -4,13 +4,15 @@ namespace Restruct\AtBrowser;
 
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\CheckboxSetField;
+use SilverStripe\Forms\CompositeField;
 use SilverStripe\ORM\DataObject;
 
 /**
  * BROWSER-TEST FIXTURE ONLY - the record AtBEditableAdmin (/admin/atb-editable) lists in a GridField
  * with GridFieldEditableColumns, for editable-gridfield.spec.ts (admintweaks#114): a text input,
  * a select, a checkbox, a checkbox set and a read-only two-line column per row.
- * Its edit form shows Featured, Tags and Archived as toggle switches (toggle-switch.spec.ts).
+ * Its edit form shows Featured, Tags and Archived as toggle switches (toggle-switch.spec.ts), and
+ * Hidden, HiddenTags, Retired and Excluded as inverted ones (toggle-switch.spec.ts).
  *
  * Needs symbiote/silverstripe-gridfieldextensions in the host (SS5_EXTRA_REQUIRE in targets.sh).
  * (See AtBRecord for why this never loads in a real install.)
@@ -22,6 +24,10 @@ use SilverStripe\ORM\DataObject;
  * @property bool $Locked
  * @property bool $Featured
  * @property bool $Archived
+ * @property bool $Hidden
+ * @property string $HiddenTags
+ * @property bool $Retired
+ * @property bool $Excluded
  */
 class AtBEditableRecord extends DataObject
 {
@@ -40,6 +46,13 @@ class AtBEditableRecord extends DataObject
         # Toggle switches: Featured in the "toggle" grid tab and the edit form, Archived disabled in the form.
         'Featured' => 'Boolean',
         'Archived' => 'Boolean',
+        # Inverted toggle switches (ON while unchecked), negative flags as a project would store them:
+        # Hidden in the "toggle" grid tab and the edit form, HiddenTags a checkbox set, Retired
+        # disabled, Excluded inside a container that carries the classes.
+        'Hidden' => 'Boolean',
+        'HiddenTags' => 'Varchar(255)',
+        'Retired' => 'Boolean',
+        'Excluded' => 'Boolean',
     ];
 
     private static $default_sort = '"Title" ASC';
@@ -65,7 +78,8 @@ class AtBEditableRecord extends DataObject
 
     /**
      * The toggle switches in the edit form: the helper method on a CheckboxField and on a
-     * CheckboxSetField, and a disabled one.
+     * CheckboxSetField, and a disabled one. Then the same set inverted, with the helper method, and
+     * a checkbox inside a container that has the classes added by hand.
      */
     public function getCMSFields()
     {
@@ -73,6 +87,13 @@ class AtBEditableRecord extends DataObject
         $fields->replaceField('Featured', CheckboxField::create('Featured')->setToggleSwitch());
         $fields->replaceField('Tags', CheckboxSetField::create('Tags', 'Tags', self::TAGS)->setToggleSwitch());
         $fields->replaceField('Archived', CheckboxField::create('Archived')->setToggleSwitch()->setDisabled(true));
+        $fields->replaceField('Hidden', CheckboxField::create('Hidden')->setToggleSwitchInverted());
+        $fields->replaceField('HiddenTags', CheckboxSetField::create('HiddenTags', 'Hidden tags', self::TAGS)->setToggleSwitchInverted());
+        $fields->replaceField('Retired', CheckboxField::create('Retired')->setToggleSwitchInverted()->setDisabled(true));
+        # By hand on a container: every checkbox inside it is an inverted switch
+        $fields->replaceField('Excluded', CompositeField::create(CheckboxField::create('Excluded'))
+            ->setName('ExcludedGroup')
+            ->addExtraClass('toggle-switch toggle-switch--inverted'));
 
         return $fields;
     }
@@ -92,7 +113,11 @@ class AtBEditableRecord extends DataObject
             $old->delete();
         }
         foreach (self::EDITABLE_TITLES as $title) {
-            static::create(['Title' => $title, 'Category' => 'two', 'Active' => false, 'Tags' => '["red"]'])->write();
+            static::create([
+                'Title' => $title, 'Category' => 'two', 'Active' => false, 'Tags' => '["red"]',
+                # Red ticked (an inverted switch shown OFF), Green and Blue not (shown ON)
+                'HiddenTags' => '["red"]',
+            ])->write();
         }
         static::create(['Title' => self::LOCKED_TITLE, 'Category' => 'one', 'Locked' => true])->write();
     }
