@@ -61,7 +61,9 @@ APP_SMTP_PASSWORD="your-secret-password"
 
 ## Error Email Logging
 
-Send error logs via email to administrators. Only activates when ALL four variables are set.
+Send error logs via email to administrators. Only activates when ALL four variables are set, and
+only on Silverstripe 5: the handler is built on Monolog 3 and Symfony Mailer, which Silverstripe 4
+does not have, so there it stays off even with the variables set.
 
 ```ini
 # Error email configuration (set on LIVE only)

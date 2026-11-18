@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **Silverstripe 4: the module no longer takes the application down on a config build** (#143).
+  `DedupSymfonyMailerHandler` extends Monolog 3's `SymfonyMailerHandler` and
+  `CliSafeMailerSubscriber` extends framework 5's `MailerSubscriber`; SS4 has neither. Because
+  silverstripe/config's `PrivateStaticTransformer` calls `class_exists()` on every manifest class,
+  both files were loaded on every config build and threw "Class not found", whatever the YAML or
+  the `APP_LOG_MAIL_*` variables said. Both now return early when their parent is missing, and the
+  error-mail YAML fragment also requires those classes, so it stays off on SS4 (it needs SS5).
+
 ## 3.28.1 (2026-11-18)
 
 ### Removed

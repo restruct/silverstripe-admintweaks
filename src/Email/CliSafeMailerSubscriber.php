@@ -9,6 +9,16 @@ use SilverStripe\Control\Email\MailerSubscriber;
 use SilverStripe\Control\HTTP;
 use Symfony\Component\Mailer\Event\MessageEvent;
 
+// MailerSubscriber only exists from Silverstripe 5, and this 3.x line also installs on SS4.
+// _config/mailer.yml being `Only: classexists` is not enough: silverstripe/config's
+// PrivateStaticTransformer calls class_exists() on EVERY class in the manifest while it builds the
+// config, which autoloads this file, and declaring a subclass of a missing parent throws
+// "Class not found" and takes the whole application down on SS4 (admintweaks#143). Returning early
+// leaves the class undeclared, which the transformer skips. Same guard as MultivalueSortField.
+if (!class_exists(MailerSubscriber::class)) {
+    return;
+}
+
 /**
  * MailerSubscriber that can send email with no current controller: a backport of the SS6 fix.
  *
