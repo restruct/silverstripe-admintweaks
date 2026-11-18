@@ -37,7 +37,10 @@
     "symbiote/silverstripe-grouped-cms-menu": "Group CMS menu items into nested lists",
     "silverstripe/htmleditor-tinymce": "The TinyMCE HTML editor (separate from framework since Silverstripe 6); needed for the minimal editor config",
     "wedevelopnl/silverstripe-webp-images": "WEBP image support (output resized jpeg/png images as webp, GD with WEBP required; no Silverstripe 6 release yet as of 2026-10)",
-    "axllent/silverstripe-cms-tweaks": "Some complemental tweaks by Axllent"
+    "axllent/silverstripe-cms-tweaks": "Some complemental tweaks by Axllent",
+    "symbiote/silverstripe-multivaluefield": "Needed for MultivalueSortField (a sort-only MultiValueDropdownField)",
+    "symbiote/silverstripe-gridfieldextensions": "Needed for GridFieldConfigs, GridFieldConfig_VersionedOrderable and the editable GridField fixes",
+    "silverstripe/lumberjack": "Needed for SelectiveLumberjack and GridFieldSiteTreeAddNewButton"
   },
   "autoload": {
     "psr-4": {
