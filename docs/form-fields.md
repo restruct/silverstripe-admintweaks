@@ -1,12 +1,12 @@
-# Form Fields
+# Form fields
 
-The module provides custom form fields and form field extensions for enhanced admin UI.
+The form fields, the toggle switch, the `minimal` HTML editor config and the form field
+extensions this module ships. None of them changes an existing form until a project uses it.
 
 ## CopyTextField
 
-A read-only text field with a copy-to-clipboard button. Useful for displaying API keys, URLs, or other values users need to copy.
-
-![CopyTextField example](https://user-images.githubusercontent.com/1005986/177027008-2c711cad-9c0c-47ea-a56a-1dc6f4861ba7.png)
+A read-only text field with a copy-to-clipboard button, for API keys, URLs and other values people
+need to copy. After a click the button turns green with a check mark for two seconds.
 
 ### Basic Usage
 
@@ -20,20 +20,57 @@ $field = CopyTextField::create('ApiKey', 'API Key', $this->ApiKey);
 
 ```php
 $field = CopyTextField::create('ShareUrl', 'Share URL', $this->AbsoluteLink())
-    ->setButtonLabel('Copy URL')     // Custom button text (default: 'Copy')
-    ->setShowAlert(true)             // Show browser alert on copy (default: false)
+    ->setButtonLabel('Copy URL')
+    ->setShowAlert(true)
+    ->setAlertMessage('URL copied')
     ->setDescription('Click to copy this URL to clipboard');
 ```
 
+| Setter | Default | What it does |
+|--------|---------|--------------|
+| `setButtonLabel(?string)` | none (icon only) | Text on the button next to the icon |
+| `setButtonTitle(?string)` | "Copy to clipboard" (translatable) | The button's tooltip |
+| `setButtonClasses(string)` | `btn btn-outline-secondary` | CSS classes of the button |
+| `setShowAlert(bool)` | `false` | Also show a browser alert after copying |
+| `setAlertMessage(?string)` | none | The alert's text; without one no alert shows, also with `setShowAlert(true)` |
+| `setIsReadonly(bool)` | `true` | Whether the input is read-only |
+
+Copying uses the browser's Clipboard API, which needs HTTPS (or `localhost`).
+
 ### Template
 
-The field uses `templates/Restruct/Silverstripe/AdminTweaks/FormFields/CopyTextField.ss` with Bootstrap styling and SVG icons for copy/success states.
+The field renders `templates/Restruct/Silverstripe/AdminTweaks/FormFields/CopyTextField.ss`, with
+Bootstrap classes and SVG icons for the copy and success states; a theme can override it.
 
 ---
 
 ## MultivalueSortField
 
-A field for managing sortable multi-value data. Allows users to add, remove, and reorder items.
+A sort-only variant of `MultiValueDropdownField` from
+[symbiote/silverstripe-multivaluefield](https://github.com/symbiote/silverstripe-multivaluefield),
+which must be installed: items are reordered by drag and drop, but cannot be added or removed.
+For a custom sort order over a fixed set of options.
+
+```php
+use Restruct\Silverstripe\AdminTweaks\FormFields\MultivalueSortField;
+
+$field = MultivalueSortField::create('SortOrder', 'Item order', [
+    '1' => 'First item',
+    '2' => 'Second item',
+    '3' => 'Third item',
+]);
+```
+
+The field loads its own stylesheet (`client/dist/css/multivaluesortfield.css`) when it renders.
+
+---
+
+## The minimal HTML editor config
+
+An HTML editor config named `minimal` for short rich-text fields (FAQ answers, intro texts, card
+texts): one toolbar line with bold, italic, bullet and numbered lists, the link menu and "clear
+formatting". Such fields need less than the full `cms` toolbar (alignment, indent, tables,
+headings, embeds), and the smaller toolbar keeps their content clean.
 
 ### Usage
 
@@ -196,9 +233,8 @@ Also available: `--toggle-switch-bg` (the track when off), `--toggle-switch-bord
 
 ## IpAddressField
 
-A text field with IP address validation.
-
-> **Note:** This field is marked as "untested" and may need adjustments for specific use cases.
+A text field that accepts an IPv4 or IPv6 address (PHP's `FILTER_VALIDATE_IP`). An empty value is
+left to a required-fields validator. The error message is Dutch and not translatable yet.
 
 ### Usage
 
@@ -214,7 +250,8 @@ $field = IpAddressField::create('AllowedIP', 'Allowed IP Address');
 
 ### FormFieldBootstrapExtension
 
-Automatically adds Bootstrap form classes to form fields. Opt-in via configuration.
+Adds Bootstrap form classes to form fields when they render, for front-end forms styled with
+Bootstrap. Opt-in.
 
 #### Enable
 
@@ -226,18 +263,20 @@ SilverStripe\Forms\FormField:
 
 #### Applied Classes
 
-| Field Type | Class Applied |
-|------------|---------------|
-| Text inputs, textareas, selects | `form-control` |
-| Select dropdowns | `form-select` |
-| Checkboxes, radios | `form-check-input` |
-| Checkbox/radio labels | `form-check-label` |
+| Field class | Class added |
+|-------------|-------------|
+| `TextField`, `TextareaField`, `EmailField`, `PasswordField`, `NumericField`, `CurrencyField`, `DateField` | `form-control` |
+| `DropdownField` | `form-select` |
+| `CheckboxField`, `CheckboxSetField`, `OptionsetField` | `form-check` |
+
+The class is matched exactly, so a subclass of one of these fields gets no class.
 
 ---
 
 ### FormFieldTweaksExtension
 
-Adds holder attribute management and validation message styling.
+Attributes on a field's holder, and Bootstrap validation classes: a field with a message gets
+`is-valid` (a "good" message) or `is-invalid` (any other). Opt-in.
 
 #### Enable
 
@@ -252,7 +291,7 @@ SilverStripe\Forms\FormField:
 ```php
 // Add attributes to the field holder (not the input)
 $field->setHolderAttribute('data-custom', 'value');
-$field->addHolderClass('my-custom-class');
+$field->getHolderAttribute('data-custom');   // 'value'
 
 // Use with custom holder template
 $field->setFieldHolderTemplate('FormFieldTweaks_holder');
@@ -260,17 +299,19 @@ $field->setFieldHolderTemplate('FormFieldTweaks_holder');
 
 #### Custom Holder Template
 
-The module provides `templates/FormFieldTweaks_holder.ss` for use with this extension.
+`templates/FormFieldTweaks_holder.ss` is a Bootstrap 5 floating-label holder that renders the
+holder attributes (`$HolderAttributesHTML`), an optional `$Append`/`$AppendTxt` input-group addon,
+and the message as `valid-feedback`/`invalid-feedback`.
 
 ---
 
 ## DataObjectExtension
 
-Adds utility methods to DataObjects.
+Applied to every DataObject on install.
 
 ### fieldLabelToLower()
 
-Returns a lowercase version of a field label:
+Returns a field's (translated) label in lower case:
 
 ```php
 // In a DataObject
