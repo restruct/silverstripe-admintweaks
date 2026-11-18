@@ -352,15 +352,24 @@ correctly report that it generated nothing.
 
 Task (3) requires `silverstripe/asset-admin`; it hides itself if that isn't installed.
 
-## Building Assets
+## Building the front-end assets
+
+The built CSS and JS in `client/dist/` are committed, so installing the module needs no Node
+tooling. To change them, edit `client/src/` and rebuild with [Vite](https://vite.dev), from a
+checkout of the module (Node `^20.19` or `>=22.12`; the lockfile is `yarn.lock`):
 
 ```bash
-cd _dev/admintweaks
-npm install
-npm run dev        # Development build
-npm run production # Production build
-npm run watch      # Watch mode
+yarn install
+yarn build    # minified, what gets committed
+yarn dev      # unminified, with inline source maps
+yarn watch    # as dev, rebuilding on every change
 ```
+
+`build-assets.mjs` holds the build configuration. The output names (`client/dist/css/admintweaks.css`,
+`client/dist/css/admintweaks-page-icons.css`, `client/dist/css/multivaluesortfield.css`,
+`client/dist/js/admintweaks.js`, and the FontAwesome webfonts in `client/dist/fonts/`) are fixed,
+because the YAML config and the PHP load them by path. Commit `client/src` and `client/dist`
+together, built with `yarn build`.
 
 ## Detailed Documentation
 
