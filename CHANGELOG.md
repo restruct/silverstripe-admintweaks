@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Removed
+
+- `client/src/scss/_legacy_ss3-tweaks.scss` (SS3-era styles, never compiled) and the unused
+  `client/imgs/transparent_bg.svg`. `client/imgs` is no longer in composer.json `expose`, so
+  `vendor-expose` stops publishing it.
+
 ### Documentation
 
 - README and `docs/` rewritten around a feature overview: each feature gets a short section with
