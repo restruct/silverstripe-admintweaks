@@ -65,6 +65,11 @@
   (`<class>.SINGULARNAME`) with English defaults; they used a project-specific key with Dutch
   defaults. Dutch is in `lang/nl_NL.yml` (#145).
 
+### Changed
+
+- Code comments, docblocks and `OrmQueryTask`'s usage examples no longer name project classes or
+  namespaces: they use core classes (`SiteTree`) or `App\...` placeholders.
+
 ### Removed
 
 - `SiteConfigExtension.enable_subnav_activation_field`: declared and documented, but never read

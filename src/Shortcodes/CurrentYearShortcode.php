@@ -17,7 +17,7 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
 
         public function singular_name()
         {
-//            return _t('MED.ReferringInfoShortcode', 'Actueel jaartal');
+//            return _t('PROJECT.ReferringInfoShortcode', 'Actueel jaartal');
             # Module-namespaced key, English default; the old key belonged to a project (admintweaks#145)
             return _t(self::class . '.SINGULARNAME', 'Current year');
         }
