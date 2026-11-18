@@ -18,7 +18,8 @@ use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
  * /admin/atb-editable, for editable-gridfield.spec.ts (admintweaks#114):
  * - "editable": the columns of AtBEditableRecord, with the usual edit link per row,
  * - "nolink": the same columns, without GridFieldEditButton, so no row has an edit link,
- * - "toggle": the same columns plus "Featured", a checkbox shown as a toggle switch (toggle-switch.spec.ts).
+ * - "toggle": the same columns plus "Featured", a checkbox shown as a toggle switch (toggle-switch.spec.ts),
+ *   and "Hidden", an inverted one (toggle-switch.spec.ts).
  *
  * Needs symbiote/silverstripe-gridfieldextensions in the host (SS5_EXTRA_REQUIRE in targets.sh).
  * (See AtBRecord for why this never loads in a real install.)
@@ -64,6 +65,11 @@ class AtBEditableAdmin extends ModelAdmin
             $columns['Featured'] = [
                 'title' => 'Featured',
                 'callback' => fn ($record, $col) => CheckboxField::create($col)->addExtraClass('toggle-switch'),
+            ];
+            # Inverted (ON while unchecked), with both classes by hand on the input
+            $columns['Hidden'] = [
+                'title' => 'Hidden',
+                'callback' => fn ($record, $col) => CheckboxField::create($col)->addExtraClass('toggle-switch toggle-switch--inverted'),
             ];
         }
         $editable->setDisplayFields($columns);
