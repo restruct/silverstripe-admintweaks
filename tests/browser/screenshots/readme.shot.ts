@@ -122,3 +122,52 @@ test('Security admin: permission codes as badges', async ({ page }) => {
     clip.height = Math.min(clip.height, 520);
     await page.screenshot({ path: path.join(IMAGES, 'permission-badges.png'), clip });
 });
+
+test('Toggle switch: switches in an edit form, on, off and disabled', async ({ page }) => {
+    // AtBEditableRecord's edit form: Tags is a CheckboxSetField with setToggleSwitch() ("Red" is
+    // ticked by the fixture seed), Locked a plain checkbox for comparison, Featured a switch that is
+    // off, Archived a disabled switch.
+    await page.goto('/admin/atb-editable/toggle');
+    const grid = page.locator('#Form_EditForm_toggle');
+    const row = grid.locator('tr.ss-gridfield-item').filter({ has: page.locator('input[value="Alpha editable"]') });
+    const href = await row.locator('.edit-link').first().getAttribute('href');
+    await page.goto(href!);
+    const form = page.locator('#Form_ItemEditForm');
+    await expect(form.locator('input[name=Title]')).toHaveValue('Alpha editable');
+    const tags = form.locator('#Form_ItemEditForm_Tags_Holder');
+    const archived = form.locator('#Form_ItemEditForm_Archived_Holder');
+    await expect(archived).toBeVisible();
+    await settle(page);
+
+    const top = (await tags.boundingBox())!;
+    const bottom = (await archived.boundingBox())!;
+    const x = Math.floor(top.x);
+    // The labels and switches sit in the left part of the form; the rest of each row is empty.
+    await page.screenshot({
+        path: path.join(IMAGES, 'toggle-switch.png'),
+        clip: { x, y: Math.floor(top.y - 12), width: Math.min(560, 1280 - x), height: Math.ceil(bottom.y + bottom.height - top.y + 24) },
+    });
+});
+
+test('Editable GridField: compact rows, with a toggle switch column', async ({ page }) => {
+    // The "toggle" tab of AtBEditableAdmin: editable text, select, checkbox, checkbox set and a
+    // read-only two-line column, plus Featured as a toggle switch. Featured is ticked on the first
+    // row (not saved) to show both states.
+    await page.goto('/admin/atb-editable/toggle');
+    const grid = page.locator('#Form_EditForm_toggle');
+    const first = grid.locator('tr.ss-gridfield-item').filter({ has: page.locator('input[value="Alpha editable"]') });
+    await expect(first).toBeVisible();
+    await hideFixtureChrome(page, ['atb-editable']);
+    await first.locator("td.col-Featured input[type=checkbox]").check();
+    await settle(page);
+
+    const table = grid.locator("table").first();
+    const clip = await around(table, 8);
+    const menu = (await page.locator('.cms-menu').boundingBox())!;
+    const menuRight = Math.ceil(menu.x + menu.width);
+    if (clip.x < menuRight) {
+        clip.width -= menuRight - clip.x;
+        clip.x = menuRight;
+    }
+    await page.screenshot({ path: path.join(IMAGES, 'editable-gridfield.png'), clip });
+});
