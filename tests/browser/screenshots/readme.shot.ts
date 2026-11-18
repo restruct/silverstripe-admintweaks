@@ -123,10 +123,13 @@ test('Security admin: permission codes as badges', async ({ page }) => {
     await page.screenshot({ path: path.join(IMAGES, 'permission-badges.png'), clip });
 });
 
-test('Toggle switch: switches in an edit form, on, off and disabled', async ({ page }) => {
+test('Toggle switch: switches in an edit form, on, off and disabled, plain and inverted', async ({ page }) => {
     // AtBEditableRecord's edit form: Tags is a CheckboxSetField with setToggleSwitch() ("Red" is
     // ticked by the fixture seed), Locked a plain checkbox for comparison, Featured a switch that is
-    // off, Archived a disabled switch.
+    // off, Archived a disabled switch. Below them the inverted switches (ON while unchecked): Hidden,
+    // HiddenTags ("Red" ticked, so shown off), Retired (disabled) and Excluded (in a container).
+    // A taller window, so all of them fit above the form's action bar.
+    await page.setViewportSize({ width: 1280, height: 1100 });
     await page.goto('/admin/atb-editable/toggle');
     const grid = page.locator('#Form_EditForm_toggle');
     const row = grid.locator('tr.ss-gridfield-item').filter({ has: page.locator('input[value="Alpha editable"]') });
@@ -135,12 +138,12 @@ test('Toggle switch: switches in an edit form, on, off and disabled', async ({ p
     const form = page.locator('#Form_ItemEditForm');
     await expect(form.locator('input[name=Title]')).toHaveValue('Alpha editable');
     const tags = form.locator('#Form_ItemEditForm_Tags_Holder');
-    const archived = form.locator('#Form_ItemEditForm_Archived_Holder');
-    await expect(archived).toBeVisible();
+    const last = form.locator('#Form_ItemEditForm_Excluded_Holder');
+    await expect(last).toBeVisible();
     await settle(page);
 
     const top = (await tags.boundingBox())!;
-    const bottom = (await archived.boundingBox())!;
+    const bottom = (await last.boundingBox())!;
     const x = Math.floor(top.x);
     // The labels and switches sit in the left part of the form; the rest of each row is empty.
     await page.screenshot({
@@ -151,14 +154,17 @@ test('Toggle switch: switches in an edit form, on, off and disabled', async ({ p
 
 test('Editable GridField: compact rows, with a toggle switch column', async ({ page }) => {
     // The "toggle" tab of AtBEditableAdmin: editable text, select, checkbox, checkbox set and a
-    // read-only two-line column, plus Featured as a toggle switch. Featured is ticked on the first
-    // row (not saved) to show both states.
+    // read-only two-line column, plus Featured as a toggle switch and Hidden as an inverted one
+    // (ON while unchecked). Featured is ticked on the first row and Hidden on the second (not saved)
+    // to show both states of each.
     await page.goto('/admin/atb-editable/toggle');
     const grid = page.locator('#Form_EditForm_toggle');
     const first = grid.locator('tr.ss-gridfield-item').filter({ has: page.locator('input[value="Alpha editable"]') });
     await expect(first).toBeVisible();
     await hideFixtureChrome(page, ['atb-editable']);
     await first.locator("td.col-Featured input[type=checkbox]").check();
+    const second = grid.locator('tr.ss-gridfield-item').filter({ has: page.locator('input[value="Bravo editable"]') });
+    await second.locator('td.col-Hidden input[type=checkbox]').check();
     await settle(page);
 
     const table = grid.locator("table").first();

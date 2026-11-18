@@ -328,10 +328,55 @@ input[type="checkbox"].toggle-switch,
     }
   }
 }
+// Inverted toggle switch: shown ON while the box is UNCHECKED, for a checkbox that stores a
+// negative flag ("Hidden", "Exclude from ...") but should read positively. Opt in with the
+// `toggle-switch--inverted` modifier next to `toggle-switch` (->setToggleSwitchInverted() adds
+// both), on the input or on an element around it, like the plain class (docs/form-fields.md).
+// The modifier only changes a switch: without `toggle-switch` it draws nothing, so a project's
+// restyle of the switch (its custom properties, set on the selectors above) carries over.
+// Display only: the knob position and track colour are keyed on :not(:checked) instead of
+// :checked. The checked state, the value, the submission, the zero input and the row-click rule
+// are those of the plain checkbox; assistive tech announces the real state.
+// The first :is() is "this checkbox is a switch" (the selectors above), the second "the modifier is
+// on it or on an element around it". Specificity (0,3,2), above the plain switch's state rules.
+:is(input[type="checkbox"].toggle-switch, .toggle-switch input[type="checkbox"]):is(.toggle-switch--inverted, .toggle-switch--inverted input) {
+  // Unchecked: drawn as the plain switch's checked state
+  &:not(:checked) {
+    background-color: var(--toggle-switch-checked);
+    border-color: var(--toggle-switch-checked);
+    &::before {
+      background-color: #fff;
+      transform: translateX(calc(var(--toggle-switch-width) - var(--toggle-switch-height)));
+    }
+  }
+
+  // Checked: drawn as the plain switch's unchecked state
+  &:checked {
+    background-color: var(--toggle-switch-bg);
+    border-color: var(--toggle-switch-border);
+    &::before {
+      background-color: var(--toggle-switch-knob);
+      transform: none;
+    }
+  }
+
+  // Focus as on the plain switch: the light-blue border in either state, and the tinted knob
+  // while it shows OFF (here: checked). Repeated because the state rules above outrank the plain
+  // switch's :focus rules; the ring and the keyboard outline are not state rules and still apply.
+  &:focus {
+    border-color: var(--toggle-switch-focus-border);
+    &:checked::before {
+      background-color: var(--toggle-switch-focus-border);
+    }
+  }
+}
 // A CheckboxField's holder: its column padding is where the admin hangs a plain checkbox
 // (.form-check .form-check-input: margin-left -1.5em). Hang the switch there too, so its left edge lines up with the
 // checkboxes above and below it; its label text starts after it.
-.form__field-holder.form-check > label > input[type="checkbox"].toggle-switch {
+// The class on a container (a CompositeField around the CheckboxField) needs the same, or the switch
+// sits a gutter to the right of the others.
+.form__field-holder.form-check > label > input[type="checkbox"].toggle-switch,
+.toggle-switch .form__field-holder.form-check > label > input[type="checkbox"] {
   margin-left: -1.5em;
 }
 // In an editable GridField the cell rules above put every .form-check-input back in the flow with
