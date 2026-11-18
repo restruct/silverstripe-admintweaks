@@ -271,8 +271,10 @@ CheckboxSetField::create('Channels', 'Channels', $options)->setToggleSwitch();
 ```
 
 `setToggleSwitch()` is a shorthand for `addExtraClass('toggle-switch')`. Disabled switches are
-faded. In an editable GridField column, read-only behaviour and the CSS custom properties for size
-and colour: [Form fields](docs/form-fields.md#toggle-switch).
+faded. `setToggleSwitchInverted()` shows the switch ON while the box is unchecked, for a stored
+negative flag ("Hidden"); display only, so screen readers still announce the real state. In an
+editable GridField column, read-only behaviour and the CSS custom properties for size and colour:
+[Form fields](docs/form-fields.md#toggle-switch).
 
 ### CopyTextField
 

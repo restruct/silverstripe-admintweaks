@@ -78,6 +78,31 @@
   the code; its one open point is fixed in signed-asset-urls. `docs/asset-path-resolution.md`
   describes the current behaviour.
 
+## 3.29.0 (2026-11-18)
+
+### Added
+
+- **Inverted toggle switch**, ON while the box is unchecked, for a checkbox that stores a negative
+  flag ("Hidden", "Exclude from ...") but should read positively:
+  `CheckboxField::create('Hidden')->setToggleSwitchInverted()`, or the classes
+  `toggle-switch toggle-switch--inverted` by hand, on the input or on a container (a
+  CheckboxSetField, a CompositeField). Display only: the checked state, value and submission are
+  unchanged, so the editable-GridField row click and unchecked-checkbox value keep working, and
+  screen readers announce the real state (see [Form fields](docs/form-fields.md#inverted-on-while-unchecked)
+  for the label). Same custom properties, disabled and focus look as the plain switch.
+  `setToggleSwitch()` keeps its signature; `setToggleSwitch(false)` now also removes the modifier.
+  New `isToggleSwitchInverted()`.
+- Tests: `ToggleSwitchExtensionTest` covers the new methods; `toggle-switch.spec.ts` checks the
+  inverted knob position and colours unchecked and checked, click and space, disabled, the
+  checkbox-set options, a container with the classes by hand, saving, and in an editable GridField
+  row the click that does not open the row and the zero input on uncheck.
+
+### Fixed
+
+- A CheckboxField inside a container that carries the `toggle-switch` class (e.g. a CompositeField)
+  is hung in the holder's gutter like a CheckboxField with the class itself, instead of sitting a
+  gutter to the right of the other checkboxes and switches.
+
 ## 3.28.1 (2026-11-18)
 
 ### Removed
