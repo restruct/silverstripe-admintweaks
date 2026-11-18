@@ -128,6 +128,94 @@ class CacheHelpersTest extends SapphireTest
         $this->assertSame(2, $this->callAndCountFailures($url, 2, 0));
     }
 
+    // ------------------------------------------- invalid responses are dropped (#138)
+
+    /**
+     * Prime the cache with a 200 response carrying $body, exactly as cached_http_request() would
+     * have stored it, so the JSON helpers parse it without touching the network.
+     */
+    private function primeCachedBody(string $url, string $body): string
+    {
+        $cacheKey = md5("cachedResponse_{$url}");
+        CacheHelpers::load_cache()->set($cacheKey, [
+            'body' => $body,
+            'statuscode' => 200,
+            'requesturl' => $url,
+            'effectiveurl' => $url,
+        ], 900);
+
+        return $cacheKey;
+    }
+
+    public function testInvalidJsonIsDroppedFromTheCache()
+    {
+        // The bug: the helper deleted md5($reqUrl), but the entry lives under
+        // md5("cachedResponse_{$reqUrl}"), so the bad body stayed cached for the full TTL and every
+        // call in that window threw again without retrying the upstream.
+        $url = $this->uniqueDeadUrl();
+        $cacheKey = $this->primeCachedBody($url, 'this is not json');
+
+        $code = null;
+        try {
+            CacheHelpers::cached_json_request($url);
+        } catch (Exception $e) {
+            $code = $e->getCode();
+        }
+
+        $this->assertSame(CacheHelpers::INVALID_JSON_EXCEPTION, $code, 'Invalid JSON must still throw');
+        $this->assertFalse(
+            CacheHelpers::load_cache()->has($cacheKey),
+            'The invalid response must be removed from the cache, so the next call retries'
+        );
+    }
+
+    public function testJsonLdWithoutValidBlocksIsDroppedFromTheCache()
+    {
+        // A JSON-LD script tag whose content does not parse: the "no valid JSON-LD" exit.
+        $url = $this->uniqueDeadUrl();
+        $cacheKey = $this->primeCachedBody(
+            $url,
+            '<html><head><script type="application/ld+json">{broken</script></head></html>'
+        );
+
+        $threw = false;
+        try {
+            CacheHelpers::cached_jsonLD_request($url);
+        } catch (Exception $e) {
+            $threw = true;
+        }
+
+        $this->assertTrue($threw, 'A page without valid JSON-LD must still throw');
+        $this->assertFalse(CacheHelpers::load_cache()->has($cacheKey));
+    }
+
+    public function testJsonLdMissingEntirelyIsDroppedFromTheCache()
+    {
+        // No JSON-LD script tag at all: the earlier exit, which never deleted anything.
+        $url = $this->uniqueDeadUrl();
+        $cacheKey = $this->primeCachedBody($url, '<html><head><title>No structured data</title></head></html>');
+
+        $code = null;
+        try {
+            CacheHelpers::cached_jsonLD_request($url);
+        } catch (Exception $e) {
+            $code = $e->getCode();
+        }
+
+        $this->assertSame(CacheHelpers::NO_JSONLD_FOUND_EXCEPTION, $code);
+        $this->assertFalse(CacheHelpers::load_cache()->has($cacheKey));
+    }
+
+    public function testValidJsonStaysCached()
+    {
+        // The control: a good response must NOT be dropped.
+        $url = $this->uniqueDeadUrl();
+        $cacheKey = $this->primeCachedBody($url, '{"ok":true}');
+
+        $this->assertSame(['ok' => true], CacheHelpers::cached_json_request($url));
+        $this->assertTrue(CacheHelpers::load_cache()->has($cacheKey));
+    }
+
     // ------------------------------------------------------- bounded requests
 
     public function testTheHttpHelperDeclaresBoundedTimeouts()
