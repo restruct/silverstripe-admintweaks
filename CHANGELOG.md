@@ -25,6 +25,10 @@
   the response is cached under `md5("cachedResponse_{$reqUrl}")`, so the bad body was kept and
   every call in the window threw again without retrying. They now delete the right key, also on the
   "no JSON-LD at all" exit, which did not invalidate anything.
+- **`FocusFill` has a fallback when FocusPoint is not installed** (#142). The FocusPoint fallback
+  extension named its `Fill` mapping `FocusFillFallback`, a method FocusPoint does not have, so
+  `$Image.FocusFill(...)` rendered nothing without FocusPoint (and threw in PHP). `FocusFill()` now
+  maps to core `Fill()`; `FocusFillFallback()` stays as a deprecated alias.
 
 ## 4.9.1 (2026-11-18)
 

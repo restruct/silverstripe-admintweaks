@@ -9,6 +9,20 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions\Image {
 
     class FocusImageFallbackExtension extends Extension
     {
+        /**
+         * FocusPoint's FocusFill(), without a focus point: a plain centred Fill.
+         *
+         * This was missing: the method was only provided as FocusFillFallback(), a name FocusPoint
+         * does not have, so $Image.FocusFill(...) rendered nothing without FocusPoint (admintweaks#142).
+         */
+        public function FocusFill($width, $height)
+        {
+            return $this->owner->Fill($width, $height);
+        }
+
+        /**
+         * @deprecated use FocusFill(), which works with and without FocusPoint
+         */
         public function FocusFillFallback($width, $height)
         {
             return $this->owner->Fill($width, $height);
