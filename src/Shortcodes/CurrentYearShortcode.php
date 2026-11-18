@@ -17,7 +17,9 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
 
         public function singular_name()
         {
-            return _t('MED.ReferringInfoShortcode', 'Actueel jaartal');
+//            return _t('MED.ReferringInfoShortcode', 'Actueel jaartal');
+            # Module-namespaced key, English default; the old key belonged to a project (admintweaks#145)
+            return _t(self::class . '.SINGULARNAME', 'Current year');
         }
 
         // Shortcode stuff
@@ -35,7 +37,10 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
         // handles [year]
         public static function parse_shortcode($arguments, $content, $parser, $shortcode)
         {
-            return '<div class="me">'.date("Y").'</div>';
+//            return '<div class="me">'.date("Y").'</div>';
+            # The bare year: the shortcode sits inside a line of text (a copyright notice), where a
+            # block-level <div> broke the line. Nothing in this module styled .me (admintweaks#145).
+            return date("Y");
         }
 
 //        /**

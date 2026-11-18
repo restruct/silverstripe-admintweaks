@@ -53,6 +53,22 @@
 - composer.json `suggest` lists `symbiote/silverstripe-multivaluefield`,
   `symbiote/silverstripe-gridfieldextensions` and `silverstripe/lumberjack`, which the features
   built on them need (#144).
+- `GeneralHelpers::add_tab_if_not_exists()` honours `$insertAfter` (#145): the tab goes after the
+  named sibling, or at the end when there is none. It used to land after `Main` whatever was
+  passed, and was named after the full path (`Root.Extra`) instead of `Extra`.
+- `IpAddressField`'s validation message is translatable, with an English default ("Not a valid IP
+  address"); it was hard-coded Dutch (#145).
+- **`[currentyear]` returns the bare year** (#145) instead of `<div class="me">2026</div>`, which
+  broke the line it sits in. Nothing in this module styled `.me`; a theme that did needs its own
+  wrapper now.
+- The `[currentyear]` and `[featuredimage]` shortcode labels use module-namespaced keys
+  (`<class>.SINGULARNAME`) with English defaults; they used a project-specific key with Dutch
+  defaults. Dutch is in `lang/nl_NL.yml` (#145).
+
+### Removed
+
+- `SiteConfigExtension.enable_subnav_activation_field`: declared and documented, but never read
+  (#145). `theme_subnav_slots` covers choosing a sub menu slot, or none.
 
 ## 3.28.1 (2026-11-18)
 

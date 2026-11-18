@@ -136,7 +136,9 @@ GeneralHelpers::add_tab_if_not_exists($fields, 'Advanced', 'Advanced settings');
 ```
 
 Adds a tab to a CMS FieldList unless it is there already. `Advanced` and `Root.Advanced` are the
-same. The fourth argument, `$insertAfter`, is not used yet: the tab is always placed after `Main`.
+same. A fourth argument names the tab to insert after, in the same tab set
+(`GeneralHelpers::add_tab_if_not_exists($fields, 'Advanced', 'Advanced settings', 'Main')`); without
+it, or when that tab does not exist, the new tab goes at the end.
 
 ### get_options_translations()
 

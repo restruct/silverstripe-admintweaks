@@ -58,12 +58,23 @@ class GeneralHelpers
 
         if(!$insertAfter){
             $fields->findOrMakeTab($tabPath, $tabTitle);
-        } else {
-            $fields->insertAfter('Main',
-                Tab::create($tabName, $tabTitle),
-                true
-            );
+//        } else {
+//            $fields->insertAfter('Main',
+//                Tab::create($tabName, $tabTitle),
+//                true
+//            );
+//        }
+            return;
         }
+
+        # Honour $insertAfter: it used to be ignored, any value placed the tab after Main, and the
+        # tab was named after the full $tabName ('Root.Extra') instead of its last segment
+        # (admintweaks#145). The new tab goes into the tab set it belongs to, after the named
+        # sibling, or at the end when there is no such sibling (insertAfter's appendIfMissing).
+        $segments = explode('.', $tabPath);
+        $name = array_pop($segments);
+        $tabSet = $fields->findOrMakeTab(implode('.', $segments));
+        $tabSet->insertAfter($insertAfter, Tab::create($name, $tabTitle), true);
     }
 
     /**
