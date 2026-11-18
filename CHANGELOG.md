@@ -50,6 +50,9 @@
   extension named its `Fill` mapping `FocusFillFallback`, a method FocusPoint does not have, so
   `$Image.FocusFill(...)` rendered nothing without FocusPoint (and threw in PHP). `FocusFill()` now
   maps to core `Fill()`; `FocusFillFallback()` stays as a deprecated alias.
+- composer.json `suggest` lists `symbiote/silverstripe-multivaluefield`,
+  `symbiote/silverstripe-gridfieldextensions` and `silverstripe/lumberjack`, which the features
+  built on them need (#144).
 
 ## 3.28.1 (2026-11-18)
 
