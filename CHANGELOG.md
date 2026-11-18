@@ -41,6 +41,11 @@
   the response is cached under `md5("cachedResponse_{$reqUrl}")`, so the bad body was kept and
   every call in the window threw again without retrying. They now delete the right key, also on the
   "no JSON-LD at all" exit, which did not invalidate anything.
+- **Silverstripe 4: `getLocalPath()` finds files again** (#141). It only built a path when the
+  asset adapter was `SilverStripe\Assets\Flysystem\LocalFilesystemAdapter`, which silverstripe/assets
+  1.x (SS4) does not have, so it returned `null` for every file there (and
+  `GeneralHelpers::getFileAssetsPath()` with it). On SS4 it now uses Flysystem 1's
+  `Local::applyPathPrefix()`.
 
 ## 3.28.1 (2026-11-18)
 
