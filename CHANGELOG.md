@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Security
+
+- **`import_file_asset()` reads local files only when the caller opts in** (#151).
+  `GeneralHelpers::import_file_asset()` read any local path or `file:` URL it was given, so a
+  caller passing user input could copy any file the PHP process can read (`.env`, `/etc/passwd`)
+  into the asset store, published by default. Local sources are now refused with a
+  `LocalImportRefusedException` unless the new fifth argument, `$localBaseDir`, names the
+  directory the file must be in; the path is resolved with `realpath()` first, so `..` and
+  symlinks cannot lead outside it. URLs are unchanged and keep going through `OutboundUrlGuard`.
+  Whether the source is local is now decided from the string instead of with `is_file()`, which
+  also stops `is_file()` opening stream wrappers such as `ftp://` before the guard saw the URL.
+  See `docs/caching.md`. **Breaking for callers that import local files:** they throw until they
+  pass `$localBaseDir`.
+
 ## 4.11.0 (2026-11-18)
 
 ### Security

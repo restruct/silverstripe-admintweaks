@@ -161,15 +161,15 @@ It uses `property_exists()`, so it does not see a DataObject's fields or relatio
 
 ### import_file_asset()
 
-Downloads a file from a URL, or reads a local path (also with a `file:` prefix), and stores it as a
-File, or an Image for image extensions:
+Downloads a file from a URL, or reads a local path (also with a `file:` prefix) when you opt in,
+and stores it as a File, or an Image for image extensions:
 
 ```php
 $file = GeneralHelpers::import_file_asset('https://example.com/document.pdf', 'Imports/document.pdf');
 ```
 
 `import_file_asset(string $filePathOrUrl, ?string $assetPath = null, bool $publish = true,
-string $conflictResolution = AssetStore::CONFLICT_OVERWRITE)`:
+string $conflictResolution = AssetStore::CONFLICT_OVERWRITE, ?string $localBaseDir = null)`:
 
 - `$assetPath` is `folder/filename` in the asset store.
 - The file is published, and an existing file with the same name is overwritten, unless you pass
@@ -177,8 +177,39 @@ string $conflictResolution = AssetStore::CONFLICT_OVERWRITE)`:
 - Only extensions in `File::getAllowedExtensions()` are accepted.
 - It throws an `Exception` for a disallowed extension, an empty download or a failed store.
 - A URL download uses the default timeouts above and the [outbound URL checks](#outbound-url-checks).
-- A local path, or a `file:` URL, is read from the server's disk without any check: never pass it
-  a string that a user controls.
+- A string with a scheme other than `file:` is a URL; anything else is a local path.
+
+#### Local files are opt-in
+
+A local path or a `file:` URL is refused with a `LocalImportRefusedException` (an `Exception`)
+unless `$localBaseDir` names the directory the file must be in. Pass the narrowest directory you
+can, ideally one your own code just created, such as the directory an uploaded zip was extracted
+to:
+
+```php
+use SilverStripe\Assets\Storage\AssetStore;
+
+$file = GeneralHelpers::import_file_asset(
+    $extractDir . '/images/photo.jpg',
+    'Imports/photo.jpg',
+    false,
+    AssetStore::CONFLICT_RENAME,
+    $extractDir
+);
+// or with named arguments:
+$file = GeneralHelpers::import_file_asset($path, 'Imports/photo.jpg', localBaseDir: $extractDir);
+```
+
+- Both the path and `$localBaseDir` are resolved with `realpath()` before the check, so `..`
+  segments and symlinks (to a file or a directory) cannot lead outside the base directory.
+- A file outside the base is refused, also when it does not exist; a missing file inside it throws
+  the usual "missing or empty" `Exception`.
+- A base directory that does not exist is refused.
+- The opt-in is per call on purpose: there is no project-wide switch, so a call site that passes
+  user input does not inherit a permission granted for another one. A broad base directory such
+  as `/`, the project root or the system temp directory gives that protection away.
+- `$localBaseDir` has no effect on URLs, which always go through the
+  [outbound URL checks](#outbound-url-checks).
 
 ### getFileAssetsPath()
 
