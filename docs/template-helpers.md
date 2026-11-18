@@ -1,276 +1,186 @@
-# Template Helpers
+# Template helpers
 
-The module provides extensive template helper methods through extensions and global providers.
+Methods and variables this module adds to templates. All of them are available on install; nothing
+needs to be switched on.
 
-## PageHelpersExtension
+## Global variables (TemplateHelpers)
 
-Adds 30+ helper methods to Page (and by extension, all page types).
+Available in every template.
 
-### Enable
+### $themeDirResourceURL($themeDir)
 
-Applied automatically to `Page` class. No configuration needed.
-
-### Environment Methods
-
-```html
-<% if $IsDev %>
-  <div class="debug-bar">Development Mode</div>
-<% end_if %>
-
-<% if $IsLive %>
-  <!-- Production analytics -->
-<% end_if %>
-
-<% if $IsTest %>
-  <div class="test-banner">Test Environment</div>
-<% end_if %>
-```
-
-### Breadcrumb Helpers
+The URL of a theme's directory, for resources that are not CSS or JS:
 
 ```html
-<!-- Get breadcrumb pages (excludes current and home) -->
-<% loop $BreadcrumbPagesExceptHome %>
-  <a href="$Link">$MenuTitle</a> /
-<% end_loop %>
-
-<!-- Check if breadcrumbs exist -->
-<% if $HasBreadcrumbs %>
-  <nav aria-label="breadcrumb">...</nav>
-<% end_if %>
+<video src="{$themeDirResourceURL('my-theme')}/video.mp4"></video>
 ```
 
-### Descendant Iteration
+### $ImagePlaceholder($W, $H, $Label = '', $AddClass = '', $DataUriBase64 = false)
+
+A grey SVG placeholder of the given size, with an optional label and CSS class. Inline SVG by
+default; with `$DataUriBase64` set, a base64 `data:` URI for use in a `src` attribute.
 
 ```html
-<!-- All descendants (including unpublished in preview) -->
-<% loop $AllDescendants %>
-  $Title
-<% end_loop %>
-
-<!-- Children of a specific page -->
-<% loop $ChildrenOf('about-us') %>
-  <a href="$Link">$Title</a>
-<% end_loop %>
+$ImagePlaceholder(300, 200, 'Photo')
+<img src="$ImagePlaceholder(300, 200, 'Photo', '', true)" alt="">
 ```
 
-### Cache Busting
+The same SVG as an include:
 
 ```html
-<!-- Auto cache key based on file modification time -->
-<link rel="stylesheet" href="$ThemeDir/css/style.css?v=$CacheKey('css/style.css')">
+<% include ImagePlaceholder W=180, H=50, Label='logo' %>
 ```
 
-### Current URL Checks
+From PHP:
 
-```html
-<% if $IsCurrentSection %>
-  <li class="active">$Title</li>
-<% end_if %>
+```php
+use Restruct\Silverstripe\AdminTweaks\Helpers\TemplateHelpers;
 
-<% if $IsCurrent %>
-  <span>$Title</span>
-<% else %>
-  <a href="$Link">$Title</a>
-<% end_if %>
+$svg = TemplateHelpers::ImagePlaceholder(300, 200, 'My label', 'custom-class');
+$uri = TemplateHelpers::ImagePlaceholder(300, 200, 'My label', '', true);
 ```
 
-### Combined Requirements
+### $CurrentLocale
 
-```html
-<!-- Combine multiple CSS files -->
-$CombinedCSS('combined.css', 'css/base.css,css/layout.css,css/theme.css')
-
-<!-- Combine multiple JS files -->
-$CombinedJS('combined.js', 'js/lib.js,js/app.js')
-```
-
-### Miscellaneous
-
-```html
-<!-- Random number (useful for cache busting or unique IDs) -->
-<div id="section-$RandomNumber">
-
-<!-- Current locale info -->
-<html lang="$CurrentLocale">
-
-<!-- Last modified date -->
-<p>Last updated: $LastEdited.Nice</p>
-```
-
----
-
-## TemplateHelpers (Global Provider)
-
-Global template methods available on all pages.
-
-### themeDirResourceURL()
-
-Get the exposed resource URL for a theme directory:
-
-```html
-<!-- In templates -->
-<video src="{$themeDirResourceURL('my-theme')}/videos/intro.mp4"></video>
-
-<!-- With path -->
-<img src="{$themeDirResourceURL('my-theme')}/images/logo.png">
-```
-
-Replaces the legacy `$ThemeDir` variable with proper resource URL handling.
-
-### ImagePlaceholder()
-
-Generate SVG placeholder images:
-
-```html
-<!-- As include (inline SVG) -->
-<% include ImagePlaceholder W=300, H=200, Label='Product Image' %>
-
-<!-- As include with class -->
-<% include ImagePlaceholder W=180, H=50, Label='logo', AddClass='rounded' %>
-
-<!-- As data URI (for img src) -->
-<img src="$ImagePlaceholder(300, 200, 'Placeholder', true)" alt="Placeholder">
-
-<!-- In PHP -->
-TemplateHelpers::ImagePlaceholder(300, 200, 'My Label', false, 'custom-class');
-```
-
-**Parameters:**
-1. `W` - Width in pixels
-2. `H` - Height in pixels
-3. `Label` - Text label (optional)
-4. `AsDataUri` - Return as base64 data URI (default: false)
-5. `AddClass` - Additional CSS classes
-
-### CurrentLocale()
+The current locale in RFC 1766 form (`en-US`, `nl-NL`), for `lang` attributes; also in projects
+without silverstripe/cms, which provides `$ContentLocale`.
 
 ```html
 <html lang="$CurrentLocale">
-<!-- Output: <html lang="en_US"> or <html lang="nl_NL"> -->
 ```
 
----
+## Page helpers (PageHelpersExtension)
 
-## SSViewer_ExtraIterators
+Applied to `SiteTree`, so available on every page and in its templates.
 
-Additional iterator methods for loops, useful for creating grid layouts.
+### Environment
 
-### Enable
+```html
+<% if $IsDev %>...<% end_if %>
+<% if $IsTest %>...<% end_if %>
+<% if $IsLive %>...<% end_if %>
+```
 
-Applied automatically. No configuration needed.
+### Request and page
 
-### Available Methods
+| Method | Returns |
+|--------|---------|
+| `$BreadCrumbPath` | The menu titles from the top-level page down to this one, as text: `About > Team > Jane` |
+| `$PageID_MD5` | An MD5 of the page ID, for a unique ID that does not show the database ID |
+| `$RequestStatusCode` | The HTTP status code of the current response |
+| `$RequestedURL` | The requested URL (path and query), stripped to safe characters |
+| `$StaleCacheKey($delayInSeconds = 300)` | A number that changes every `$delayInSeconds`, for a partial-cache key that expires |
+| `$RandomNumber($max = 4)` | A random integer from 1 to `$max`, for example to pick a banner variant |
+
+```html
+<% cached 'news', $StaleCacheKey(600) %>...<% end_cached %>
+```
+
+### Finding pages
+
+| Method | Returns |
+|--------|---------|
+| `$HomePage` | The home page |
+| `$PageById($id = 1)` | The page with this ID |
+| `$PageByClass($ClassName = 'Page')` | The first record of this class |
+| `$allDescendants` | All descendants of this page, in the current reading mode (`$allDescendants($parent, $childRelation)` for another parent or relation) |
+| `$allStageDescendants` | All descendants including unpublished ones (read from the draft stage) |
+
+### A to Z lists
+
+`$TitleFirstChar` is the first letter or digit of the title, in lower case, and `$AlphabetChars` is
+a list of `a` to `z` (each as `$Char`), for grouped lists:
+
+```html
+<% loop $AlphabetChars %>
+  <a href="#letter-$Char">$Char</a>
+<% end_loop %>
+```
+
+### Requirements from a template
+
+| Method | Does |
+|--------|------|
+| `$RequireCustomCSS($css)` | Adds a block of CSS to the page head |
+| `$RequireCustomTemplatedCSS($template)` | The same, after rendering `$template` as a template on this page |
+| `$RequireCustomJS($script)` | Adds a script (`<script>` tags are removed) |
+| `$RequireCustomTemplatedJS($template)` | The same, after rendering it as a template |
+| `$RequireCombinedThemeRelativeCSS($path, $makeFirstItem = false)` | Adds a theme file to a combined `themes-styles.css` |
+| `$RequireCombinedThemeRelativeJS($path, $makeFirstItem = false)` | Adds a theme file to a combined `themes-scripts.js` |
+
+## Extra loop variables (SSViewer_ExtraIterators)
+
+Inside any `<% loop %>`, for splitting a list into a number of groups (columns, for example). The
+argument is the **number of groups**:
+
+| Variable | Returns |
+|----------|---------|
+| `$GroupSize(n)` | Items per group: the item count divided by `n`, rounded up (the item count without `n`) |
+| `$PosInGroup(n)` | The item's position within its group, from 1 |
+| `$FirstOfGroup(n)` | Whether the item is the first of its group |
+| `$LastOfGroup(n)` | Whether the item is the last of its group (`n` is required) |
+| `$FirstLastOfGroup(n)` | The class `first-of-group`, `last-of-group`, both, or nothing (`n` is required) |
+| `$GroupOfGroups(n)` | Which group the item is in, from 1 |
+
+Three columns from one list:
 
 ```html
 <% loop $Items %>
-  <!-- Group size (for CSS grid classes) -->
-  <div class="col-$GroupSize-of-4">
-
-  <!-- Position within current group -->
-  Position in group: $PosInGroup
-
-  <!-- Check if first/last in group -->
-  <% if $FirstOfGroup %>class="first"<% end_if %>
-  <% if $LastOfGroup %>class="last"<% end_if %>
-
-  <!-- Combined first/last check -->
-  <% if $FirstLastOfGroup %>class="single"<% end_if %>
+  <% if $FirstOfGroup(3) %><div class="column column-$GroupOfGroups(3)"><% end_if %>
+    <div class="$FirstLastOfGroup(3)">$Title</div>
+  <% if $LastOfGroup(3) %></div><% end_if %>
 <% end_loop %>
 ```
 
-### Grid Layout Example
+## Date and time fields
+
+### DBDatetime
 
 ```html
-<div class="row">
-  <% loop $Products %>
-    <div class="col-md-{$GroupSize}">
-      <div class="product-card">
-        $Title
-      </div>
-    </div>
-    <% if $LastOfGroup %></div><div class="row"><% end_if %>
-  <% end_loop %>
-</div>
-```
-
-### GroupOfGroups
-
-Nest loops for complex grid structures:
-
-```html
-<% loop $Items.GroupOfGroups(4) %>
-  <div class="row">
-    <% loop $Items %>
-      <div class="col-3">$Title</div>
-    <% end_loop %>
-  </div>
-<% end_loop %>
-```
-
----
-
-## DBDatetimeExtension
-
-Restores SilverStripe 3 / PHP datetime formatting (SS4+ uses CLDR format).
-
-### Enable
-
-Applied automatically to `DBDatetime` fields.
-
-### Usage
-
-```html
-<!-- Legacy PHP format (SS3 style) -->
+<!-- PHP date format, as Silverstripe 3 used (core's Format() takes CLDR) -->
 $Created.LegacyFormat('d-m-Y H:i')
-<!-- Output: 25-12-2024 14:30 -->
 
-<!-- ISO 8601 format -->
+<!-- ISO 8601 -->
 $LastEdited.Iso8601
-<!-- Output: 2024-12-25T14:30:00+00:00 -->
 ```
 
-### Format Reference
-
-| SS3/PHP Format | CLDR Equivalent |
-|----------------|-----------------|
+| PHP format | CLDR equivalent |
+|------------|-----------------|
 | `d-m-Y` | `dd-MM-yyyy` |
 | `Y-m-d` | `yyyy-MM-dd` |
 | `d/m/Y H:i` | `dd/MM/yyyy HH:mm` |
 | `F j, Y` | `MMMM d, yyyy` |
 
-Use `LegacyFormat()` when migrating SS3 templates or when PHP format strings are more convenient.
+### DBTime
 
----
+| Method | Returns |
+|--------|---------|
+| `LegacyFormat($format)` | The time in a PHP date format |
+| `Time12($includeSeconds = false)` | `1:32 pm` |
+| `Time24($includeSeconds = false)` | `13:32` |
+| `AsSeconds` | Seconds since the start of the day |
+| `FormatSecondsAsTime($seconds, $format = 'H:mm')` | A number of seconds formatted as a time (CLDR format) |
+| `Ago($includeSeconds = true, $significance = 2)` | "2 hours ago" or "in 2 hours" |
+| `TimeDiff($includeSeconds = true, $significance = 2)` | "2 hours" |
+| `TimeDiffIn($format)` | The difference in one unit: `seconds`, `minutes`, `hours`, `days`, `months` or `years` |
 
-## SelectiveLumberjack
+## String fields
 
-Enhanced Lumberjack extension that respects `hide_from_cms_tree` configuration.
+`contains($text)` on any string field (`DBString`): whether the raw value contains `$text`.
 
-### Problem Solved
-
-Standard Lumberjack hides all child pages in the tree. SelectiveLumberjack:
-- Also hides the child page types listed in the **holder's** `hide_from_cms_tree` config
-- Does NOT filter the listview (shows all children in grid)
-- Filters the tree of the Pages section only (`treeview`, `getsubtree`); the tree beside a page
-  being edited (`admin/pages/edit`) is not filtered
-- Works with existing Lumberjack configuration
-
-### Usage
-
-```yaml
-# Instead of Lumberjack
-MyNamespace\Pages\BlogHolder:
-  extensions:
-    - Restruct\Silverstripe\AdminTweaks\Extensions\SelectiveLumberjack
+```html
+<% if $Content.contains('youtube.com') %>...<% end_if %>
 ```
 
-```php
-// On the HOLDER: the child page types to hide from its tree
-class BlogHolder extends Page
-{
-    private static $hide_from_cms_tree = [
-        BlogPost::class,
-    ];
-}
-```
+## Shortcodes
+
+With [restruct/silverstripe-shortcodable](https://github.com/restruct/silverstripe-shortcodable)
+installed, two shortcodes are registered for the HTML editor:
+
+- `[currentyear]`: the current year, for copyright lines (rendered inside a `<div>`).
+- `[featuredimage]`: the current page's `FeaturedImage`, medium (640 by 480) or full width (1000 by
+  600). Only for pages whose controller has a `FeaturedImage()`; its editor labels are Dutch.
+
+## See also
+
+`SelectiveLumberjack`, which used to be described here, is in [GridField](gridfield.md#selectivelumberjack).
