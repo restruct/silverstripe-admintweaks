@@ -177,7 +177,7 @@ $LastEdited.Iso8601
 With [restruct/silverstripe-shortcodable](https://github.com/restruct/silverstripe-shortcodable)
 installed, two shortcodes are registered for the HTML editor:
 
-- `[currentyear]`: the current year, for copyright lines (rendered inside a `<div>`).
+- `[currentyear]`: the current year, for copyright lines (the bare year, no wrapper element).
 - `[featuredimage]`: the current page's `FeaturedImage`, medium (640 by 480) or full width (1000 by
   600). Only for pages whose controller has a `FeaturedImage()`; its editor labels are Dutch.
 

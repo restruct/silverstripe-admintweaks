@@ -37,7 +37,9 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
          */
         public function singular_name()
         {
-            return _t('MED.FeaturedImageShortcode', 'Pagina afbeelding van huidige pagina invoegen');
+//            return _t('MED.FeaturedImageShortcode', 'Pagina afbeelding van huidige pagina invoegen');
+            # Module-namespaced key, English default; the old key belonged to a project (admintweaks#145)
+            return _t(self::class . '.SINGULARNAME', 'Featured image of the current page');
         }
 
         /**

@@ -22,7 +22,12 @@ class IpAddressField
 
         // An empty value is left to the Required* validators to judge, exactly as before.
         if (!filter_var($this->value, FILTER_VALIDATE_IP) && trim((string) $this->value) !== '') {
-            $result->addFieldError($this->name, 'Geen valide ip adres', 'validation');
+            # Translatable, English default: this was hard-coded Dutch (admintweaks#145)
+            $result->addFieldError(
+                $this->name,
+                _t(self::class . '.INVALID', 'Not a valid IP address'),
+                'validation'
+            );
         }
 
         return $result;

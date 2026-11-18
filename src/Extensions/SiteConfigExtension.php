@@ -76,11 +76,13 @@ class SiteConfigExtension extends Extension
      */
     private static $enable_browser_color_theme_field = false;
 
-    /**
-     * @config Allow activation/inclusion of subnav menu in templates
-     * @var boolean
-     */
-    private static $enable_subnav_activation_field = false;
+    # 2026-11-18: removed, it was declared but never read: no field, no column (admintweaks#145).
+    # theme_subnav_slots below already covers choosing a sub menu slot, or none.
+//    /**
+//     * @config Allow activation/inclusion of subnav menu in templates
+//     * @var boolean
+//     */
+//    private static $enable_subnav_activation_field = false;
 
     /**
      * @config Enable contact/social media fields?
