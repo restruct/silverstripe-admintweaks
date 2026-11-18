@@ -333,9 +333,9 @@
   // Advanced search toggle for modeladmins
   // DISABLED 2026-07-18: SS3-era feature, dead on SS5 — #Form_SearchForm_q_Advanced never exists
   // (SS5 search forms are named Form_<Model>SearchForm and render in the React 'Search options'
-  // popover; the CourseAdmin::getSearchContext() override that added the q[Advanced] checkbox was
-  // itself dead code and has been removed). Kept as reference with the matching
-  // .HasAdvancedSearch block in _legacy_ss3-tweaks.scss.
+  // popover; a project-side getSearchContext() override that added the q[Advanced] checkbox was
+  // itself dead code and has been removed). Kept as reference; its matching
+  // .HasAdvancedSearch styling went with the uncompiled _legacy_ss3-tweaks.scss (removed 2026-11-18).
   //$('#Form_SearchForm_q_Advanced').entwine({
   //  onmatch: function () {
   //    this._super();
