@@ -21,6 +21,15 @@
   `bootstrap` and `bootstrap-sass` are gone; `bootstrap-icons` stays as the source of the SVG page
   icons (`_page-icons-svg.scss`).
 
+### Removed
+
+- Asset files nothing uses any more (about 43 MB): the full FontAwesome 7.1 web kit under
+  `client/fonts/` except the two webfonts the stylesheet bundles and its licence, the eot, svg, ttf
+  and woff copies of those fonts and the Bootstrap Icons webfonts in `client/dist/fonts/` (the admin
+  loads Bootstrap Icons from the CDN, see `bootstrap_icons_cdn_url`), and the SS3-era images in
+  `client/_legacy_icons/` and `client/_legacy_img/`. `client/src/scss/_legacy_ss3-tweaks.scss` stays as the
+  record of what was ported; it is not compiled.
+
 ### Tests
 
 - New browser spec `editable-gridfield-save.spec.ts`: an editable GridField in a record's edit form
