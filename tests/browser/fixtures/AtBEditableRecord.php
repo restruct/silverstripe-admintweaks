@@ -2,12 +2,15 @@
 
 namespace Restruct\AtBrowser;
 
+use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\CheckboxSetField;
 use SilverStripe\ORM\DataObject;
 
 /**
  * BROWSER-TEST FIXTURE ONLY - the record AtBEditableAdmin (/admin/atb-editable) lists in a GridField
  * with GridFieldEditableColumns, for editable-gridfield.spec.ts (admintweaks#114): a text input,
  * a select, a checkbox, a checkbox set and a read-only two-line column per row.
+ * Its edit form shows Featured, Tags and Archived as toggle switches (toggle-switch.spec.ts).
  *
  * Needs symbiote/silverstripe-gridfieldextensions in the host (SS6_EXTRA_REQUIRE in targets.sh).
  * (See AtBRecord for why this never loads in a real install.)
@@ -17,6 +20,8 @@ use SilverStripe\ORM\DataObject;
  * @property bool $Active
  * @property string $Tags
  * @property bool $Locked
+ * @property bool $Featured
+ * @property bool $Archived
  */
 class AtBEditableRecord extends DataObject
 {
@@ -32,6 +37,9 @@ class AtBEditableRecord extends DataObject
         'Tags' => 'Varchar(255)',
         # A locked record cannot be edited: its row shows read-only values and a view link only.
         'Locked' => 'Boolean',
+        # Toggle switches: Featured in the "toggle" grid tab and the edit form, Archived disabled in the form.
+        'Featured' => 'Boolean',
+        'Archived' => 'Boolean',
     ];
 
     private static $default_sort = '"Title" ASC';
@@ -53,6 +61,20 @@ class AtBEditableRecord extends DataObject
     public function getSummary(): string
     {
         return 'First line of ' . $this->Title;
+    }
+
+    /**
+     * The toggle switches in the edit form: the helper method on a CheckboxField and on a
+     * CheckboxSetField, and a disabled one.
+     */
+    public function getCMSFields()
+    {
+        $fields = parent::getCMSFields();
+        $fields->replaceField('Featured', CheckboxField::create('Featured')->setToggleSwitch());
+        $fields->replaceField('Tags', CheckboxSetField::create('Tags', 'Tags', self::TAGS)->setToggleSwitch());
+        $fields->replaceField('Archived', CheckboxField::create('Archived')->setToggleSwitch()->setDisabled(true));
+
+        return $fields;
     }
 
     public function canEdit($member = null)

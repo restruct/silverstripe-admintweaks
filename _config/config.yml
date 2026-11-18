@@ -38,6 +38,14 @@ SilverStripe\ORM\DataObject:
 SilverStripe\Forms\GridField\GridFieldConfig:
   extensions:
     - Restruct\Silverstripe\AdminTweaks\Extensions\GridFieldConfigExtension
+# ->setToggleSwitch(): shorthand for addExtraClass('toggle-switch'), the opt-in CSS toggle switch
+# (adds a method only; nothing changes until a field calls it)
+SilverStripe\Forms\CheckboxField:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\ToggleSwitchExtension
+SilverStripe\Forms\CheckboxSetField:
+  extensions:
+    - Restruct\Silverstripe\AdminTweaks\Extensions\ToggleSwitchExtension
 
 # NOTE: this extension adds various extra fields & functionality to siteadmin, activate on a per-project basis
 #SilverStripe\SiteConfig\SiteConfig:

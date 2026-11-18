@@ -17,7 +17,8 @@ use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
  * BROWSER-TEST FIXTURE ONLY - AtBEditableRecord in GridFields with GridFieldEditableColumns,
  * /admin/atb-editable, for editable-gridfield.spec.ts (admintweaks#114):
  * - "editable": the columns of AtBEditableRecord, with the usual edit link per row,
- * - "nolink": the same columns, without GridFieldEditButton, so no row has an edit link.
+ * - "nolink": the same columns, without GridFieldEditButton, so no row has an edit link,
+ * - "toggle": the same columns plus "Featured", a checkbox shown as a toggle switch (toggle-switch.spec.ts).
  *
  * Needs symbiote/silverstripe-gridfieldextensions in the host (SS6_EXTRA_REQUIRE in targets.sh).
  * (See AtBRecord for why this never loads in a real install.)
@@ -32,6 +33,7 @@ class AtBEditableAdmin extends ModelAdmin
     private static $managed_models = [
         'editable' => ['dataClass' => AtBEditableRecord::class, 'title' => 'Editable'],
         'nolink' => ['dataClass' => AtBEditableRecord::class, 'title' => 'No edit link'],
+        'toggle' => ['dataClass' => AtBEditableRecord::class, 'title' => 'Toggle switch'],
     ];
 
     protected function getGridFieldConfig(): GridFieldConfig
@@ -41,7 +43,7 @@ class AtBEditableAdmin extends ModelAdmin
         # Editable columns in place of the plain data columns, as a project would set them up.
         $config->removeComponentsByType(GridFieldDataColumns::class);
         $editable = GridFieldEditableColumns::create();
-        $editable->setDisplayFields([
+        $columns = [
             'Title' => ['title' => 'Title', 'field' => TextField::class],
             'Category' => [
                 'title' => 'Category',
@@ -54,7 +56,17 @@ class AtBEditableAdmin extends ModelAdmin
             ],
             # Read-only: a LiteralField is never marked editable-column-field.
             'Summary' => ['title' => 'Summary', 'field' => LiteralField::class],
-        ]);
+        ];
+        if ($this->modelTab === 'toggle') {
+            # A column's field is built from the column config, so the class goes on in a callback
+            # (docs/form-fields.md). Only on this tab, so the other tabs keep the columns their
+            # specs count.
+            $columns['Featured'] = [
+                'title' => 'Featured',
+                'callback' => fn ($record, $col) => CheckboxField::create($col)->addExtraClass('toggle-switch'),
+            ];
+        }
+        $editable->setDisplayFields($columns);
         # Two lines in the read-only column (escaped value, then a fixed second line).
         $editable->setFieldFormatting([
             'Summary' => fn ($value) => htmlspecialchars((string) $value) . '<br>Second line',

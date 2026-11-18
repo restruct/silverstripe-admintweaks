@@ -1,5 +1,25 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **Opt-in toggle switch for checkboxes**, CSS only: `CheckboxField::create('Active')->setToggleSwitch()`
+  or `->addExtraClass('toggle-switch')`. The native checkbox itself is drawn as a switch
+  (`appearance: none`, the knob is a pseudo-element) that looks like the admin's Bootstrap 5 `.form-switch`, so there
+  is no JavaScript and no extra markup: clicks, the keyboard, screen readers, the editable-GridField
+  row click and the unchecked-checkbox `0` value all keep working as for a plain checkbox. Works for
+  every option of a CheckboxSetField (the class lands on their wrapper) and in
+  `GridFieldEditableColumns` columns (build the field in the column's `callback`). Disabled switches
+  are faded and cannot be toggled; sizes and colours are CSS custom properties. New
+  `ToggleSwitchExtension` on CheckboxField and CheckboxSetField for `setToggleSwitch()` /
+  `isToggleSwitch()`. See [Form fields](docs/form-fields.md#toggle-switch).
+- New unit test `ToggleSwitchExtensionTest` and browser spec `toggle-switch.spec.ts` (Silverstripe 6):
+  drawn as a switch with a knob that moves, a click and the space key toggle it, a visible focus
+  ring, a click in an editable GridField does not open the row, disabled cannot be toggled, the value
+  is saved on and off. The editable-GridField fixture has a "toggle" tab and the record's edit form
+  shows toggle switches.
+
 ## 4.7.2 (2026-11-17)
 
 ### Fixed
