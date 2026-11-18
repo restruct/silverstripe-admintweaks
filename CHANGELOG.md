@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- **The admin CSS and JS are built with Vite 8 instead of laravel-mix 6** (`build-assets.mjs`,
+  `yarn build`; see README "Building the front-end assets"). Build tooling only: the output keeps
+  its names and paths (`client/dist/css/admintweaks.css`, `admintweaks-page-icons.css`,
+  `multivaluesortfield.css`, `client/dist/js/admintweaks.js`, the FontAwesome webfonts in
+  `client/dist/fonts/`), and its rules and script logic are the same. What differs in the built
+  files: the minifier writes some values differently (colours as hex, `flex:none`, `inset`
+  spelled out as `top/right/bottom/left`); the SVG page icons keep their `viewBox` (mix's CSS
+  minifier stripped it); `admintweaks.js` is a plain IIFE without the webpack runtime; the webfont
+  URLs lose their `?hash` query. Leaving mix drops most build-time advisories (`yarn audit`: 15
+  before, 2 after; the 2 left are picomatch GHSA-fc5q-39xc-vjpf through Vite and Sass, which has
+  no fixed release and was already among the 15).
+- Removed with mix: `webpack.mix.js`, `.babelrc`, `client/dist/mix-manifest.json` (nothing reads
+  it), and the committed `admintweaks.css.map` / `admintweaks.js.map` (no built file pointed at
+  them, `*.map` is gitignored, and they described the webpack output). Unused devDependencies
+  `bootstrap` and `bootstrap-sass` are gone; `bootstrap-icons` stays as the source of the SVG page
+  icons (`_page-icons-svg.scss`).
+
 ## 4.8.0 (2026-11-18)
 
 ### Added

@@ -456,17 +456,24 @@ composer require restruct/silverstripe-admintweaks:^3   # Silverstripe 4 / 5
 Then flush and build the database (`sake db:build --flush` on Silverstripe 6). The defaults above
 apply from then on; the rest is switched on in your project's config.
 
-### Building the admin assets
+### Building the front-end assets
 
-The compiled CSS and JS in `client/dist/` are committed. To change them, edit `client/src/` and
-rebuild with Laravel Mix, from a checkout of the module (the lockfile is `yarn.lock`):
+The built CSS and JS in `client/dist/` are committed, so installing the module needs no Node
+tooling. To change them, edit `client/src/` and rebuild with [Vite](https://vite.dev), from a
+checkout of the module (Node `^20.19` or `>=22.12`; the lockfile is `yarn.lock`):
 
 ```bash
 yarn install
-yarn run development   # development build
-yarn run production    # production build
-yarn run watch         # watch mode
+yarn build    # minified, what gets committed
+yarn dev      # unminified, with inline source maps
+yarn watch    # as dev, rebuilding on every change
 ```
+
+`build-assets.mjs` holds the build configuration. The output names (`client/dist/css/admintweaks.css`,
+`client/dist/css/admintweaks-page-icons.css`, `client/dist/css/multivaluesortfield.css`,
+`client/dist/js/admintweaks.js`, and the FontAwesome webfonts in `client/dist/fonts/`) are fixed,
+because the YAML config and the PHP load them by path. Commit `client/src` and `client/dist`
+together, built with `yarn build`.
 
 ### Tests
 
