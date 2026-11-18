@@ -11,6 +11,15 @@
   both files were loaded on every config build and threw "Class not found", whatever the YAML or
   the `APP_LOG_MAIL_*` variables said. Both now return early when their parent is missing, and the
   error-mail YAML fragment also requires those classes, so it stays off on SS4 (it needs SS5).
+- **A failing upstream is no longer re-requested on every call; outbound HTTP requests are
+  bounded** (#140, backport of #55 from 4.x). `CacheHelpers::cached_http_request()` only cached a
+  200, and `perform_http_request()` throws on a connection failure, so a dead upstream was
+  contacted again on every call. Failures and non-200 responses are now cached for
+  `CacheHelpers.failure_cache_duration` (60s); a repeat call in that window fails (or returns the
+  same response) without a request. Guzzle has no default timeouts (0 = unlimited), so a vanished
+  upstream could hold a PHP worker indefinitely: `perform_http_request()` now defaults to 5s
+  connect / 10s total (`GeneralHelpers.http_connect_timeout` / `http_timeout`), and a caller's own
+  `$options` still win.
 
 ## 3.28.1 (2026-11-18)
 

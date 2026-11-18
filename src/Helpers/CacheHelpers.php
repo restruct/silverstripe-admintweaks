@@ -6,10 +6,27 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
 use Psr\SimpleCache\CacheInterface;
+use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injector;
 
 class CacheHelpers
 {
+    use Configurable;
+
+    /**
+     * @config
+     * Seconds to remember that an upstream FAILED - the "dead upstream penalty window".
+     *
+     * Only successes used to be cached, so a dead or slow upstream was re-requested on every
+     * single call, forever: the cache stopped working exactly when it was needed most
+     * (admintweaks#55). Failures are now cached too, on their own shorter TTL, so a repeat call
+     * inside the window fails immediately instead of making another network request.
+     *
+     * Shorter than the success TTL on purpose: this is a circuit breaker, and it must let a
+     * recovered upstream back in reasonably quickly.
+     */
+    private static int $failure_cache_duration = 60;
+
     const HTTP_REQUEST_EXCEPTION = 1;
     const INVALID_JSON_EXCEPTION = 2;
     const NO_JSONLD_FOUND_EXCEPTION = 3;
@@ -85,14 +102,40 @@ class CacheHelpers
 
         $cacheKey = md5("cachedResponse_{$reqUrl}");
         $cache = self::load_cache();
-        $cachedResponse = self::load_cache()->get($cacheKey);
+        $cachedResponse = $cache->get($cacheKey);
 
-        if (!$cachedResponse) {
-            $cachedResponse = GeneralHelpers::perform_http_request($reqUrl, $reqMethod, $options);
-            // write to cache if OK
-            if ($cachedResponse['statuscode'] === 200) {
-                self::load_cache()->set($cacheKey, $cachedResponse, $cacheDuration);
+        if ($cachedResponse) {
+            // A cached FAILURE is re-thrown without touching the network: the caller sees exactly
+            // what it saw the first time, but the dead upstream is not contacted again until the
+            // penalty window expires.
+            if (isset($cachedResponse['failed'])) {
+                throw new Exception($cachedResponse['failed'], self::HTTP_REQUEST_EXCEPTION);
             }
+
+            return $cachedResponse;
+        }
+
+        $failureDuration = static::config()->get('failure_cache_duration');
+
+        try {
+            $cachedResponse = GeneralHelpers::perform_http_request($reqUrl, $reqMethod, $options);
+        } catch (Exception $exception) {
+            // perform_http_request() THROWS on a GuzzleException (connection refused, timeout),
+            // which is the common real-world failure - so the old success-only cache write below
+            // was never even reached for it, and every call re-made the request.
+            $cache->set($cacheKey, ['failed' => $exception->getMessage()], $failureDuration);
+
+            throw $exception;
+        }
+
+        // write to cache if OK
+        if ($cachedResponse['statuscode'] === 200) {
+            self::load_cache()->set($cacheKey, $cachedResponse, $cacheDuration);
+        } else {
+            // A non-200 is cached too, but only for the penalty window: the return value is
+            // unchanged (callers still get the response array), while a 500ing upstream stops
+            // being hammered on every render.
+            $cache->set($cacheKey, $cachedResponse, $failureDuration);
         }
 
         return $cachedResponse;

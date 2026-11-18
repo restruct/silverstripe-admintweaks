@@ -72,11 +72,17 @@ try {
 
 - The cache key is the URL only: the method and options are not part of it, so a GET and a POST
   to the same URL share one cache entry.
-- Only a response with status 200 is cached. A request that fails, or answers with another status,
-  is made again on the next call.
-- Guzzle has no timeout of its own, so pass `connect_timeout` and `timeout` in `$options` for a
-  request made while a page renders; otherwise a dead upstream holds the request until PHP gives
-  up. (The 4.x line caches failures for a minute and sets default timeouts.)
+- A request that fails (an exception) or answers with a status other than 200 is cached as well,
+  for `failure_cache_duration` seconds (default 60): a repeat call in that window throws the same
+  error, or returns the same response, without another request. A dead upstream is then not
+  hammered on every page view.
+- Requests have a connect timeout of 5 seconds and a total timeout of 10 seconds (below), unless
+  `$options` sets its own.
+
+```yaml
+Restruct\Silverstripe\AdminTweaks\Helpers\CacheHelpers:
+  failure_cache_duration: 120
+```
 
 Request URLs are fetched as given: validate any URL that comes from user input before passing it.
 
@@ -86,7 +92,13 @@ Request URLs are fetched as given: validate any URL that comes from user input b
 
 The uncached request the methods above use: `perform_http_request($reqUrl, $reqMethod = 'GET',
 array $options = [])` returns the same array as `cached_http_request()` and throws an `Exception`
-when the request fails. It sets no timeouts; pass them in `$options`.
+when the request fails. Default timeouts:
+
+```yaml
+Restruct\Silverstripe\AdminTweaks\Helpers\GeneralHelpers:
+  http_connect_timeout: 5   # seconds to connect
+  http_timeout: 10          # seconds for the whole request
+```
 
 ### add_tab_if_not_exists()
 
