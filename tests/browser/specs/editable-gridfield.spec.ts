@@ -19,6 +19,7 @@ import type { Locator, Page } from '@playwright/test';
 
 const EDITABLE = { url: '/admin/atb-editable/editable', grid: '#Form_EditForm_editable' };
 const NOLINK = { url: '/admin/atb-editable/nolink', grid: '#Form_EditForm_nolink' };
+const NESTED = { url: '/admin/atb-editable/nested', grid: '#Form_EditForm_nested' };
 
 async function openGrid(page: Page, which: typeof EDITABLE): Promise<Locator> {
     await page.goto(which.url);
@@ -195,6 +196,58 @@ test('a click on the empty part of a cell that holds a field still opens the rec
     expect(hitsCell, 'the click point is empty cell space').toBe(true);
 
     await cell.click({ position: point });
+    const form = page.locator('#Form_ItemEditForm');
+    await expect(form).toBeVisible();
+    await expect(form.locator('input[name=Title]')).toHaveValue('Bravo editable');
+});
+
+// A field that renders a <table> of its own in its cell (AtBNestedTableField, "nested" tab). The
+// rule must judge a click by the ROW's own cell: closest('td') stopped at the inner table's cell,
+// which holds no editable field, so a click in the inner table opened the record (the same case
+// as silverstripe/silverstripe-gridfieldextensions#477).
+
+/** Assert the click left the grid where it was: no edit form, no page load, the URL unchanged. */
+async function expectStillOnGrid(page: Page, url: string, navigations: () => string[]): Promise<void> {
+    await page.waitForTimeout(750);
+    await expect(page.locator('#Form_ItemEditForm')).toHaveCount(0);
+    expect(page.url()).toContain(url);
+    expect(navigations()).toEqual([]);
+}
+
+test('a click on the content of a table nested in an editable cell does not open the record', async ({ page }) => {
+    const grid = await openGrid(page, NESTED);
+    const navigations = watchDocumentNavigations(page);
+    const r = row(grid, 'Alpha editable');
+    const content = r.locator('td.col-Nested .atb-nested-table-content');
+    await expect(content).toBeVisible();
+
+    await content.click();
+    await expectStillOnGrid(page, NESTED.url, navigations);
+});
+
+test('a click on the padding of a cell of a table nested in an editable cell does not open the record', async ({ page }) => {
+    const grid = await openGrid(page, NESTED);
+    const navigations = watchDocumentNavigations(page);
+    const r = row(grid, 'Alpha editable');
+    const inner = r.locator('td.col-Nested td.atb-nested-table-cell');
+    // Guard: the point (in the inner cell's padding) must hit the inner td itself, not its content.
+    const point = { x: 4, y: 4 };
+    const hitsInner = await inner.evaluate((td, p) => {
+        const rect = td.getBoundingClientRect();
+        return document.elementFromPoint(rect.left + p.x, rect.top + p.y) === td;
+    }, point);
+    expect(hitsInner, 'the click point is the inner cell\'s padding').toBe(true);
+
+    await inner.click({ position: point });
+    await expectStillOnGrid(page, NESTED.url, navigations);
+});
+
+test('next to a nested table, a click on the row\'s own read-only cell still opens the record', async ({ page }) => {
+    const grid = await openGrid(page, NESTED);
+    const r = row(grid, 'Bravo editable');
+    await expect(r.locator('td.col-Nested .atb-nested-table')).toHaveCount(1);
+
+    await clickRowSpace(r);
     const form = page.locator('#Form_ItemEditForm');
     await expect(form).toBeVisible();
     await expect(form.locator('input[name=Title]')).toHaveValue('Bravo editable');
