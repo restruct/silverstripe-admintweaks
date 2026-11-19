@@ -16,6 +16,11 @@
   See `docs/caching.md`. **Breaking for callers that import local files:** they throw until they
   pass `$localBaseDir`.
 
+### Fixed
+
+- PHP 8.4 deprecation "Implicitly marking parameter as nullable" on
+  `GeneralHelpers::import_file_asset()`: `$assetPath` is now declared `?string`.
+
 ## 4.11.0 (2026-11-18)
 
 ### Security

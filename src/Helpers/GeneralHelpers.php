@@ -160,7 +160,7 @@ class GeneralHelpers
      */
     public static function import_file_asset(
         string $filePathOrUrl,
-        string $assetPath = null,
+        ?string $assetPath = null,
         bool $publish = true,
         string $conflictResolution = AssetStore::CONFLICT_OVERWRITE,
         ?string $localBaseDir = null
