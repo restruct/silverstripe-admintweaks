@@ -1,0 +1,175 @@
+name: CI
+
+on:
+  push:
+    branches: [v3]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: SS${{ matrix.silverstripe }} / PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # This branch is the Silverstripe 4/5 line (composer.json: framework ^4 | ^5); the
+          # SS6 line lives on main with its own workflow. SS5: the floor and ceiling of its
+          # PHP support (8.1 to 8.3).
+          - silverstripe: '5'
+            php: '8.1'
+            recipe: '^5'
+            testing: '^3'
+            queuedjobs: '^5'
+            lumberjack: '^3'
+          - silverstripe: '5'
+            php: '8.3'
+            recipe: '^5'
+            testing: '^3'
+            queuedjobs: '^5'
+            lumberjack: '^3'
+          # SS4 on 4.13, the last minor. PHP 8.1 only: SS4 itself goes down to 7.4, but this
+          # branch already uses PHP 8 syntax (a `static` return type), so 7.4 cannot load it.
+          - silverstripe: '4'
+            php: '8.1'
+            recipe: '^4.13'
+            testing: '^2'
+            queuedjobs: '^4'
+            lumberjack: '^2'
+
+    services:
+      database:
+        # MariaDB rather than MySQL: it matches both the local dev machines and the Forge
+        # servers, so a version-specific failure here means something real.
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: ss_ci
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+
+    steps:
+      - name: Check out the module
+        uses: actions/checkout@v7
+        with:
+          path: module
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, intl, pdo_mysql, mysqli, gd, zip, dom, xml, tokenizer, simplexml, ctype, hash, session
+          tools: composer:v2
+          coverage: none
+
+      - name: Build a host project
+        # The module cannot be tested on its own: it needs a booted Silverstripe app. It is
+        # required through a PATH repository pointing at the checkout, and symlinked rather
+        # than mirrored so the tests come along even if /tests is ever made export-ignore.
+        #
+        # queuedjobs is installed because QueuedJobContextExtension hooks its descriptor, and
+        # lumberjack because the SelectiveLumberjack / AddNew tests (#61, #62) skip without it.
+        # recipe-cms 4 and 5 already include reports (the #54 menu tests) and the TinyMCE
+        # editor (the minimal editor config tests, #116).
+        #
+        # audit.block-insecure is off for this throwaway host only: SS4 and SS5 are out of
+        # support and some of their releases carry advisories that will not be fixed, so
+        # Composer 2.9+ refuses to resolve any of them. The module's composer.json is unaffected.
+        run: |
+          mkdir -p app-host
+          cd app-host
+          cat > composer.json <<JSON
+          {
+            "name": "restruct/ci-host",
+            "require": {
+              "silverstripe/recipe-cms": "${{ matrix.recipe }}",
+              "silverstripe/recipe-testing": "${{ matrix.testing }}",
+              "symbiote/silverstripe-queuedjobs": "${{ matrix.queuedjobs }}",
+              "silverstripe/lumberjack": "${{ matrix.lumberjack }}",
+              "restruct/silverstripe-admintweaks": "*"
+            },
+            "repositories": [
+              { "type": "path", "url": "../module", "options": { "symlink": true } }
+            ],
+            "autoload-dev": {
+              "psr-4": {
+                "Restruct\\\\Silverstripe\\\\AdminTweaks\\\\Tests\\\\": "vendor/restruct/silverstripe-admintweaks/tests/"
+              }
+            },
+            "minimum-stability": "dev",
+            "prefer-stable": true,
+            "config": {
+              "allow-plugins": true,
+              "audit": { "block-insecure": false },
+              "policy": { "advisories": { "block": false } }
+            }
+          }
+          JSON
+          composer update --no-interaction --no-progress
+
+      - name: Configure the test suite
+        run: |
+          cd app-host
+          cat > phpunit.xml <<'XML'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!-- failOnWarning is pinned so a warning fails the run the same way as on main's
+               workflow (PHPUnit 9 here, 11 there). -->
+          <phpunit bootstrap="vendor/silverstripe/framework/tests/bootstrap.php" colors="true"
+                   failOnWarning="true">
+              <testsuites>
+                  <testsuite name="admintweaks">
+                      <directory>vendor/restruct/silverstripe-admintweaks/tests</directory>
+                      <exclude>vendor/restruct/silverstripe-admintweaks/tests/browser</exclude>
+                  </testsuite>
+              </testsuites>
+          </phpunit>
+          XML
+
+      - name: Run tests
+        # No flush argument: the host is built fresh, so there is no manifest cache to flush.
+        working-directory: app-host
+        env:
+          SS_DATABASE_CLASS: MySQLDatabase
+          SS_DATABASE_SERVER: 127.0.0.1
+          SS_DATABASE_PORT: 3306
+          SS_DATABASE_USERNAME: root
+          SS_DATABASE_PASSWORD: root
+          SS_DATABASE_NAME: ss_ci
+          SS_ENVIRONMENT_TYPE: dev
+        run: vendor/bin/phpunit --testsuite admintweaks
+
+      - name: Boot the app and build the database
+        # The suite proves the classes behave; this proves the module does not break a real
+        # boot, a bootstrap fatal no unit test would catch.
+        working-directory: app-host
+        env:
+          SS_DATABASE_CLASS: MySQLDatabase
+          SS_DATABASE_SERVER: 127.0.0.1
+          SS_DATABASE_PORT: 3306
+          SS_DATABASE_USERNAME: root
+          SS_DATABASE_PASSWORD: root
+          SS_DATABASE_NAME: ss_ci
+          SS_ENVIRONMENT_TYPE: dev
+        run: vendor/bin/sake dev/build flush=1
+
+  lint:
+    name: Lint PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The PHP range the CI legs above cover (SS4 and SS5 on 8.1, SS5 up to 8.3).
+        php: ['8.1', '8.3']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - name: Syntax check every PHP file
+        run: find src tests -name '*.php' -print0 | xargs -0 -n1 php -l
