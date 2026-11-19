@@ -16,6 +16,14 @@
   See `docs/caching.md`. **Breaking for callers that import local files:** they throw until they
   pass `$localBaseDir`.
 
+### Fixed
+
+- composer.json now requires PHP `^8.1`: the code already needs PHP 8, so a PHP 7.4 install resolved
+  and then failed at runtime.
+- PHP 8.4 deprecation "Implicitly marking parameter as nullable" on
+  `GeneralHelpers::import_file_asset()` (`$assetPath`) and
+  `GridFieldSiteTreeAddNewButton::getAllowedChildren()` (`$parent`): both now declared nullable.
+
 ## 3.30.0 (2026-11-18)
 
 ### Security
