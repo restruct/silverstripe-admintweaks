@@ -144,20 +144,78 @@ class GeneralHelpers
     /**
      * (Down)load a file from path or url and store it as File/Image asset object
      *
+     * A local path or `file:` URL is refused unless $localBaseDir names the directory it must be
+     * in; see resolve_local_import_path() (admintweaks#151).
+     *
      * @param string $filePathOrUrl URL to internet file or path to local file (direct or with 'file:' prefix)
      * @param string|null $assetPath folder/filename path in asset store (e.g. 'Imports/my-file.txt')
      * @param bool $publish whether to publish the file after import
      * @param string $conflictResolution AssetStore conflict strategy (default: CONFLICT_OVERWRITE)
+     * @param string|null $localBaseDir opt-in for local sources: the directory a local path or
+     *   `file:` URL must resolve into. Null (the default) refuses every local source.
      * @return File|Image|null
+     * @throws LocalImportRefusedException for a local source without, or outside, $localBaseDir
+     * @throws OutboundUrlRejectedException for a URL OutboundUrlGuard refuses
      * @throws Exception
      */
     public static function import_file_asset(
         string $filePathOrUrl,
-        string $assetPath = null,
+        ?string $assetPath = null,
         bool $publish = true,
-        string $conflictResolution = AssetStore::CONFLICT_OVERWRITE
+        string $conflictResolution = AssetStore::CONFLICT_OVERWRITE,
+        ?string $localBaseDir = null
     ) {
-        return self::download_and_save_asset($filePathOrUrl, $assetPath, $publish, $conflictResolution);
+        return self::download_and_save_asset($filePathOrUrl, $assetPath, $publish, $conflictResolution, $localBaseDir);
+    }
+
+    /**
+     * Resolve a local import source and check that it lies inside $localBaseDir.
+     *
+     * Both the base directory and the source are resolved with realpath() first, so `..` segments
+     * and symlinks (in the file itself or in any directory on the way) cannot lead outside it.
+     * A source that does not exist is resolved through its parent directory, so a missing file
+     * inside the base still reports as missing, while a missing file elsewhere is refused like an
+     * existing one: the error does not tell a caller what exists outside the base.
+     *
+     * @param string $path local filesystem path (a `file:` prefix already stripped)
+     * @param string|null $localBaseDir the caller's opt-in, see import_file_asset()
+     * @return string the resolved path to read from
+     * @throws LocalImportRefusedException
+     */
+    private static function resolve_local_import_path(string $path, ?string $localBaseDir): string
+    {
+        # No opt-in: a local source is never read. An empty string counts as none, so a stray
+        # `false` from a caller still on the old five-argument signature cannot open it up.
+        if ($localBaseDir === null || trim($localBaseDir) === '') {
+            throw new LocalImportRefusedException(
+                "Local file import refused, pass \$localBaseDir to allow it: {$path}"
+            );
+        }
+
+        $realBase = realpath($localBaseDir);
+        if ($realBase === false || !is_dir($realBase)) {
+            throw new LocalImportRefusedException(
+                "Local file import refused, base directory does not exist: {$localBaseDir}"
+            );
+        }
+
+        $realPath = realpath($path);
+        if ($realPath === false) {
+            # Missing file: resolve the directory it would be in instead
+            $realDir = realpath(dirname($path));
+            $realPath = $realDir === false ? false : $realDir . DIRECTORY_SEPARATOR . basename($path);
+        }
+
+        # Prefix check on resolved paths, with a trailing separator so /data/import does not also
+        # admit /data/import-other. rtrim keeps a base of '/' as '/' rather than '//'.
+        $prefix = rtrim($realBase, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        if ($realPath === false || strpos($realPath, $prefix) !== 0) {
+            throw new LocalImportRefusedException(
+                "Local file import refused, path is outside {$localBaseDir}: {$path}"
+            );
+        }
+
+        return $realPath;
     }
 
     // Download/load a file into assets (set to private and replaced with add_file_to_assets in order to phase out $write argument)
@@ -165,7 +223,8 @@ class GeneralHelpers
         $filePathOrUrl,
         $assetPath = null,
         $publish = true,
-        $conflictResolution = AssetStore::CONFLICT_OVERWRITE
+        $conflictResolution = AssetStore::CONFLICT_OVERWRITE,
+        $localBaseDir = null
     ) {
         // fallback to just filename of original file
         $fileName = basename($assetPath ?: $filePathOrUrl);
@@ -178,6 +237,20 @@ class GeneralHelpers
             throw new Exception("FILE EXTENSION NOT ALLOWED IN ASSETS ({$fileExt})");
         }
 
+        # Decide local vs remote from the string itself, before any record is looked up or any
+        # file is touched. Anything with a scheme other than `file:` is a URL for OutboundUrlGuard
+        # (which refuses all but http/https); everything else is a local path. This used to hinge
+        # on is_file(), which read existing local files unchecked (admintweaks#151).
+        $isFileUrl = stripos($filePathOrUrl, 'file:') === 0;
+        $isRemote = !$isFileUrl && preg_match('#^[a-z][a-z0-9+.\-]*://#i', $filePathOrUrl);
+        $resolvedLocalPath = null;
+        if (!$isRemote) {
+            $localSource = $isFileUrl
+                ? '/' . str_replace(['file:///', 'file://', 'file:/', 'file:'], '', $filePathOrUrl)
+                : $filePathOrUrl;
+            $resolvedLocalPath = self::resolve_local_import_path($localSource, $localBaseDir);
+        }
+
         $File = File::find($assetPath);
         if(!$File) {
             $File = File::get_app_category($fileExt) == 'image' ? Image::create() : File::create();
@@ -187,10 +260,14 @@ class GeneralHelpers
         $tempFilePath = null;
 
         // Create pointer to (temp) local file
-        if(strpos($filePathOrUrl, 'file:')===0) {
-            $localFilePath = '/' . str_replace(['file:///', 'file://', 'file:/', 'file:'], '', $filePathOrUrl);
-        } elseif (is_file($filePathOrUrl)) {
-            $localFilePath = $filePathOrUrl;
+//        if(strpos($filePathOrUrl, 'file:')===0) {
+//            $localFilePath = '/' . str_replace(['file:///', 'file://', 'file:/', 'file:'], '', $filePathOrUrl);
+//        } elseif (is_file($filePathOrUrl)) {
+//            $localFilePath = $filePathOrUrl;
+//        } else {
+        if ($resolvedLocalPath !== null) {
+            # Read the resolved path, not the caller's string, so what was checked is what is read
+            $localFilePath = $resolvedLocalPath;
         } else {
             # Download URL to temp file — pass path string (not handle) so Guzzle manages open/close
 //            $client = new Client();
