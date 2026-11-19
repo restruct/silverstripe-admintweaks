@@ -19,7 +19,9 @@ use Symbiote\GridFieldExtensions\GridFieldEditableColumns;
  * - "editable": the columns of AtBEditableRecord, with the usual edit link per row,
  * - "nolink": the same columns, without GridFieldEditButton, so no row has an edit link,
  * - "toggle": the same columns plus "Featured", a checkbox shown as a toggle switch (toggle-switch.spec.ts),
- *   and "Hidden", an inverted one (toggle-switch.spec.ts).
+ *   and "Hidden", an inverted one (toggle-switch.spec.ts),
+ * - "nested": the same columns plus "Nested", a text field that renders a table of its own inside
+ *   its cell (AtBNestedTableField, editable-gridfield.spec.ts).
  *
  * Needs symbiote/silverstripe-gridfieldextensions in the host (SS5_EXTRA_REQUIRE in targets.sh).
  * (See AtBRecord for why this never loads in a real install.)
@@ -35,6 +37,7 @@ class AtBEditableAdmin extends ModelAdmin
         'editable' => ['dataClass' => AtBEditableRecord::class, 'title' => 'Editable'],
         'nolink' => ['dataClass' => AtBEditableRecord::class, 'title' => 'No edit link'],
         'toggle' => ['dataClass' => AtBEditableRecord::class, 'title' => 'Toggle switch'],
+        'nested' => ['dataClass' => AtBEditableRecord::class, 'title' => 'Nested table'],
     ];
 
     protected function getGridFieldConfig(): GridFieldConfig
@@ -70,6 +73,14 @@ class AtBEditableAdmin extends ModelAdmin
             $columns['Hidden'] = [
                 'title' => 'Hidden',
                 'callback' => fn ($record, $col) => CheckboxField::create($col)->addExtraClass('toggle-switch toggle-switch--inverted'),
+            ];
+        }
+        if ($this->modelTab === 'nested') {
+            # A field with a <table> of its own in its cell. No db field behind it: the column only
+            # needs the markup (it renders empty), and this tab's specs never save the row.
+            $columns['Nested'] = [
+                'title' => 'Nested',
+                'callback' => fn ($record, $col) => AtBNestedTableField::create($col),
             ];
         }
         $editable->setDisplayFields($columns);
