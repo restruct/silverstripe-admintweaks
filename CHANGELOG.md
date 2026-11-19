@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **Editable GridFields: a click inside a field that renders its own `<table>` no longer opens the
+  row.** The row-click rule looked up the clicked cell with `closest('td')`, which stopped at the
+  inner table's cell; that cell holds no editable field, so the click was taken for row space and
+  opened the record. The rule now matches against the row's own cells only. Same fix as upstream
+  silverstripe/silverstripe-gridfieldextensions#477.
+
 ## 3.31.0 (2026-11-19)
 
 ### Security

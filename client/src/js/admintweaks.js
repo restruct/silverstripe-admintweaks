@@ -102,7 +102,10 @@
         // switch, select2/chosen, a date or colour picker) hides the field and draws its own markup next to it:
         // the click then lands on the widget, which matches none of the selectors below (#114 follow-up).
         // A click on the cell itself (its padding, empty space) still opens the row.
-        var cell = target.closest('td');
+        // The cell of THIS row that holds the target: matching against the row's own cells, not the nearest td,
+        // keeps a field that renders its own <table> from passing off its inner cell as the row's cell
+        // (same fix as silverstripe/silverstripe-gridfieldextensions#477).
+        var cell = target.closest(this.children('td'));
         if (target.closest('input, select, textarea, label, a, button, .editable-column-field, .action-menu').length
           || (cell.length && !target.is(cell) && cell.find('.editable-column-field').length)) {
           e.stopPropagation();
