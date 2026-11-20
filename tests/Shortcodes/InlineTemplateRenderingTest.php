@@ -5,6 +5,8 @@ namespace Restruct\Silverstripe\AdminTweaks\Tests\Shortcodes;
 use Restruct\Silverstripe\AdminTweaks\Extensions\PageHelpersExtension;
 use Restruct\Silverstripe\AdminTweaks\Shortcodes\FeaturedImageShortcode;
 use Restruct\Silverstripe\AdminTweaks\Tests\Stub\FeaturedImageController;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Control\Session;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\View\Requirements;
@@ -21,6 +23,10 @@ class InlineTemplateRenderingTest extends SapphireTest
     public function testFeaturedImageShortcodeRendersItsWrapper(): void
     {
         $controller = FeaturedImageController::create();
+        # pushCurrent() needs a request with a session.
+        $request = new HTTPRequest('GET', '/');
+        $request->setSession(new Session([]));
+        $controller->setRequest($request);
         $controller->pushCurrent();
         try {
             $html = FeaturedImageShortcode::parse_shortcode([], null, null, 'featuredimage');
@@ -36,7 +42,8 @@ class InlineTemplateRenderingTest extends SapphireTest
     public function testRequireCustomTemplatedCssRendersAgainstTheOwner(): void
     {
         Requirements::clear();
-        $extension = PageHelpersExtension::create();
+        # Extensions are not Injectable, so no ::create().
+        $extension = new PageHelpersExtension();
         $extension->setOwner(ArrayData::create(['Colour' => 'rebeccapurple']));
 
         $extension->RequireCustomTemplatedCSS('.x { color: $Colour; }');
@@ -48,7 +55,8 @@ class InlineTemplateRenderingTest extends SapphireTest
     public function testRequireCustomTemplatedJsRendersAgainstTheOwner(): void
     {
         Requirements::clear();
-        $extension = PageHelpersExtension::create();
+        # Extensions are not Injectable, so no ::create().
+        $extension = new PageHelpersExtension();
         $extension->setOwner(ArrayData::create(['Name' => 'admintweaks']));
 
         $extension->RequireCustomTemplatedJS('<script>console.log("$Name");</script>');
