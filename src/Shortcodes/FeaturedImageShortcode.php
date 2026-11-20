@@ -9,7 +9,10 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
     use SilverStripe\Forms\FieldList;
     use SilverStripe\Forms\TextField;
     use SilverStripe\ORM\DataObject;
-    use SilverStripe\View\SSViewer;
+    // use SilverStripe\View\SSViewer; // SSViewer::fromString() is gone in SS6 (#150)
+    use SilverStripe\Core\Injector\Injector;
+    use SilverStripe\View\TemplateEngine;
+    use SilverStripe\View\ViewLayerData;
     use SilverStripe\Model\ModelData;
 
     class FeaturedImageShortcode extends ModelData
@@ -70,7 +73,13 @@ namespace Restruct\Silverstripe\AdminTweaks\Shortcodes {
             /** @var Image $featImg */
             if ( $featImg = $ctrl->FeaturedImage() ) {
 //                return '<div class="image">' . $featImg->Fill(640, 500)->forTemplate() . '</div>';
-                return $featImg->renderWith(SSViewer::fromString('<div class="image"><% if $CroppedFill('.$size.') %>$CroppedFill('.$size.')<% else %>$Fill('.$size.')<% end_if %></div>'));
+//                return $featImg->renderWith(SSViewer::fromString('<div class="image"><% if $CroppedFill('.$size.') %>$CroppedFill('.$size.')<% else %>$Fill('.$size.')<% end_if %></div>'));
+                # SS6 removed SSViewer::fromString() (#150): render the inline template through the injected
+                # TemplateEngine, as SSViewer itself does, with the model wrapped in ViewLayerData.
+                return Injector::inst()->create(TemplateEngine::class)->renderString(
+                    '<div class="image"><% if $CroppedFill('.$size.') %>$CroppedFill('.$size.')<% else %>$Fill('.$size.')<% end_if %></div>',
+                    ViewLayerData::create($featImg)
+                );
             }
         }
 

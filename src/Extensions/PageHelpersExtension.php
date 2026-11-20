@@ -15,6 +15,9 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
     use SilverStripe\Model\ArrayData;
     use SilverStripe\View\Requirements;
     use SilverStripe\View\SSViewer;
+    use SilverStripe\Core\Injector\Injector;
+    use SilverStripe\View\TemplateEngine;
+    use SilverStripe\View\ViewLayerData;
     use SilverStripe\View\ThemeResourceLoader;
 
     class PageHelpersExtension
@@ -102,8 +105,9 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
 
         public function RequireCustomTemplatedCSS($template)
         {
-            $template = SSViewer::fromString($template);
-            $result = $template->process($this->owner);
+//            $template = SSViewer::fromString($template);
+//            $result = $template->process($this->owner);
+            $result = $this->renderInlineTemplate($template);
             Requirements::customCSS($result);
         }
 
@@ -114,6 +118,17 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
 //            $themedir = SSViewer::current_theme();
 //            Requirements::javascript("themes/$themedir/$pathrelativetotheme");
 //        }
+
+        /**
+         * Render an inline template string against the owner. SS6 removed SSViewer::fromString() (#150);
+         * the injected TemplateEngine is what SSViewer itself renders with, and it takes the model
+         * wrapped in ViewLayerData.
+         */
+        protected function renderInlineTemplate(string $template): string
+        {
+            return Injector::inst()->create(TemplateEngine::class)
+                ->renderString($template, ViewLayerData::create($this->owner));
+        }
 
         public function RequireCustomJS($script)
         {
@@ -126,8 +141,9 @@ namespace Restruct\Silverstripe\AdminTweaks\Extensions {
         {
             $template = str_replace('<script>', '', $template);
             $template = str_replace('</script>', '', $template);
-            $template = SSViewer::fromString($template);
-            $result = $template->process($this->owner);
+//            $template = SSViewer::fromString($template);
+//            $result = $template->process($this->owner);
+            $result = $this->renderInlineTemplate($template);
             Requirements::customScript($result);
         }
 

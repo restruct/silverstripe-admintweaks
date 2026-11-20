@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **SS6: a page with the `[featuredimage]` shortcode answered HTTP 500** (#150). Silverstripe 6 removed
+  `SSViewer::fromString()`, which the shortcode and `PageHelpersExtension::RequireCustomTemplatedCSS()` /
+  `RequireCustomTemplatedJS()` used to render inline template strings. They now render through the
+  injected `TemplateEngine` with the model wrapped in `ViewLayerData`, as `SSViewer` does itself.
+
 ## 4.12.1 (2026-11-19)
 
 ### Fixed
