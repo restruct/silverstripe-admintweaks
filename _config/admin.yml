@@ -72,3 +72,29 @@ SilverStripe\Subsites\Admin\SubsiteAdmin:
   menu_priority: -5
 Symbiote\QueuedJobs\Controllers\QueuedJobsAdmin:
   menu_priority: -6
+
+# Same 'Advanced Config' group for CMS 6, where symbiote/silverstripe-grouped-cms-menu has no release
+# (#157): xddesigners/silverstripe-grouped-cms-menu reads the same LeftAndMain.menu_groups key, but takes
+# 'items' instead of 'children' and 'icon_class' instead of 'icon'.
+# No menu_priority block here: that module sorts a group's items by config order and places the group by
+# its own 'priority', so the native priorities above would have no effect on the grouped items.
+---
+Name: admintweaks-menugroups-xd
+Only:
+  moduleexists: 'xddesigners/silverstripe-grouped-cms-menu'
+---
+SilverStripe\Admin\LeftAndMain:
+  menu_groups:
+    Advanced Config:
+      # admin's own icon font, so the module's Font Awesome stylesheet is not needed for this group
+      icon_class: 'font-icon-cog'
+      # Groups sort by priority, higher first; ungrouped items use their menu_priority (-1 when unset).
+      # -10 keeps the group at the bottom of the menu, where the symbiote module's priorities put it.
+      priority: -10
+      items:
+        - SilverStripe-SiteConfig-SiteConfigLeftAndMain
+        - SilverStripe-Subsites-Admin-SubsiteAdmin
+        - SilverStripe-RedirectedURLs-Admin-RedirectedURLAdmin
+        - Restruct-Silverstripe-BlockBase-Admin-BlockAdmin
+        - SilverStripe-VersionedAdmin-ArchiveAdmin
+        - Symbiote-QueuedJobs-Controllers-QueuedJobsAdmin
