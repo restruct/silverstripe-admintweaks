@@ -1,5 +1,20 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- **SS6: the "Advanced Config" menu group never applied** (#157). It is configured only for
+  `symbiote/silverstripe-grouped-cms-menu`, which has no Silverstripe 6 release. A second config
+  fragment now sets the same group for `xddesigners/silverstripe-grouped-cms-menu`, the Silverstripe 6
+  module, in its `items` / `icon_class` shape.
+
+### Changed
+
+- **The symbiote grouped-menu fragment is commented out on this branch, and `composer.json` now
+  suggests `xddesigners/silverstripe-grouped-cms-menu` instead of the symbiote module.** This branch
+  is Silverstripe 6 only, and the symbiote module has no Silverstripe 6 release. The v3 branch keeps it.
+
 ## 4.12.2 (2026-11-20)
 
 ### Fixed
