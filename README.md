@@ -203,11 +203,12 @@ With a grouped-menu module installed, the configuration sections (Settings, Arch
 Subsites, Queued Jobs and restruct/silverstripe-blockbase's blocks admin, those that are installed)
 are grouped under "Advanced Config" in the menu. Nothing to configure.
 
-- Silverstripe 6: `xddesigners/silverstripe-grouped-cms-menu`. The group needs two or more of those
-  sections installed to show as a group. That module also removes the Help menu item and loads Font
-  Awesome from a CDN by default; both are its own settings, see its README.
-- Silverstripe 5 and earlier: `symbiote/silverstripe-grouped-cms-menu`, which has no Silverstripe 6
-  release (2026-11).
+The module is `xddesigners/silverstripe-grouped-cms-menu`. The group needs two or more of those
+sections installed to show as a group. That module also removes the Help menu item and loads Font
+Awesome from a CDN by default; both are its own settings, see its README.
+
+On Silverstripe 4/5 (the v3 branch) the same group works with `symbiote/silverstripe-grouped-cms-menu`
+instead, which has no Silverstripe 6 release (2026-11).
 
 ### Smaller fixes
 
@@ -481,7 +482,7 @@ name the running job in error mails from the queue runner
 
 | Module | What happens |
 |--------|--------------|
-| `xddesigners/silverstripe-grouped-cms-menu` (SS6), `symbiote/silverstripe-grouped-cms-menu` (SS5) | Admin sections grouped under "Advanced Config" |
+| `xddesigners/silverstripe-grouped-cms-menu` | Admin sections grouped under "Advanced Config" |
 | `symbiote/silverstripe-queuedjobs` | Job context in error mails; report recipient from env |
 | `wilr/silverstripe-googlesitemaps` | Sitemap enabled: 1000 objects per sitemap, Google and Bing notification on, honours `ShowInSearch` |
 | `silverstripe/mimevalidator` | MIME upload validation active |
